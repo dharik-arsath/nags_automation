@@ -584,7 +584,7 @@
 
             // Submit to server
             // fetch("http://192.168.31.204:8000/update_sheet", {
-            fetch("http://dharikarsath01.pythonanywhere.com/update_sheet", {
+            fetch("https://dharikarsath01.pythonanywhere.com/update_sheet", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -593,6 +593,7 @@
             })
                 .then(response => {
                     if (!response.ok) {
+                        submitButton.style.visibility = 'visible';
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     return response.json();

@@ -596,7 +596,6 @@
                         submitButton.style.visibility = 'visible';
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                    window.location.reload();
                     return response.json();
                 })
                 .then(data => {
@@ -609,6 +608,7 @@
                     document.getElementById('vehicleDamage').value = '0';
                     document.getElementById('otherExpenseAmount').value = '0';
                     document.getElementById('otherExpenses').value = '';
+                    submitButton.style.visibility = 'visible';
                 })
                 .catch(error => {
                     console.error("Error submitting billing details:", error);

@@ -608,12 +608,12 @@
                     document.getElementById('vehicleDamage').value = '0';
                     document.getElementById('otherExpenseAmount').value = '0';
                     document.getElementById('otherExpenses').value = '';
-                    submitButton.style.visibility = 'visible';
+                    submitbtn.style.visibility = 'visible';
                 })
                 .catch(error => {
                     console.error("Error submitting billing details:", error);
                     alert("Failed to submit billing details. Please try again.");
-                    submitButton.style.visibility = 'visible';
+                    submitbtn.style.visibility = 'visible';
                 });
         }
 

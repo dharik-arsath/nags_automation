@@ -596,6 +596,7 @@
                         submitButton.style.visibility = 'visible';
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
+                    window.location.reload();
                     return response.json();
                 })
                 .then(data => {

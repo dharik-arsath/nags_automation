@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Entry</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/8.1.0/mdb.min.css" rel="stylesheet" />
+    <style>
+        .form-outline input::-webkit-outer-spin-button,
+        .form-outline input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .form-outline input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid mt-3">
+        <!-- Driver Information -->
+        <div class="card mb-3">
+            <div class="card-header py-2">
+                <h5 class="mb-0">Driver Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-outline mb-3">
+                    <input list="buyer-list" class="form-control" id="buyer-user-name" autofocus>
+                    <label class="form-label">Driver Name</label>
+                    <datalist id="buyer-list"></datalist>
+                </div>
+                <div class="form-outline mb-3">
+                    <input type="date" class="form-control" id="date">
+                    <label class="form-label">Date of Issue</label>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Add Product Button -->
+        <div class="d-grid mb-3">
+            <button class="btn btn-primary" id="product_add" data-mdb-ripple-init data-mdb-modal-init
+                data-mdb-target="#addTodoModal" style="visibility: hidden;">
+                <i class="fas fa-plus me-2"></i>Add Product
+            </button>
+        </div>
+
+        <!-- Product List -->
+        <div id="productList"></div>
+
+        <!-- Add Product Modal -->
+        <div class="modal fade" id="addTodoModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header py-2">
+                        <h5 class="modal-title">Add New Product</h5>
+                        <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="todoForm">
+                            <!-- Basic Info -->
+                            <div class="form-outline mb-3">
+                                <input list="product-title" id="product-input" class="form-control">
+                                <label class="form-label">Product Name</label>
+                                <datalist id="product-title"></datalist>
+                            </div>
+                            <div class="form-outline mb-3">
+                                <input list="buyer-line" class="form-control" id="buyer-lineid">
+                                <label class="form-label">Area</label>
+                                <datalist id="buyer-line"></datalist>
+                            </div>
+
+                            <!-- Quantity Section -->
+                            <div class="mb-3 p-2 bg-light rounded">
+                                <small class="text-muted d-block mb-2">Quantity</small>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <div class="form-outline">
+                                            <input type="number" class="form-control" id="editTodoCases" value="0">
+                                            <label class="form-label">Cases</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-outline">
+                                            <input type="number" class="form-control" id="editTodoPieces" value="0">
+                                            <label class="form-label">Pieces</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Financial Section -->
+                            <div class="mb-3 p-2 bg-light rounded">
+                                <small class="text-muted d-block mb-2">Financial Details</small>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <div class="form-outline">
+                                            <input type="number" class="form-control" id="editTodoDiscount" value="0">
+                                            <label class="form-label">Discount</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-outline">
+                                            <input type="number" class="form-control" id="editTodoCommission" value="0" readonly>
+                                            <label class="form-label">Commission</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Adjustments Section -->
+                            <div class="mb-3 p-2 bg-light rounded">
+                                <small class="text-muted d-block mb-2">Adjustments</small>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <div class="form-outline">
+                                            <input type="number" class="form-control" id="editTodoKuraivu" value="0">
+                                            <label class="form-label">Kuraivu</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-outline">
+                                            <input type="number" class="form-control" id="editTodoAdhigaVaravu"
+                                                value="0">
+                                            <label class="form-label">Adhiga Varavu</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Total Amount -->
+                            <div class="form-outline mb-3">
+                                <label class="form-label">Final Amount</label>
+                                <input id="editTodoAmount" class="form-control" type="text" readonly>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="saveTodo()">Add Item</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="card mb-3" style="visibility: hidden;" id="constant_expenses">
+            <div class="card-header py-2 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Constant Expenses</h5>
+                <button class="btn btn-link btn-sm p-0" data-mdb-collapse-init data-mdb-ripple-init type="button"
+                    data-mdb-toggle="collapse" data-mdb-target="#expensesCollapse">
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+            <div class="collapse show" id="expensesCollapse">
+                <div class="card-body">
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <div class="form-outline">
+                                <input type="number" class="form-control" id="dieselExpense" value="0">
+                                <label class="form-label">Diesel Expense</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-outline">
+                                <input type="number" class="form-control" id="vehicleDamage" value="0">
+                                <label class="form-label">Vehicle Damage</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <div class="form-outline">
+                            <textarea class="form-control" id="otherExpenses" rows="2"></textarea>
+                            <label class="form-label">Other Expenses (Description)</label>
+                        </div>
+                        <div class="form-outline mt-2">
+                            <input type="number" class="form-control" id="otherExpenseAmount" value="0">
+                            <label class="form-label">Other Expense Amount</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Summary Card -->
+        <div class="card mb-3">
+            <div class="card-header py-2">
+                <h5 class="mb-0">Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-6">
+                        <small class="text-muted">Total Products:</small>
+                        <div id="totalProducts" class="h5 mb-0">₹0</div>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted">Total Deductions:</small>
+                        <div id="totalDeductions" class="h5 mb-0 text-danger">₹0</div>
+                    </div>
+                    <div class="col-12">
+                        <small class="text-muted">Final Amount:</small>
+                        <div id="finalAmount" class="h4 mb-0 text-primary">₹0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+        <!-- Submit Button -->
+        <div class="d-grid mt-3" id="submitButtonContainer" style="visibility: hidden;">
+            <button class="btn btn-primary" onclick="submitBillingDetails()">
+                <i class="fas fa-save me-2"></i>Submit Details
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/8.1.0/mdb.umd.min.js"></script>
+    <script src="{{url_for('static', filename='js/data.js')}}"></script>
+
+    <script>
+        let todos = [];
+        let currentId = 0;
+
+        // Initialize date and form
+        document.getElementById('date').valueAsDate = new Date();
+        document.querySelectorAll('.form-outline').forEach((formOutline) => {
+            new mdb.Input(formOutline).init();
+        });
+
+        function updateAmount() {
+            const productName = document.getElementById('product-input').value;
+            const selectedProduct = products.find(product => product.name === productName);
+            
+            if (!selectedProduct) return;
+
+            const caseCount = Number(document.getElementById("editTodoCases").value);
+            const pieceCount = Number(document.getElementById("editTodoPieces").value);
+            const discount = Number(document.getElementById("editTodoDiscount").value);
+            // const commission = Number(document.getElementById("editTodoCommission").value);
+            const kuraivu = Number(document.getElementById("editTodoKuraivu").value);
+            const adhigaVaravu = Number(document.getElementById("editTodoAdhigaVaravu").value);
+            
+            const commission = document.getElementById("editTodoCommission").value = (caseCount * selectedProduct.commission.case) + (pieceCount * selectedProduct.commission.piece);
+            let totalAmount = (caseCount + pieceCount) * selectedProduct.price.case;
+            totalAmount -= discount;
+            totalAmount -= commission;
+            console.log(kuraivu)
+            console.log(kuraivu * selectedProduct.price.piece);
+            totalAmount -= (kuraivu * selectedProduct.price.piece);
+            totalAmount += (adhigaVaravu * selectedProduct.price.piece);
+
+            document.getElementById('editTodoAmount').value = totalAmount.toFixed(2);
+        }
+
+        document.querySelector('[data-mdb-target="#addTodoModal"]').addEventListener('click', function (e) {
+            const driverName = document.getElementById('buyer-user-name').value;
+            if (!driverName.trim()) {
+                e.preventDefault();
+                alert('Please select driver name first');
+                document.getElementById('buyer-user-name').classList.add('required-field');
+            }
+        });
+
+
+
+
+
+        // // Add to your existing updateList function:
+        // function updateSummary() {
+        //     let totalProducts = 0;
+        //     let totalDeductions = 0;
+
+        //     todos.forEach(todo => {
+        //         const amount = parseFloat(todo.amount) || 0;
+        //         const discount = parseFloat(todo.discount) || 0;
+        //         const kuraivu = parseFloat(todo.kuraivu) || 0;
+
+        //         console.log(todo)
+        //         totalProducts += amount + discount + kuraivu;
+        //         totalDeductions += discount + kuraivu;
+        //     });
+
+        //     // Add constant expenses to deductions
+        //     const diesel = parseFloat(document.getElementById('dieselExpense').value) || 0;
+        //     const damage = parseFloat(document.getElementById('vehicleDamage').value) || 0;
+        //     const other = parseFloat(document.getElementById('otherExpenseAmount').value) || 0;
+
+        //     totalDeductions += diesel + damage + other;
+
+        //     document.getElementById('totalProducts').textContent = `₹${totalProducts.toFixed(2)}`;
+        //     document.getElementById('totalDeductions').textContent = `₹${totalDeductions.toFixed(2)}`;
+        //     document.getElementById('finalAmount').textContent = `₹${(totalProducts - totalDeductions).toFixed(2)}`;
+        // }
+
+
+
+        function updateSummary() {
+            let totalBaseAmount = 0;
+            let totalDiscounts = 0;
+            let totalCommissions = 0;
+            let totalKuraivu = 0;
+            let totalAdhigaVaravu = 0;
+
+            todos.forEach(todo => {
+                // Calculate base amount
+                const productInfo = products.find(p => p.name === todo.title);
+                const basePrice = productInfo ? productInfo.price.case : 0;
+                const totalQuantity = Number(todo.cases) + Number(todo.pieces);
+                const baseAmount = totalQuantity * basePrice;
+
+                // Add to total base amount
+                totalBaseAmount += baseAmount;
+
+                // Calculate deductions
+                totalDiscounts += Number(todo.discount) || 0;
+                totalCommissions += Number(todo.commission) || 0;
+                totalKuraivu += (Number(todo.kuraivu) * (productInfo ? productInfo.price.piece : 0)) || 0;
+                totalAdhigaVaravu += (Number(todo.adhigaVaravu) * (productInfo ? productInfo.price.piece : 0)) || 0;
+            });
+
+            // Add constant expenses
+            const diesel = parseFloat(document.getElementById('dieselExpense').value) || 0;
+            const damage = parseFloat(document.getElementById('vehicleDamage').value) || 0;
+            const other = parseFloat(document.getElementById('otherExpenseAmount').value) || 0;
+            const constantExpenses = diesel + damage + other;
+
+            // Calculate total deductions
+            const totalDeductions = totalDiscounts + totalCommissions + totalKuraivu + constantExpenses;
+
+            // Calculate final amount
+            const finalAmount = totalBaseAmount - totalDeductions + totalAdhigaVaravu;
+
+            // Update display with detailed breakdown
+            document.getElementById('totalProducts').innerHTML = `
+        <div class="h5 mb-0">₹${totalBaseAmount.toFixed(2)}</div>
+        <small class="text-muted">Base Amount</small>
+    `;
+
+            document.getElementById('totalDeductions').innerHTML = `
+        <div class="h5 mb-0 text-danger">₹${totalDeductions.toFixed(2)}</div>
+        <div class="small text-muted">
+            ${totalDiscounts > 0 ? `Discounts: ₹${totalDiscounts.toFixed(2)}<br>` : ''}
+            ${totalCommissions > 0 ? `Commissions: ₹${totalCommissions.toFixed(2)}<br>` : ''}
+            ${totalKuraivu > 0 ? `Kuraivu: ₹${totalKuraivu.toFixed(2)}<br>` : ''}
+            ${constantExpenses > 0 ? `Expenses: ₹${constantExpenses.toFixed(2)}<br>` : ''}
+            ${totalAdhigaVaravu > 0 ? `<span class="text-success">Adhiga Varavu: +₹${totalAdhigaVaravu.toFixed(2)}</span>` : ''}
+        </div>
+    `;
+
+            document.getElementById('finalAmount').innerHTML = `
+        <div class="h4 mb-0 text-primary">₹${finalAmount.toFixed(2)}</div>
+        <small class="text-muted">Final Amount</small>
+    `;
+        }
+
+
+
+
+
+        // Add event listeners for constant expenses
+        ['dieselExpense', 'vehicleDamage', 'otherExpenseAmount'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updateSummary);
+        });
+
+        // Modify your existing updateList function to call updateSummary:
+        const originalUpdateList = updateList;
+        updateList = function () {
+            originalUpdateList();
+            updateSummary();
+        };
+
+
+
+        function saveTodo() {
+            const driverName = document.getElementById('buyer-user-name').value;
+            if (!driverName.trim()) {
+                alert('Please select driver name first');
+                document.getElementById('buyer-user-name').classList.add('required-field');
+                closeModal('addTodoModal');
+                return;
+            }
+
+            const formData = {
+                title: document.getElementById('product-input').value,
+                line: document.getElementById('buyer-lineid').value,
+                cases: document.getElementById("editTodoCases").value,
+                pieces: document.getElementById("editTodoPieces").value,
+                discount: document.getElementById("editTodoDiscount").value,
+                commission: document.getElementById("editTodoCommission").value,
+                kuraivu: document.getElementById("editTodoKuraivu").value,
+                adhigaVaravu: document.getElementById("editTodoAdhigaVaravu").value,
+                amount: document.getElementById("editTodoAmount").value
+            };
+            // saveTodo
+            if (formData.title && formData.line) {
+                todos.push({ id: currentId++, ...formData });
+                updateList();
+                document.getElementById('todoForm').reset();
+                closeModal('addTodoModal');
+            }
+        }
+        function deleteTodo(id) {
+            if (confirm('Delete this item?')) {
+                todos = todos.filter(t => t.id !== id);
+                updateList();
+            }
+        }
+
+        //         function updateList() {
+        //             const list = document.getElementById('productList');
+        //             console.log(todos)
+        //             list.innerHTML = todos.map(todo => `
+        //     <div class="card mb-3">
+        //         <div class="card-body">
+        //             <div class="d-flex justify-content-between align-items-center mb-2">
+        //                 <h6 class="mb-0">${todo.title}</h6>
+        //                 <button class="btn btn-link btn-sm text-danger p-0" onclick="deleteTodo(${todo.id})">
+        //                     <i class="fas fa-trash"></i>
+        //                 </button>
+        //             </div>
+        //             <div class="row g-2">
+        //                 <div class="col-6">
+        //                     <small class="text-muted">Area:</small>
+        //                     <div>${todo.line}</div>
+        //                 </div>
+        //                 <div class="col-6">
+        //                     <small class="text-muted">Final Amount:</small>
+        //                     <div class="text-primary fw-bold">₹${todo.amount}</div>
+        //                 </div>
+        //                 <div class="col-6">
+        //                     <small class="text-muted">Cases:</small>
+        //                     <div>${todo.cases}</div>
+        //                 </div>
+        //                 <div class="col-6">
+        //                     <small class="text-muted">Pieces:</small>
+        //                     <div>${todo.pieces}</div>
+        //                 </div>
+        //                 <div class="col-6">
+        //                     <small class="text-muted">Commission:</small>
+        //                     <div class="text-success">₹${todo.commission}</div>
+        //                 </div>
+        //                 <div class="col-6">
+        //                     <small class="text-muted">Discount:</small>
+        //                     <div class="text-danger">₹${todo.discount}</div>
+        //                 </div>
+        //                 <div class="col-6">
+        //                     <small class="text-muted">Kuraivu:</small>
+        //                     <div class="text-danger">₹${todo.kuraivu}</div>
+        //                 </div>
+        //                 <div class="col-6">
+        //                     <small class="text-muted">Adhiga Varavu:</small>
+        //                     <div class="text-success">₹${todo.adhigaVaravu}</div>
+        //                 </div>
+        //             </div>
+        //         </div>
+        //     </div>
+        // `).join('');
+
+        //             const submitButton = document.getElementById('submitButtonContainer');
+        //             submitButton.style.visibility = todos.length > 0 ? 'visible' : 'hidden';
+
+        //             const constant_expenses = document.getElementById( "constant_expenses" )
+        //             constant_expenses.style.visibility = todos.length > 0 ? 'visible' : 'hidden';
+
+        //         }
+
+
+
+        function updateList() {
+            const list = document.getElementById('productList');
+            list.innerHTML = todos.map(todo => {
+                // Calculate base amount before any deductions
+                const productInfo = products.find(p => p.name === todo.title);
+                const basePrice = productInfo ? productInfo.price.case : 0;
+                const totalQuantity = Number(todo.cases) + Number(todo.pieces);
+                const baseAmount = totalQuantity * basePrice;
+
+                // Calculate deductions and additions
+                const totalDeductions = Number(todo.discount) + Number(todo.commission) +
+                    (Number(todo.kuraivu) * (productInfo ? productInfo.price.piece : 0));
+                const totalAdditions = Number(todo.adhigaVaravu) * (productInfo ? productInfo.price.piece : 0);
+
+                return `
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h3 class="mb-0">${todo.title}</h3>
+                    <button class="btn btn-link btn-sm text-danger p-0" onclick="deleteTodo(${todo.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                
+                <!-- Basic Information -->
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <small class="text-muted">Area:</small>
+                        <div>${todo.line}</div>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted">Quantity:</small>
+                        <div>${todo.cases} cases + ${todo.pieces} pieces</div>
+                    </div>
+                </div>
+
+                <!-- Financial Breakdown -->
+                <div class="border-top pt-2">
+                    <div class="row g-2">
+                        <!-- Base Amount -->
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between">
+                                <small class="text-muted">Base Amount:</small>
+                                <div class="fw-bold">₹${baseAmount.toFixed(2)}</div>
+                            </div>
+                        </div>
+
+                        <!-- Deductions Section -->
+                        <div class="col-12">
+                            <small class="text-muted d-block mb-1">Deductions:</small>
+                            <div class="ms-3">
+                                ${Number(todo.discount) > 0 ? `
+                                <div class="d-flex justify-content-between text-danger">
+                                    <span>Discount</span>
+                                    <span>-₹${Number(todo.discount).toFixed(2)}</span>
+                                </div>` : ''}
+                                
+                                ${Number(todo.commission) > 0 ? `
+                                <div class="d-flex justify-content-between text-danger">
+                                    <span>Commission</span>
+                                    <span>-₹${Number(todo.commission).toFixed(2)}</span>
+                                </div>` : ''}
+                                
+                                ${Number(todo.kuraivu) > 0 ? `
+                                <div class="d-flex justify-content-between text-danger">
+                                    <span>Kuraivu (${todo.kuraivu} pieces)</span>
+                                    <span>-₹${(Number(todo.kuraivu) * (productInfo ? productInfo.price.piece : 0)).toFixed(2)}</span>
+                                </div>` : ''}
+                            </div>
+                        </div>
+
+                        <!-- Additions Section -->
+                        ${Number(todo.adhigaVaravu) > 0 ? `
+                        <div class="col-12">
+                            <small class="text-muted d-block mb-1">Additions:</small>
+                            <div class="ms-3">
+                                <div class="d-flex justify-content-between text-success">
+                                    <span>Adhiga Varavu (${todo.adhigaVaravu} pieces)</span>
+                                    <span>+₹${totalAdditions.toFixed(2)}</span>
+                                </div>
+                            </div>
+                        </div>` : ''}
+
+                        <!-- Final Amount -->
+                        <div class="col-12 mt-2 border-top pt-2">
+                            <div class="d-flex justify-content-between">
+                                <small class="text-muted fw-bold">Final Amount:</small>
+                                <div class="text-primary fw-bold">₹${todo.amount}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+            }).join('');
+
+            const submitButton = document.getElementById('submitButtonContainer');
+            submitButton.style.visibility = todos.length > 0 ? 'visible' : 'hidden';
+
+            const constant_expenses = document.getElementById("constant_expenses");
+            constant_expenses.style.visibility = todos.length > 0 ? 'visible' : 'hidden';
+
+            // Update summary after updating list
+            updateSummary();
+        }
+
+
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            const modalInstance = mdb.Modal.getInstance(modal);
+            modalInstance.hide();
+        }
+
+        // Event listeners for amount calculation
+        ['product-input', 'editTodoCases', 'editTodoPieces', 'editTodoDiscount',
+            'editTodoCommission', 'editTodoKuraivu', 'editTodoAdhigaVaravu']
+            .forEach(id => {
+                document.getElementById(id).addEventListener('input', updateAmount);
+            });
+
+        // Initialize datalists
+        if (typeof users !== 'undefined') {
+            const buyerList = document.getElementById('buyer-list');
+            const lineList = document.getElementById('buyer-line');
+            const productList = document.getElementById('product-title');
+
+            users.forEach(user => {
+                buyerList.innerHTML += `<option value="${user.name}">`;
+                lineList.innerHTML += `<option value="${user.address}">`;
+            });
+
+            products.forEach(product => {
+                productList.innerHTML += `<option value="${product.name}">`;
+            });
+        }
+
+
+        document.getElementById('buyer-user-name').addEventListener('keyup', function () {
+            this.classList.remove('required-field');
+            const name = document.getElementById('buyer-user-name').value
+            console.log(name)
+            if (!name) {
+                document.getElementById("product_add").style.visibility = "hidden";
+            }
+            if (name.length > 0) {
+                document.getElementById("product_add").style.visibility = "visible";
+            }
+        });
+
+
+
+    </script>
+</body>
+
+</html>

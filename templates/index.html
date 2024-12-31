@@ -106,7 +106,8 @@
                                     </div>
                                     <div class="col-6">
                                         <div class="form-outline">
-                                            <input type="number" class="form-control" id="editTodoCommission" value="0" readonly>
+                                            <input type="number" class="form-control" id="editTodoCommission" value="0"
+                                                readonly>
                                             <label class="form-label">Commission</label>
                                         </div>
                                     </div>
@@ -221,7 +222,7 @@
 
         <!-- Submit Button -->
         <div class="d-grid mt-3" id="submitButtonContainer" style="visibility: hidden;">
-            <button class="btn btn-primary" onclick="submitBillingDetails()">
+            <button class="btn btn-primary" onclick="submitBillingDetails()" id="submitbtn">
                 <i class="fas fa-save me-2"></i>Submit Details
             </button>
         </div>
@@ -243,7 +244,7 @@
         function updateAmount() {
             const productName = document.getElementById('product-input').value;
             const selectedProduct = products.find(product => product.name === productName);
-            
+
             if (!selectedProduct) return;
 
             const caseCount = Number(document.getElementById("editTodoCases").value);
@@ -252,7 +253,7 @@
             // const commission = Number(document.getElementById("editTodoCommission").value);
             const kuraivu = Number(document.getElementById("editTodoKuraivu").value);
             const adhigaVaravu = Number(document.getElementById("editTodoAdhigaVaravu").value);
-            
+
             const commission = document.getElementById("editTodoCommission").value = (caseCount * selectedProduct.commission.case) + (pieceCount * selectedProduct.commission.piece);
             let totalAmount = (caseCount + pieceCount) * selectedProduct.price.case;
             totalAmount -= discount;
@@ -273,39 +274,6 @@
                 document.getElementById('buyer-user-name').classList.add('required-field');
             }
         });
-
-
-
-
-
-        // // Add to your existing updateList function:
-        // function updateSummary() {
-        //     let totalProducts = 0;
-        //     let totalDeductions = 0;
-
-        //     todos.forEach(todo => {
-        //         const amount = parseFloat(todo.amount) || 0;
-        //         const discount = parseFloat(todo.discount) || 0;
-        //         const kuraivu = parseFloat(todo.kuraivu) || 0;
-
-        //         console.log(todo)
-        //         totalProducts += amount + discount + kuraivu;
-        //         totalDeductions += discount + kuraivu;
-        //     });
-
-        //     // Add constant expenses to deductions
-        //     const diesel = parseFloat(document.getElementById('dieselExpense').value) || 0;
-        //     const damage = parseFloat(document.getElementById('vehicleDamage').value) || 0;
-        //     const other = parseFloat(document.getElementById('otherExpenseAmount').value) || 0;
-
-        //     totalDeductions += diesel + damage + other;
-
-        //     document.getElementById('totalProducts').textContent = `₹${totalProducts.toFixed(2)}`;
-        //     document.getElementById('totalDeductions').textContent = `₹${totalDeductions.toFixed(2)}`;
-        //     document.getElementById('finalAmount').textContent = `₹${(totalProducts - totalDeductions).toFixed(2)}`;
-        // }
-
-
 
         function updateSummary() {
             let totalBaseAmount = 0;
@@ -393,6 +361,11 @@
                 return;
             }
 
+            const productInfo = products.find(p => p.name === document.getElementById('product-input').value);
+            const basePrice = productInfo ? productInfo.price.case : 0;
+            const totalQuantity = Number(document.getElementById("editTodoCases").value) + Number(document.getElementById("editTodoPieces").value);
+            const baseAmount = totalQuantity * basePrice;
+
             const formData = {
                 title: document.getElementById('product-input').value,
                 line: document.getElementById('buyer-lineid').value,
@@ -402,7 +375,8 @@
                 commission: document.getElementById("editTodoCommission").value,
                 kuraivu: document.getElementById("editTodoKuraivu").value,
                 adhigaVaravu: document.getElementById("editTodoAdhigaVaravu").value,
-                amount: document.getElementById("editTodoAmount").value
+                amount: document.getElementById("editTodoAmount").value,
+                base_amount: baseAmount
             };
             // saveTodo
             if (formData.title && formData.line) {
@@ -418,66 +392,6 @@
                 updateList();
             }
         }
-
-        //         function updateList() {
-        //             const list = document.getElementById('productList');
-        //             console.log(todos)
-        //             list.innerHTML = todos.map(todo => `
-        //     <div class="card mb-3">
-        //         <div class="card-body">
-        //             <div class="d-flex justify-content-between align-items-center mb-2">
-        //                 <h6 class="mb-0">${todo.title}</h6>
-        //                 <button class="btn btn-link btn-sm text-danger p-0" onclick="deleteTodo(${todo.id})">
-        //                     <i class="fas fa-trash"></i>
-        //                 </button>
-        //             </div>
-        //             <div class="row g-2">
-        //                 <div class="col-6">
-        //                     <small class="text-muted">Area:</small>
-        //                     <div>${todo.line}</div>
-        //                 </div>
-        //                 <div class="col-6">
-        //                     <small class="text-muted">Final Amount:</small>
-        //                     <div class="text-primary fw-bold">₹${todo.amount}</div>
-        //                 </div>
-        //                 <div class="col-6">
-        //                     <small class="text-muted">Cases:</small>
-        //                     <div>${todo.cases}</div>
-        //                 </div>
-        //                 <div class="col-6">
-        //                     <small class="text-muted">Pieces:</small>
-        //                     <div>${todo.pieces}</div>
-        //                 </div>
-        //                 <div class="col-6">
-        //                     <small class="text-muted">Commission:</small>
-        //                     <div class="text-success">₹${todo.commission}</div>
-        //                 </div>
-        //                 <div class="col-6">
-        //                     <small class="text-muted">Discount:</small>
-        //                     <div class="text-danger">₹${todo.discount}</div>
-        //                 </div>
-        //                 <div class="col-6">
-        //                     <small class="text-muted">Kuraivu:</small>
-        //                     <div class="text-danger">₹${todo.kuraivu}</div>
-        //                 </div>
-        //                 <div class="col-6">
-        //                     <small class="text-muted">Adhiga Varavu:</small>
-        //                     <div class="text-success">₹${todo.adhigaVaravu}</div>
-        //                 </div>
-        //             </div>
-        //         </div>
-        //     </div>
-        // `).join('');
-
-        //             const submitButton = document.getElementById('submitButtonContainer');
-        //             submitButton.style.visibility = todos.length > 0 ? 'visible' : 'hidden';
-
-        //             const constant_expenses = document.getElementById( "constant_expenses" )
-        //             constant_expenses.style.visibility = todos.length > 0 ? 'visible' : 'hidden';
-
-        //         }
-
-
 
         function updateList() {
             const list = document.getElementById('productList');
@@ -631,6 +545,75 @@
         });
 
 
+        function submitBillingDetails() {
+            const submitbtn = document.getElementById("submitbtn");
+
+            submitbtn.style.visibility = "hidden";
+
+            const driverName = document.getElementById('buyer-user-name').value;
+            const date = document.getElementById('date').value;
+            const diesel = document.getElementById("dieselExpense").value;
+            const vehicleDamage = document.getElementById("vehicleDamage").value;
+            const otherExpenseAmount = document.getElementById("otherExpenseAmount").value;
+            const otherExpenseDescription = document.getElementById("otherExpenses").value;
+
+            // Create array to store all billing entries
+            const billingEntries = todos.map(todo => ({
+                driver_name: driverName,
+                date: date,
+                product_name: todo.title,
+                line: todo.line,
+                cases: Number(todo.cases),
+                pieces: Number(todo.pieces),
+                discount: Number(todo.discount),
+                commission: Number(todo.commission),
+                kuraivu: Number(todo.kuraivu),
+                adhiga_varavu: Number(todo.adhigaVaravu),
+                base_amount: Number(todo.base_amount),
+                final_amount: Number(todo.amount),
+                diesel: Number(diesel),
+                vehicle_damage: Number(vehicleDamage),
+                other_expense: Number(otherExpenseAmount),
+                other_expense_description: otherExpenseDescription
+            }));
+
+            // Prepare final payload
+            const payload = {
+                entries: billingEntries
+            };
+
+            // Submit to server
+            // fetch("http://192.168.31.204:8000/update_sheet", {
+            fetch("http://dharikarsath01.pythonanywhere.com/update_sheet", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert("Billing details submitted successfully!");
+                    // Clear the form after successful submission
+                    todos = [];
+                    updateList();
+                    document.getElementById('buyer-user-name').value = '';
+                    document.getElementById('dieselExpense').value = '0';
+                    document.getElementById('vehicleDamage').value = '0';
+                    document.getElementById('otherExpenseAmount').value = '0';
+                    document.getElementById('otherExpenses').value = '';
+                })
+                .catch(error => {
+                    console.error("Error submitting billing details:", error);
+                    alert("Failed to submit billing details. Please try again.");
+                    submitButton.style.visibility = 'visible';
+                });
+        }
 
     </script>
 </body>

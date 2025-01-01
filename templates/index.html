@@ -733,6 +733,9 @@
                     todos = [];
                     updateList();
                     document.getElementById('buyer-user-name').value = '';
+                    document.getElementById("totalDeductions").value = '';
+                    document.getElementById("finalAmount").value = ''
+
                     submitbtn.style.visibility = 'visible';
                 })
                 .catch(error => {

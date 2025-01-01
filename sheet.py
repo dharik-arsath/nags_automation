@@ -26,6 +26,7 @@ def update_google_sheet(data_dict: dict):
         'DATE': 'date',
         'DRIVER NAME': 'driver_name',
         'LINE': 'line',
+        'PRODUCT_NAME': "product_name",
         'BASE_AMOUNT': 'base_amount',
         'FINAL_AMOUNT': 'final_amount',
         'DISCOUNT': 'discount',

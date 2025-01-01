@@ -13,6 +13,7 @@ class SheetInfo(BaseModel):
     date: str
     driver_name: str
     line: str
+    product_name: str 
     base_amount: float
     final_amount: float
     discount: float

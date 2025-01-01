@@ -6,6 +6,8 @@ from datetime import datetime
 from flask_cors import CORS
 from flask import abort
 import json
+from notify_telegram import send_message
+import asyncio 
 
 
 
@@ -49,5 +51,14 @@ def update_sheet():
         # sheet_info_dict["expenses"] = str( sheet_info_dict["expenses"] )
         print(sheet_info_dict)
         update_google_sheet(sheet_info_dict)
-
+    try:
+        update_on_telegram(sheet_info)
+    except Exception as e:
+        pass 
+    
     return jsonify({"status":True})
+
+
+def update_on_telegram(sheet_info: SheetInfo):
+    resp = asyncio.run( send_message(sheet_info.model_dump()) )
+    return jsonify({"status": True})

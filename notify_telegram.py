@@ -15,7 +15,7 @@ CHANNEL_ID = os.environ.get("CHANNEL_ID")
 bot = Bot(BOT_TOKEN)
 
 @retry(wait=wait_exponential(multiplier=1, min=4, max=10), reraise=True)
-async def send_message(id: str, msg: str):
+async def _send_message(id: str, msg: str):
     try:
         resp = await bot.send_message(id, msg)
     except Exception as e:
@@ -24,11 +24,9 @@ async def send_message(id: str, msg: str):
     
     return resp 
 
-async def main():
-    text = "Hi From Python"
-    resp = await send_message(CHANNEL_ID, text)
-    print(resp)
-    return 
+async def send_message(msg: str):
+    resp = await _send_message(CHANNEL_ID, msg)
+    return resp 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(send_message("hi from python"))

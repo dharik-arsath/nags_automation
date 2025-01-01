@@ -733,9 +733,22 @@
                     todos = [];
                     updateList();
                     document.getElementById('buyer-user-name').value = '';
-                    document.getElementById("totalDeductions").value = '';
-                    document.getElementById("finalAmount").value = ''
 
+                    document.getElementById('totalDeductions').innerHTML = `
+        <div class="h5 mb-0 text-danger">₹0.00</div>
+        <div class="small text-muted"></div>
+    `;
+                    document.getElementById('totalProducts').innerHTML = `
+        <div class="h5 mb-0">₹0.00</div>
+        <small class="text-muted">Base Amount</small>
+    `;
+                    document.getElementById('finalAmount').innerHTML = `
+        <div class="h4 mb-0 text-primary">₹0.00</div>
+        <small class="text-muted">Final Amount</small>
+    `;
+                    // Reset expenses
+                    document.querySelectorAll('.expense-row').forEach(row => row.remove());
+                    addExpenseRow();
                     submitbtn.style.visibility = 'visible';
                 })
                 .catch(error => {

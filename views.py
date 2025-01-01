@@ -17,12 +17,11 @@ class SheetInfo(BaseModel):
     final_amount: float
     discount: float
     commission: float
-    kuraivu: int
-    adhiga_varavu: int
-    diesel: float
-    vehicle_damage: float
-    other_expense: float
-    other_expense_description: str = Field(default="")
+    kuraivu_cases: int
+    kuraivu_pieces: int
+    adhiga_varavu_cases: int
+    adhiga_varavu_pieces: int 
+    expenses: list[ dict[str, object] ]
 
 
 app = Flask(__name__)
@@ -44,9 +43,10 @@ def update_sheet():
 
     data_json: list[dict[str, object]] = json.loads(data)["entries"]
     for data in data_json:
-        print(data)
         sheet_info = SheetInfo(**data)
-        print(sheet_info.model_dump())
-        update_google_sheet(sheet_info.model_dump())
+        sheet_info_dict = sheet_info.model_dump()
+        # sheet_info_dict["expenses"] = str( sheet_info_dict["expenses"] )
+        print(sheet_info_dict)
+        update_google_sheet(sheet_info_dict)
 
     return jsonify({"status":True})

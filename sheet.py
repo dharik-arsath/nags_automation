@@ -8,7 +8,7 @@ import gspread
 #dep_id = "AKfycbzY3wk18Epc-rsinYjrNCRlnmUof0mmltKYRG1OK_8dQoPqDq0ULbK7zOHxf8BQZj6maw"
 #dep_url = "https://script.google.com/macros/s/AKfycbzY3wk18Epc-rsinYjrNCRlnmUof0mmltKYRG1OK_8dQoPqDq0ULbK7zOHxf8BQZj6maw/exec"
 
-def update_google_sheet(data_dict):
+def update_google_sheet(data_dict: dict):
     """
     Update Google Sheet using column mapping for resilient data insertion
     
@@ -30,12 +30,11 @@ def update_google_sheet(data_dict):
         'FINAL_AMOUNT': 'final_amount',
         'DISCOUNT': 'discount',
         'COMMISSION': 'commission',
-        'KURAIVU': 'kuraivu',
-        'ADHIGA_VARAVU': 'adhiga_varavu',
-        'DIESEL': 'diesel_expense',
-        'VEHICLE_DAMAGE': 'vehicle_damage',
-        'OTHER_EXPENSE': 'other_expense',
-        'OTHER_EXPENSE_DESCRIPTION': 'other_expense_description'
+        'KURAIVU_CASES': 'kuraivu_cases',
+        'KURAIVU_PIECES': 'kuraivu_pieces',
+        "ADHIGA_VARAVU_CASES" : "adhiga_varavu_cases" ,
+        "ADHIGA_VARAVU_PIECES": "adhiga_varavu_pieces",
+        "EXPENSES" : "expenses"
     }
     
     # Get all column headers from the sheet
@@ -48,40 +47,51 @@ def update_google_sheet(data_dict):
         if header in COLUMN_MAPPING:
             key = COLUMN_MAPPING[header]
             value = data_dict.get(key, '')  # Use empty string if key doesn't exist
+            if header == "EXPENSES":
+                value = str(value)
+            
             row_data.append(value)
         else:
             # If header doesn't exist in mapping, add empty string
+            if header == "TOTAL_EXPENSE":
+                continue
+            
             row_data.append('')
     
+
+    total_expense = 0
+
+    expenses: list[dict] = data_dict["expenses"]
+    for expense in expenses:
+        print(expense)
+        for k,v in expense.items():
+            if k == "amount":
+                total_expense += v
+        
+    row_data.append(total_expense)
+
+
     # Append the row to the sheet
     report_sheet.append_row(row_data)
 
 
 
-gc = gspread.service_account("credentials.json")
+# gc = gspread.service_account("credentials.json")
 
-spreadsheet=  gc.open("nags_automation")
-report_sheet = spreadsheet.worksheet("Sheet2")
+# spreadsheet=  gc.open("nags_automation")
+# report_sheet = spreadsheet.worksheet("Sheet2")
 
 # Example usage:
-sample_data = {
-    'date': "12/1/2024",
-    'driver_name': 'Nagaraj',
-    'line': 'Sellur',
-    'base_amount': 20,
-    'final_amount': 300,
-    'discount': 10,
-    'commission': 5,
-    'kuraivu': 1,
-    'adhiga_varavu': 2,
-    'diesel_expense': 100,
-    'vehicle_damage': 10,
-    'other_expense': 10,
-    'other_expense_description': 'Maintenance'
-}
+# sample_data = {
+#     'date': "12/1/2024",
+#     'driver_name': 'Nagaraj',
+#     'line': 'Sellur',
+#     'base_amount': 20,
+#     'final_amount': 300,
+#     'discount': 10,
+#     'commission': 5,
+#     'kuraivu': 1,
+# }
 
 # Update the sheet
-update_google_sheet(sample_data)
-
-
-sample_data.get("BASE_AMOUNT")
+# update_google_sheet(sample_data)

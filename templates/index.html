@@ -119,19 +119,37 @@
                                 <small class="text-muted d-block mb-2">Adjustments</small>
                                 <div class="row g-2">
                                     <div class="col-6">
-                                        <div class="form-outline">
-                                            <input type="number" class="form-control" id="editTodoKuraivu" value="0">
-                                            <label class="form-label">Kuraivu</label>
+                                        <div class="form-outline mb-3">
+                                            <input type="number" class="form-control" id="editTodoKuraivuCases"
+                                                value="0">
+                                            <label class="form-label">Kuraivu(in cases)</label>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-outline">
-                                            <input type="number" class="form-control" id="editTodoAdhigaVaravu"
+                                            <input type="number" class="form-control" id="editTodoKuraivuPieces"
                                                 value="0">
-                                            <label class="form-label">Adhiga Varavu</label>
+                                            <label class="form-label">Kuraivu(in pieces)</label>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <div class="form-outline mb-3">
+                                            <input type="number" class="form-control" id="editTodoAdhigaVaravuCases"
+                                                value="0">
+                                            <label class="form-label">Adhiga Varavu(in cases)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-outline">
+                                            <input type="number" class="form-control" id="editTodoAdhigaVaravuPieces"
+                                                value="0">
+                                            <label class="form-label">Adhiga Varavu(in pieces)</label>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
 
                             <!-- Total Amount -->
@@ -149,46 +167,69 @@
             </div>
         </div>
 
-
-
-
         <div class="card mb-3" style="visibility: hidden;" id="constant_expenses">
             <div class="card-header py-2 d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Constant Expenses</h5>
-                <button class="btn btn-link btn-sm p-0" data-mdb-collapse-init data-mdb-ripple-init type="button"
-                    data-mdb-toggle="collapse" data-mdb-target="#expensesCollapse">
-                    <i class="fas fa-chevron-down"></i>
+                <h5 class="mb-0">Expenses</h5>
+                <button class="btn btn-primary btn-sm" onclick="addExpenseRow()">
+                    <i class="fas fa-plus me-2"></i>Add Expense
                 </button>
             </div>
-            <div class="collapse show" id="expensesCollapse">
-                <div class="card-body">
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <div class="form-outline">
-                                <input type="number" class="form-control" id="dieselExpense" value="0">
-                                <label class="form-label">Diesel Expense</label>
+            <div class="card-body">
+                <div id="expenses-container">
+                    <div class="expense-row mb-2 position-relative">
+                        <div class="row g-2">
+                            <div class="col-8">
+                                <div class="form-outline mb-3">
+                                    <input type="text" class="form-control expense-description active" value="Petrol">
+                                    <label class="form-label">Description</label>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-outline">
-                                <input type="number" class="form-control" id="vehicleDamage" value="0">
-                                <label class="form-label">Vehicle Damage</label>
+                            <div class="col-3">
+                                <div class="form-outline mb-3">
+                                    <input type="number" class="form-control expense-amount" value="0">
+                                    <label class="form-label">Amount</label>
+                                </div>
+                            </div>
+                            <div class="col-1">
+                                <button class="btn btn-link text-danger p-0" onclick="removeExpenseRow(this)">
+                                    <i class="fas fa-times"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
-                    <div class="mt-2">
-                        <div class="form-outline">
-                            <textarea class="form-control" id="otherExpenses" rows="2"></textarea>
-                            <label class="form-label">Other Expenses (Description)</label>
-                        </div>
-                        <div class="form-outline mt-2">
-                            <input type="number" class="form-control" id="otherExpenseAmount" value="0">
-                            <label class="form-label">Other Expense Amount</label>
+
+                    <div class="expense-row mb-2 position-relative">
+
+                        <div class="row g-2">
+                            <div class="col-8">
+                                <div class="form-outline mb-3">
+                                    <input type="text" class="form-control expense-description active" value="Food">
+                                    <label class="form-label">Description</label>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-outline mb-3">
+                                    <input type="number" class="form-control expense-amount" value="0">
+                                    <label class="form-label">Amount</label>
+                                </div>
+                            </div>
+                            <div class="col-1">
+                                <button class="btn btn-link text-danger p-0" onclick="removeExpenseRow(this)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+
+
+
+
+
+
 
 
 
@@ -229,9 +270,13 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/8.1.0/mdb.umd.min.js"></script>
+    <!-- <script src="static/js/data.js"></script> -->
     <script src="{{url_for('static', filename='js/data.js')}}"></script>
 
     <script>
+        // Call this after adding new expense rows and during initial load
+        // document.addEventListener('DOMContentLoaded', initializeFormLabels);
+
         let todos = [];
         let currentId = 0;
 
@@ -251,17 +296,15 @@
             const pieceCount = Number(document.getElementById("editTodoPieces").value);
             const discount = Number(document.getElementById("editTodoDiscount").value);
             // const commission = Number(document.getElementById("editTodoCommission").value);
-            const kuraivu = Number(document.getElementById("editTodoKuraivu").value);
-            const adhigaVaravu = Number(document.getElementById("editTodoAdhigaVaravu").value);
+            const kuraivu = Number(document.getElementById("editTodoKuraivuPieces").value);
+            // const adhigaVaravu = Number(document.getElementById("editTodoAdhigaVaravu").value);
 
             const commission = document.getElementById("editTodoCommission").value = (caseCount * selectedProduct.commission.case) + (pieceCount * selectedProduct.commission.piece);
             let totalAmount = (caseCount + pieceCount) * selectedProduct.price.case;
             totalAmount -= discount;
             totalAmount -= commission;
-            console.log(kuraivu)
-            console.log(kuraivu * selectedProduct.price.piece);
-            totalAmount -= (kuraivu * selectedProduct.price.piece);
-            totalAmount += (adhigaVaravu * selectedProduct.price.piece);
+
+            totalAmount += (kuraivu * selectedProduct.price.piece);
 
             document.getElementById('editTodoAmount').value = totalAmount.toFixed(2);
         }
@@ -295,26 +338,27 @@
                 // Calculate deductions
                 totalDiscounts += Number(todo.discount) || 0;
                 totalCommissions += Number(todo.commission) || 0;
-                totalKuraivu += (Number(todo.kuraivu) * (productInfo ? productInfo.price.piece : 0)) || 0;
-                totalAdhigaVaravu += (Number(todo.adhigaVaravu) * (productInfo ? productInfo.price.piece : 0)) || 0;
+                totalKuraivu += (Number(todo.kuraivu_pieces) * (productInfo ? productInfo.price.piece : 0)) || 0;
+                // totalAdhigaVaravu += (Number(todo.adhigaVaravu) * (productInfo ? productInfo.price.piece : 0)) || 0;
             });
 
             // Add constant expenses
-            const diesel = parseFloat(document.getElementById('dieselExpense').value) || 0;
-            const damage = parseFloat(document.getElementById('vehicleDamage').value) || 0;
-            const other = parseFloat(document.getElementById('otherExpenseAmount').value) || 0;
-            const constantExpenses = diesel + damage + other;
+            // Get total expenses
+            const constantExpenses = getExpensesTotal();
+            // const diesel = parseFloat(document.getElementById('dieselExpense').value) || 0;
+            // const damage = parseFloat(document.getElementById('vehicleDamage').value) || 0;
+            // const other = parseFloat(document.getElementById('otherExpenseAmount').value) || 0;
+            // const constantExpenses = diesel + damage + other;
 
             // Calculate total deductions
-            const totalDeductions = totalDiscounts + totalCommissions + totalKuraivu + constantExpenses;
+            const totalDeductions = totalDiscounts + totalCommissions + constantExpenses;
 
             // Calculate final amount
-            const finalAmount = totalBaseAmount - totalDeductions + totalAdhigaVaravu;
+            const finalAmount = totalBaseAmount - totalDeductions + totalKuraivu;
 
             // Update display with detailed breakdown
             document.getElementById('totalProducts').innerHTML = `
         <div class="h5 mb-0">₹${totalBaseAmount.toFixed(2)}</div>
-        <small class="text-muted">Base Amount</small>
     `;
 
             document.getElementById('totalDeductions').innerHTML = `
@@ -322,7 +366,6 @@
         <div class="small text-muted">
             ${totalDiscounts > 0 ? `Discounts: ₹${totalDiscounts.toFixed(2)}<br>` : ''}
             ${totalCommissions > 0 ? `Commissions: ₹${totalCommissions.toFixed(2)}<br>` : ''}
-            ${totalKuraivu > 0 ? `Kuraivu: ₹${totalKuraivu.toFixed(2)}<br>` : ''}
             ${constantExpenses > 0 ? `Expenses: ₹${constantExpenses.toFixed(2)}<br>` : ''}
             ${totalAdhigaVaravu > 0 ? `<span class="text-success">Adhiga Varavu: +₹${totalAdhigaVaravu.toFixed(2)}</span>` : ''}
         </div>
@@ -330,18 +373,9 @@
 
             document.getElementById('finalAmount').innerHTML = `
         <div class="h4 mb-0 text-primary">₹${finalAmount.toFixed(2)}</div>
-        <small class="text-muted">Final Amount</small>
     `;
         }
 
-
-
-
-
-        // Add event listeners for constant expenses
-        ['dieselExpense', 'vehicleDamage', 'otherExpenseAmount'].forEach(id => {
-            document.getElementById(id).addEventListener('input', updateSummary);
-        });
 
         // Modify your existing updateList function to call updateSummary:
         const originalUpdateList = updateList;
@@ -349,6 +383,7 @@
             originalUpdateList();
             updateSummary();
         };
+
 
 
 
@@ -373,8 +408,10 @@
                 pieces: document.getElementById("editTodoPieces").value,
                 discount: document.getElementById("editTodoDiscount").value,
                 commission: document.getElementById("editTodoCommission").value,
-                kuraivu: document.getElementById("editTodoKuraivu").value,
-                adhigaVaravu: document.getElementById("editTodoAdhigaVaravu").value,
+                kuraivu_pieces: document.getElementById("editTodoKuraivuPieces").value,
+                kuraivu_cases: document.getElementById("editTodoKuraivuCases").value,
+                adhigaVaravu_cases: document.getElementById("editTodoAdhigaVaravuCases").value,
+                adhigaVaravu_pieces: document.getElementById("editTodoAdhigaVaravuPieces").value,
                 amount: document.getElementById("editTodoAmount").value,
                 base_amount: baseAmount
             };
@@ -403,9 +440,8 @@
                 const baseAmount = totalQuantity * basePrice;
 
                 // Calculate deductions and additions
-                const totalDeductions = Number(todo.discount) + Number(todo.commission) +
-                    (Number(todo.kuraivu) * (productInfo ? productInfo.price.piece : 0));
-                const totalAdditions = Number(todo.adhigaVaravu) * (productInfo ? productInfo.price.piece : 0);
+                const totalDeductions = Number(todo.discount) + Number(todo.commission)
+                const totalAdditions = Number(todo.kuraivu_pieces) * (productInfo ? productInfo.price.piece : 0);
 
                 return `
         <div class="card mb-3">
@@ -465,12 +501,12 @@
                         </div>
 
                         <!-- Additions Section -->
-                        ${Number(todo.adhigaVaravu) > 0 ? `
+                        ${Number(todo.kuraivu_pieces) > 0 ? `
                         <div class="col-12">
                             <small class="text-muted d-block mb-1">Additions:</small>
                             <div class="ms-3">
                                 <div class="d-flex justify-content-between text-success">
-                                    <span>Adhiga Varavu (${todo.adhigaVaravu} pieces)</span>
+                                    <span>Adhiga Varavu (${todo.kuraivu_pieces} pieces)</span>
                                     <span>+₹${totalAdditions.toFixed(2)}</span>
                                 </div>
                             </div>
@@ -510,7 +546,7 @@
 
         // Event listeners for amount calculation
         ['product-input', 'editTodoCases', 'editTodoPieces', 'editTodoDiscount',
-            'editTodoCommission', 'editTodoKuraivu', 'editTodoAdhigaVaravu']
+            'editTodoCommission', 'editTodoKuraivuPieces']
             .forEach(id => {
                 document.getElementById(id).addEventListener('input', updateAmount);
             });
@@ -545,6 +581,79 @@
         });
 
 
+
+
+
+        // Add expense row functionality
+        function addExpenseRow() {
+            const container = document.getElementById('expenses-container');
+            const newRow = document.createElement('div');
+            newRow.className = 'expense-row mb-2 position-relative';
+            newRow.innerHTML = `
+        <div class="row g-2">
+            <div class="col-8">
+                <div class="form-outline mb-3">
+                    <input type="text" class="form-control expense-description active">
+                    <label class="form-label">Description</label>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-outline mb-3">
+                    <input type="number" class="form-control expense-amount" value="0">
+                    <label class="form-label">Amount</label>
+                </div>
+            </div>
+            <div class="col-1">
+                <button class="btn btn-link text-danger p-0" onclick="removeExpenseRow(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    `;
+
+            container.appendChild(newRow);
+            console.log(newRow)
+            newRow.querySelectorAll('.form-outline').forEach((formOutline) => {
+                console.log(formOutline);
+            });
+
+            newRow.querySelectorAll('.form-outline').forEach((formOutline) => {
+                new mdb.Input(formOutline).init();
+            });
+            // initializeFormLabels(); // Add this line
+        }
+
+        function removeExpenseRow(button) {
+            if (document.querySelectorAll('.expense-row').length > 0) {
+                button.closest('.expense-row').remove();
+                updateSummary();
+            }
+        }
+
+
+
+        // Modify updateSummary() to handle dynamic expenses
+        function getExpensesTotal() {
+            let total = 0;
+            document.querySelectorAll('.expense-amount').forEach(input => {
+                total += parseFloat(input.value) || 0;
+            });
+            return total;
+        }
+
+
+        // Add event listener for expense amounts
+        document.addEventListener('input', function (e) {
+            if (e.target.classList.contains('expense-amount')) {
+                updateSummary();
+            }
+        });
+
+
+
+
+
+
         function submitBillingDetails() {
             const submitbtn = document.getElementById("submitbtn");
 
@@ -552,10 +661,27 @@
 
             const driverName = document.getElementById('buyer-user-name').value;
             const date = document.getElementById('date').value;
-            const diesel = document.getElementById("dieselExpense").value;
-            const vehicleDamage = document.getElementById("vehicleDamage").value;
-            const otherExpenseAmount = document.getElementById("otherExpenseAmount").value;
-            const otherExpenseDescription = document.getElementById("otherExpenses").value;
+            // const diesel = document.getElementById("dieselExpense").value;
+            // const vehicleDamage = document.getElementById("vehicleDamage").value;
+            // const otherExpenseAmount = document.getElementById("otherExpenseAmount").value;
+            // const otherExpenseDescription = document.getElementById("otherExpenses").value;
+
+
+            const expenses = [];
+            document.querySelectorAll('.expense-row').forEach(row => {
+                const description = row.querySelector('.expense-description').value;
+                const amount = parseFloat(row.querySelector('.expense-amount').value) || 0;
+                if (description || amount > 0) {
+                    expenses.push({
+                        description: description,
+                        amount: amount
+                    });
+                }
+            });
+
+
+
+
 
             // Create array to store all billing entries
             const billingEntries = todos.map(todo => ({
@@ -567,14 +693,17 @@
                 pieces: Number(todo.pieces),
                 discount: Number(todo.discount),
                 commission: Number(todo.commission),
-                kuraivu: Number(todo.kuraivu),
-                adhiga_varavu: Number(todo.adhigaVaravu),
+                kuraivu_cases: Number(todo.kuraivu_cases),
+                kuraivu_pieces: Number(todo.kuraivu_pieces),
+                adhiga_varavu_cases: Number(todo.adhigaVaravu_cases),
+                adhiga_varavu_pieces: Number(todo.adhigaVaravu_pieces),
                 base_amount: Number(todo.base_amount),
                 final_amount: Number(todo.amount),
-                diesel: Number(diesel),
-                vehicle_damage: Number(vehicleDamage),
-                other_expense: Number(otherExpenseAmount),
-                other_expense_description: otherExpenseDescription
+                // diesel: Number(diesel),
+                // vehicle_damage: Number(vehicleDamage),
+                // other_expense: Number(otherExpenseAmount),
+                // other_expense_description: otherExpenseDescription
+                expenses: expenses
             }));
 
             // Prepare final payload
@@ -583,8 +712,8 @@
             };
 
             // Submit to server
-            // fetch("http://192.168.31.204:8000/update_sheet", {
-            fetch("https://dharikarsath01.pythonanywhere.com/update_sheet", {
+            fetch("http://192.168.0.6:8000/update_sheet", {
+            // fetch("https://dharikarsath01.pythonanywhere.com/update_sheet", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -604,10 +733,6 @@
                     todos = [];
                     updateList();
                     document.getElementById('buyer-user-name').value = '';
-                    document.getElementById('dieselExpense').value = '0';
-                    document.getElementById('vehicleDamage').value = '0';
-                    document.getElementById('otherExpenseAmount').value = '0';
-                    document.getElementById('otherExpenses').value = '';
                     submitbtn.style.visibility = 'visible';
                 })
                 .catch(error => {
@@ -616,6 +741,8 @@
                     submitbtn.style.visibility = 'visible';
                 });
         }
+
+
 
     </script>
 </body>

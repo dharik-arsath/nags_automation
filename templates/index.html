@@ -281,7 +281,9 @@
         let currentId = 0;
 
         // Initialize date and form
-        document.getElementById('date').valueAsDate = new Date();
+        const localDate = new Date();
+        document.getElementById('date').valueAsDate = new Date(localDate.getTime() - localDate.getTimezoneOffset() * 60000);
+        
         document.querySelectorAll('.form-outline').forEach((formOutline) => {
             new mdb.Input(formOutline).init();
         });

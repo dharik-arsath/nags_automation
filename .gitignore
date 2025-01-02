@@ -1,4 +1,5 @@
 .env
 credentials.json
 index*.html
+thankyou*.html
 .vscode/settings.json

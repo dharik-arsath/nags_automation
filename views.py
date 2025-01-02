@@ -9,7 +9,39 @@ import json
 from notify_telegram import send_message
 import asyncio 
 from loguru import logger
+from utils import parse_expense,generate_id
 
+
+
+def format_msg(sheet_info: list):
+    prod_count = 1
+    msg = ""
+    for prod in sheet_info:
+        msg += f"{prod_count}."
+        
+        for key, val in prod.items():
+            if key != "expenses":
+                msg += f"    {key.replace('_', ' ').title()}  : {prod[key]}\n"
+
+        prod_count += 1
+
+        msg += "\n\n"
+    
+
+    msg += "\n     Expenses:\n"
+    msg += "----------------------------------\n"
+    exp = parse_expense(prod)
+    if exp is None:
+        msg += f"         No Expenses added\n"
+    else:
+        for exp_key, exp_val in exp.items():
+            msg += f"         {exp_key.replace('_', ' ').title()} : {exp_val}\n"
+        
+    msg += "\n\n"
+        
+        
+
+    return msg 
 
 class SheetInfo(BaseModel):
     date: str
@@ -45,11 +77,13 @@ def update_sheet():
 
     data_json: list[dict[str, object]] = json.loads(request_data)["entries"]
     all_resp = []
+    id = generate_id()
     for data in data_json:
         sheet_info = SheetInfo(**data)
         sheet_info_dict = sheet_info.model_dump()
         # sheet_info_dict["expenses"] = str( sheet_info_dict["expenses"] )
         print(sheet_info_dict)
+        sheet_info_dict["_id"] = id 
         resp = update_google_sheet(sheet_info_dict)
         all_resp.append(resp)
 
@@ -61,12 +95,10 @@ def update_sheet():
     return jsonify({"status":True})
 
 
-# def update_on_telegram(sheet_info: SheetInfo):
-#     resp = asyncio.run( send_message(sheet_info.model_dump()) )
-#     return jsonify({"status": True})
-
 def update_on_telegram(sheet_info: list):
-    resp = asyncio.run( send_message(sheet_info ))
+    sheet_msg_formated = format_msg(sheet_info)
+
+    resp = asyncio.run( send_message(sheet_msg_formated ))
     return jsonify({"status": True})
 
 

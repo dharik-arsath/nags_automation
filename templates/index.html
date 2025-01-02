@@ -170,6 +170,49 @@
             </div>
         </div>
 
+        <div class="card mb-3" id="constant_expenses" style="visibility: hidden;">
+            <div class="card-header py-2 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Expenses</h5>
+                <button class="btn btn-primary btn-sm" onclick="addExpenseRow()">
+                    <i class="fas fa-plus me-2"></i>Add Expense
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="expenses-container">
+                    <div class="expense-row mb-2 position-relative">
+                        <div class="row g-2">
+                            <div class="col-8">
+                                <div class="form-outline mb-3">
+                                    <input type="text" list="expenseOptions"
+                                        class="form-control expense-description active">
+                                    <label class="form-label">Description</label>
+                                    <datalist id="expenseOptions">
+                                        <option value="Petrol">
+                                        <option value="Food">
+                                        <option value="Puncture">
+                                        <option value="Key">
+                                        <option value="Vehicle repair">
+                                    </datalist>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-outline mb-3">
+                                    <input type="number" class="form-control expense-amount" value="0">
+                                    <label class="form-label">Amount</label>
+                                </div>
+                            </div>
+                            <div class="col-1">
+                                <button class="btn btn-link text-danger p-0" onclick="removeExpenseRow(this)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 
         <div class="card mb-3" style="visibility: hidden;" id="constant_expenses">
             <div class="card-header py-2 d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Expenses</h5>
@@ -225,7 +268,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
 
 
 
@@ -594,25 +637,33 @@
             const newRow = document.createElement('div');
             newRow.className = 'expense-row mb-2 position-relative';
             newRow.innerHTML = `
-        <div class="row g-2">
-            <div class="col-8">
-                <div class="form-outline mb-3">
-                    <input type="text" class="form-control expense-description active">
-                    <label class="form-label">Description</label>
-                </div>
-            </div>
-            <div class="col-3">
-                <div class="form-outline mb-3">
-                    <input type="number" class="form-control expense-amount" value="0">
-                    <label class="form-label">Amount</label>
-                </div>
-            </div>
-            <div class="col-1">
-                <button class="btn btn-link text-danger p-0" onclick="removeExpenseRow(this)">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        </div>
+                        <div class="row g-2">
+                            <div class="col-8">
+                                <div class="form-outline mb-3">
+                                    <input type="text" list="expenseOptions"
+                                        class="form-control expense-description active">
+                                    <label class="form-label">Description</label>
+                                    <datalist id="expenseOptions">
+                                        <option value="Petrol">
+                                        <option value="Food">
+                                        <option value="Puncture">
+                                        <option value="Key">
+                                        <option value="Vehicle repair">
+                                    </datalist>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-outline mb-3">
+                                    <input type="number" class="form-control expense-amount" value="0">
+                                    <label class="form-label">Amount</label>
+                                </div>
+                            </div>
+                            <div class="col-1">
+                                <button class="btn btn-link text-danger p-0" onclick="removeExpenseRow(this)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
     `;
 
             container.appendChild(newRow);
@@ -822,7 +873,7 @@
 
 
             // Submit to server
-            // fetch("http://192.168.0.6:8000/update_sheet", {
+            // fetch("http://192.168.31.204:8000/update_sheet", {
             fetch("https://dharikarsath01.pythonanywhere.com/update_sheet", {
                 method: "POST",
                 headers: {

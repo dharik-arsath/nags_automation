@@ -1,5 +1,6 @@
 import gspread
-
+from datetime import datetime
+from utils import parse_expense,generate_id
 
 
 #dep id = AKfycbxEoJW56-68jritKZlByqAviO3AZabfNdgHBVoJeqEQaO9wB0k2evGMuknKcv3uGYuILw
@@ -7,6 +8,11 @@ import gspread
 
 #dep_id = "AKfycbzY3wk18Epc-rsinYjrNCRlnmUof0mmltKYRG1OK_8dQoPqDq0ULbK7zOHxf8BQZj6maw"
 #dep_url = "https://script.google.com/macros/s/AKfycbzY3wk18Epc-rsinYjrNCRlnmUof0mmltKYRG1OK_8dQoPqDq0ULbK7zOHxf8BQZj6maw/exec"
+
+gc = gspread.service_account("credentials.json")
+spreadsheet = gc.open("nags_automation")
+report_sheet = spreadsheet.worksheet("Sheet2")
+
 
 def update_google_sheet(data_dict: dict):
     """
@@ -17,12 +23,13 @@ def update_google_sheet(data_dict: dict):
             Keys should match the column headers in the Google Sheet
     """
     # Initialize Google Sheets connection
-    gc = gspread.service_account("credentials.json")
-    spreadsheet = gc.open("nags_automation")
-    report_sheet = spreadsheet.worksheet("Sheet2")
+    # gc = gspread.service_account("credentials.json")
+    # spreadsheet = gc.open("nags_automation")
+    # report_sheet = spreadsheet.worksheet("Sheet2")
     
     # Define column headers and their corresponding keys in your data
     COLUMN_MAPPING = {
+        "TRANSACTION ID" : "",
         'DATE': 'date',
         'DRIVER NAME': 'driver_name',
         'LINE': 'line',
@@ -35,7 +42,12 @@ def update_google_sheet(data_dict: dict):
         'KURAIVU_PIECES': 'kuraivu_pieces',
         "ADHIGA_VARAVU_CASES" : "adhiga_varavu_cases" ,
         "ADHIGA_VARAVU_PIECES": "adhiga_varavu_pieces",
-        "EXPENSES" : "expenses"
+        # "EXPENSES" : "expenses",
+        "PETROL" : "",
+        "FOOD": "",
+        "PUNCTURE":"",
+        "KEY" : "",
+        "TIME" : ""
     }
     
     # Get all column headers from the sheet
@@ -44,12 +56,24 @@ def update_google_sheet(data_dict: dict):
     
     # Create a list of values in the same order as the sheet headers
     row_data = []
+    expenses = None
     for header in headers:
         if header in COLUMN_MAPPING:
             key = COLUMN_MAPPING[header]
             value = data_dict.get(key, '')  # Use empty string if key doesn't exist
-            if header == "EXPENSES":
-                value = str(value)
+            if header == "TRANSACTION ID":
+                value = data_dict["_id"]
+            if header == "TIME":
+                value = datetime.today().time().strftime("%H:%M")
+            if header == "PETROL" or header == "FOOD" or header == "PUNCTURE" or header == "KEY":
+                if expenses is None:
+                    expenses = parse_expense(data_dict)
+                    if expenses is None:
+                        value = ""
+                    else:
+                        value = expenses.get(header.title(), "")
+                else:
+                    value = expenses.get(header.title(), "")
             
             row_data.append(value)
         else:

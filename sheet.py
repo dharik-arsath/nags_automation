@@ -47,7 +47,7 @@ def update_google_sheet(data_dict: dict):
         "FOOD": "",
         "PUNCTURE":"",
         "KEY" : "",
-        "TIME" : ""
+        "TIME" : "time"
     }
     
     # Get all column headers from the sheet
@@ -63,8 +63,6 @@ def update_google_sheet(data_dict: dict):
             value = data_dict.get(key, '')  # Use empty string if key doesn't exist
             if header == "TRANSACTION ID":
                 value = data_dict["_id"]
-            if header == "TIME":
-                value = datetime.today().time().strftime("%H:%M")
             if header == "PETROL" or header == "FOOD" or header == "PUNCTURE" or header == "KEY":
                 if expenses is None:
                     expenses = parse_expense(data_dict)

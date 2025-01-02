@@ -818,55 +818,55 @@
 
 
 
-            //         // Submit to server
-            //         fetch("http://192.168.0.6:8000/update_sheet", {
-            //         // fetch("https://dharikarsath01.pythonanywhere.com/update_sheet", {
-            //             method: "POST",
-            //             headers: {
-            //                 "Content-Type": "application/json"
-            //             },
-            //             body: JSON.stringify(payload)
-            //         })
-            //             .then(response => {
-            //                 if (!response.ok) {
-            //                     submitButton.style.visibility = 'visible';
-            //                     throw new Error(`HTTP error! status: ${response.status}`);
-            //                 }
-            //                 return response.json();
-            //             })
-            //             .then(data => {
-            //                 // alert("Billing details submitted successfully!");
-            //                 // Clear the form after successful submission
-            // //                 todos = [];
-            // //                 updateList();
-            // //                 document.getElementById('buyer-user-name').value = '';
+                    // Submit to server
+                    fetch("http://192.168.0.6:8000/update_sheet", {
+                    // fetch("https://dharikarsath01.pythonanywhere.com/update_sheet", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(payload)
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                submitButton.style.visibility = 'visible';
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            // alert("Billing details submitted successfully!");
+                            // Clear the form after successful submission
+            //                 todos = [];
+            //                 updateList();
+            //                 document.getElementById('buyer-user-name').value = '';
 
-            // //                 document.getElementById('totalDeductions').innerHTML = `
-            // //     <div class="h5 mb-0 text-danger">₹0.00</div>
-            // //     <div class="small text-muted"></div>
-            // // `;
-            // //                 document.getElementById('totalProducts').innerHTML = `
-            // //     <div class="h5 mb-0">₹0.00</div>
-            // //     <small class="text-muted">Base Amount</small>
-            // // `;
-            // //                 document.getElementById('finalAmount').innerHTML = `
-            // //     <div class="h4 mb-0 text-primary">₹0.00</div>
-            // //     <small class="text-muted">Final Amount</small>
-            // // `;
-            // //                 // Reset expenses
-            // //                 document.querySelectorAll('.expense-row').forEach(row => row.remove());
-            // //                 addExpenseRow();
-            // //                 submitbtn.style.visibility = 'visible';
-            //                 // window.location.reload();
-            //                 // window.location.href = "thankyou.html";
-            //                 window.location.replace("thankyou.html")
-            //             })
-            //             .catch(error => {
-            //                 console.error("Error submitting billing details:", error);
-            //                 alert("Failed to submit billing details. Please try again.");
+            //                 document.getElementById('totalDeductions').innerHTML = `
+            //     <div class="h5 mb-0 text-danger">₹0.00</div>
+            //     <div class="small text-muted"></div>
+            // `;
+            //                 document.getElementById('totalProducts').innerHTML = `
+            //     <div class="h5 mb-0">₹0.00</div>
+            //     <small class="text-muted">Base Amount</small>
+            // `;
+            //                 document.getElementById('finalAmount').innerHTML = `
+            //     <div class="h4 mb-0 text-primary">₹0.00</div>
+            //     <small class="text-muted">Final Amount</small>
+            // `;
+            //                 // Reset expenses
+            //                 document.querySelectorAll('.expense-row').forEach(row => row.remove());
+            //                 addExpenseRow();
             //                 submitbtn.style.visibility = 'visible';
-            //             });
-            //     }
+                            // window.location.reload();
+                            // window.location.href = "thankyou.html";
+                            window.location.replace("thankyou")
+                        })
+                        .catch(error => {
+                            console.error("Error submitting billing details:", error);
+                            alert("Failed to submit billing details. Please try again.");
+                            submitbtn.style.visibility = 'visible';
+                        });
+                }
 
 
 
@@ -874,16 +874,16 @@
 
             // Submit to server
             // fetch("http://192.168.31.204:8000/update_sheet", {
-            fetch("https://dharikarsath01.pythonanywhere.com/update_sheet", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(payload)
-            })
+        //     fetch("https://dharikarsath01.pythonanywhere.com/update_sheet", {
+        //         method: "POST",
+        //         headers: {
+        //             "Content-Type": "application/json"
+        //         },
+        //         body: JSON.stringify(payload)
+        //     })
 
-            window.location.replace("thankyou");
-        }
+        //     window.location.replace("thankyou");
+        // }
 
 
 

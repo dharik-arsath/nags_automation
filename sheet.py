@@ -74,6 +74,8 @@ def update_google_sheet(data_dict: dict):
 
     # Append the row to the sheet
     report_sheet.append_row(row_data)
+    data_dict["total_expense"] = total_expense
+    return data_dict
 
 
 

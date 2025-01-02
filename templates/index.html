@@ -29,7 +29,7 @@
             </div>
             <div class="card-body">
                 <div class="form-outline mb-3">
-                    <input list="buyer-list" class="form-control" id="buyer-user-name" autofocus>
+                    <input list="buyer-list" class="form-control" id="buyer-user-name" autofocus autocomplete="off">
                     <label class="form-label">Driver Name</label>
                     <datalist id="buyer-list"></datalist>
                 </div>
@@ -65,12 +65,12 @@
                         <form id="todoForm">
                             <!-- Basic Info -->
                             <div class="form-outline mb-3">
-                                <input list="product-title" id="product-input" class="form-control">
+                                <input list="product-title" id="product-input" class="form-control" autocomplete="off">
                                 <label class="form-label">Product Name</label>
                                 <datalist id="product-title"></datalist>
                             </div>
                             <div class="form-outline mb-3">
-                                <input list="buyer-line" class="form-control" id="buyer-lineid">
+                                <input list="buyer-line" class="form-control" id="buyer-lineid" autocomplete="off">
                                 <label class="form-label">Area</label>
                                 <datalist id="buyer-line"></datalist>
                             </div>
@@ -81,13 +81,15 @@
                                 <div class="row g-2">
                                     <div class="col-6">
                                         <div class="form-outline">
-                                            <input type="number" class="form-control" id="editTodoCases" value="0">
+                                            <input type="number" class="form-control" id="editTodoCases" value="0"
+                                                min="0">
                                             <label class="form-label">Cases</label>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-outline">
-                                            <input type="number" class="form-control" id="editTodoPieces" value="0">
+                                            <input type="number" class="form-control" id="editTodoPieces" value="0"
+                                                min="0">
                                             <label class="form-label">Pieces</label>
                                         </div>
                                     </div>
@@ -100,14 +102,15 @@
                                 <div class="row g-2">
                                     <div class="col-6">
                                         <div class="form-outline">
-                                            <input type="number" class="form-control" id="editTodoDiscount" value="0">
+                                            <input type="number" class="form-control" id="editTodoDiscount" value="0"
+                                                min="0">
                                             <label class="form-label">Discount</label>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-outline">
                                             <input type="number" class="form-control" id="editTodoCommission" value="0"
-                                                readonly>
+                                                min="0" readonly>
                                             <label class="form-label">Commission</label>
                                         </div>
                                     </div>
@@ -121,14 +124,14 @@
                                     <div class="col-6">
                                         <div class="form-outline mb-3">
                                             <input type="number" class="form-control" id="editTodoKuraivuCases"
-                                                value="0">
+                                                value="0" min="0">
                                             <label class="form-label">Kuraivu(in cases)</label>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-outline">
                                             <input type="number" class="form-control" id="editTodoKuraivuPieces"
-                                                value="0">
+                                                value="0" min="0">
                                             <label class="form-label">Kuraivu(in pieces)</label>
                                         </div>
                                     </div>
@@ -137,14 +140,14 @@
                                     <div class="col-6">
                                         <div class="form-outline mb-3">
                                             <input type="number" class="form-control" id="editTodoAdhigaVaravuCases"
-                                                value="0">
+                                                value="0" min="0">
                                             <label class="form-label">Adhiga Varavu(in cases)</label>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-outline">
                                             <input type="number" class="form-control" id="editTodoAdhigaVaravuPieces"
-                                                value="0">
+                                                value="0" min="0">
                                             <label class="form-label">Adhiga Varavu(in pieces)</label>
                                         </div>
                                     </div>
@@ -283,7 +286,6 @@
         // Initialize date and form
         const localDate = new Date();
         document.getElementById('date').valueAsDate = new Date(localDate.getTime() - localDate.getTimezoneOffset() * 60000);
-        
         document.querySelectorAll('.form-outline').forEach((formOutline) => {
             new mdb.Input(formOutline).init();
         });
@@ -570,7 +572,7 @@
         }
 
 
-        document.getElementById('buyer-user-name').addEventListener('keyup', function () {
+        document.getElementById('buyer-user-name').addEventListener('input', function () {
             this.classList.remove('required-field');
             const name = document.getElementById('buyer-user-name').value
             console.log(name)
@@ -713,6 +715,112 @@
                 entries: billingEntries
             };
 
+            //         // Submit to server
+            //         fetch("http://192.168.0.6:8000/update_sheet", {
+            //             // fetch("https://dharikarsath01.pythonanywhere.com/update_sheet", {
+            //             method: "POST",
+            //             headers: {
+            //                 "Content-Type": "application/json"
+            //             },
+            //             body: JSON.stringify(payload)
+            //         })
+            //             .then(response => {
+            //                 if (!response.ok) {
+            //                     submitButton.style.visibility = 'visible';
+            //                     throw new Error(`HTTP error! status: ${response.status}`);
+            //                 }
+            //                 return response.json();
+            //             })
+            //             .then(data => {
+            //                 alert("Billing details submitted successfully!");
+            //                 // Clear the form after successful submission
+            //                 todos = [];
+            //                 updateList();
+            //                 document.getElementById('buyer-user-name').value = '';
+
+            //                 document.getElementById('totalDeductions').innerHTML = `
+            //     <div class="h5 mb-0 text-danger">₹0.00</div>
+            //     <div class="small text-muted"></div>
+            // `;
+            //                 document.getElementById('totalProducts').innerHTML = `
+            //     <div class="h5 mb-0">₹0.00</div>
+            //     <small class="text-muted">Base Amount</small>
+            // `;
+            //                 document.getElementById('finalAmount').innerHTML = `
+            //     <div class="h4 mb-0 text-primary">₹0.00</div>
+            //     <small class="text-muted">Final Amount</small>
+            // `;
+            //                 // Reset expenses
+            //                 document.querySelectorAll('.expense-row').forEach(row => row.remove());
+            //                 addExpenseRow();
+            //                 submitbtn.style.visibility = 'visible';
+            //             })
+            //             .catch(error => {
+            //                 console.error("Error submitting billing details:", error);
+            //                 alert("Failed to submit billing details. Please try again.");
+            //                 submitbtn.style.visibility = 'visible';
+            //             });
+
+
+
+
+
+
+
+            //         // Submit to server
+            //         fetch("http://192.168.0.6:8000/update_sheet", {
+            //         // fetch("https://dharikarsath01.pythonanywhere.com/update_sheet", {
+            //             method: "POST",
+            //             headers: {
+            //                 "Content-Type": "application/json"
+            //             },
+            //             body: JSON.stringify(payload)
+            //         })
+            //             .then(response => {
+            //                 if (!response.ok) {
+            //                     submitButton.style.visibility = 'visible';
+            //                     throw new Error(`HTTP error! status: ${response.status}`);
+            //                 }
+            //                 return response.json();
+            //             })
+            //             .then(data => {
+            //                 // alert("Billing details submitted successfully!");
+            //                 // Clear the form after successful submission
+            // //                 todos = [];
+            // //                 updateList();
+            // //                 document.getElementById('buyer-user-name').value = '';
+
+            // //                 document.getElementById('totalDeductions').innerHTML = `
+            // //     <div class="h5 mb-0 text-danger">₹0.00</div>
+            // //     <div class="small text-muted"></div>
+            // // `;
+            // //                 document.getElementById('totalProducts').innerHTML = `
+            // //     <div class="h5 mb-0">₹0.00</div>
+            // //     <small class="text-muted">Base Amount</small>
+            // // `;
+            // //                 document.getElementById('finalAmount').innerHTML = `
+            // //     <div class="h4 mb-0 text-primary">₹0.00</div>
+            // //     <small class="text-muted">Final Amount</small>
+            // // `;
+            // //                 // Reset expenses
+            // //                 document.querySelectorAll('.expense-row').forEach(row => row.remove());
+            // //                 addExpenseRow();
+            // //                 submitbtn.style.visibility = 'visible';
+            //                 // window.location.reload();
+            //                 // window.location.href = "thankyou.html";
+            //                 window.location.replace("thankyou.html")
+            //             })
+            //             .catch(error => {
+            //                 console.error("Error submitting billing details:", error);
+            //                 alert("Failed to submit billing details. Please try again.");
+            //                 submitbtn.style.visibility = 'visible';
+            //             });
+            //     }
+
+
+
+
+
             // Submit to server
             // fetch("http://192.168.0.6:8000/update_sheet", {
             fetch("https://dharikarsath01.pythonanywhere.com/update_sheet", {
@@ -722,40 +830,10 @@
                 },
                 body: JSON.stringify(payload)
             })
-                .then(response => {
-                    if (!response.ok) {
-                        submitButton.style.visibility = 'visible';
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    alert("Billing details submitted successfully!");
-                    // Clear the form after successful submission
-                    todos = [];
-                    updateList();
-                    document.getElementById('buyer-user-name').value = '';
 
-                    document.getElementById('totalDeductions').innerHTML = `
-        <div class="h5 mb-0 text-danger">₹0.00</div>
-    `;
-                    document.getElementById('totalProducts').innerHTML = `
-        <div class="h5 mb-0">₹0.00</div>
-    `;
-                    document.getElementById('finalAmount').innerHTML = `
-        <div class="h4 mb-0 text-primary">₹0.00</div>
-    `;
-                    // Reset expenses
-                    document.querySelectorAll('.expense-row').forEach(row => row.remove());
-                    addExpenseRow();
-                    submitbtn.style.visibility = 'visible';
-                })
-                .catch(error => {
-                    console.error("Error submitting billing details:", error);
-                    alert("Failed to submit billing details. Please try again.");
-                    submitbtn.style.visibility = 'visible';
-                });
+            window.location.replace("thankyou");
         }
+
 
 
 

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Entry</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/8.1.0/mdb.min.css" rel="stylesheet" />
+    <style>
+        .form-outline input::-webkit-outer-spin-button,
+        .form-outline input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .form-outline input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5 text-center">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <img src="https://img.icons8.com/color/96/000000/checkmark.png" alt="Thank You" />
+                <h2 class="h2-responsive font-weight-bold mt-3">Thank You!</h2>
+                <p class="text-muted">Your submission has been received successfully.</p>
+                <button class="btn btn-primary btn-md mt-3" id="submitBtn">Back to Home</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/8.1.0/mdb.umd.min.js"></script>
+    <script>
+        console.log("asds")
+        const submitBtn = document.querySelector("#submitBtn")
+        submitBtn.addEventListener("click", function(e) {
+            window.location.replace("/");
+        })
+    </script>
+</body>
+
+</html>

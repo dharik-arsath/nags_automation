@@ -45,6 +45,7 @@ def format_msg(sheet_info: list):
 
 class SheetInfo(BaseModel):
     date: str
+    time: str 
     driver_name: str
     line: str
     product_name: str 

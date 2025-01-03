@@ -1,4 +1,4 @@
-from flask import Flask, Request, request, jsonify
+from flask import Flask, Request, request, jsonify, make_response
 from flask import render_template
 from sheet import update_google_sheet
 from pydantic import BaseModel, Field
@@ -10,7 +10,7 @@ from notify_telegram import send_message
 import asyncio 
 from loguru import logger
 from utils import parse_expense,generate_id
-
+from pathlib import Path
 
 
 def format_msg(sheet_info: list):
@@ -106,3 +106,24 @@ def update_on_telegram(sheet_info: list):
 @app.route('/thankyou')
 def thank_you():
     return render_template('thankyou.html')
+
+
+
+
+
+@app.route("/upload", methods=["GET", "POST"])
+def upload():
+    if request.method == "GET":
+        return render_template("upload.html")
+
+    save_at = Path( "static/js/data.js" )
+    if save_at.exists():
+        save_at.rename("static/js/data_bkup.js")
+    
+    file = request.files["file"]
+    file.save(str(save_at))
+
+    resp = make_response()
+
+    return resp 
+

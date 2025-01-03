@@ -276,9 +276,6 @@
 
 
 
-
-
-
         <!-- Summary Card -->
         <div class="card mb-3">
             <div class="card-header py-2">
@@ -314,6 +311,7 @@
             </button>
         </div>
     </div>
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/8.1.0/mdb.umd.min.js"></script>
     <!-- <script src="static/js/data.js"></script> -->
@@ -599,15 +597,18 @@
             });
 
         // Initialize datalists
-        if (typeof users !== 'undefined') {
+        if (typeof driverListInfo !== 'undefined' && typeof lineListInfo !== 'undefined') {
             const buyerList = document.getElementById('buyer-list');
             const lineList = document.getElementById('buyer-line');
             const productList = document.getElementById('product-title');
 
-            users.forEach(user => {
+            driverListInfo.forEach(user => {
                 buyerList.innerHTML += `<option value="${user.name}">`;
-                lineList.innerHTML += `<option value="${user.address}">`;
             });
+
+            lineListInfo.forEach(line => {
+                lineList.innerHTML += `<option value="${line.line}">`;
+            })
 
             products.forEach(product => {
                 productList.innerHTML += `<option value="${product.name}">`;
@@ -769,127 +770,34 @@
                 entries: billingEntries
             };
 
-            //         // Submit to server
-            //         fetch("http://192.168.0.6:8000/update_sheet", {
-            //             // fetch("https://dharikarsath01.pythonanywhere.com/update_sheet", {
-            //             method: "POST",
-            //             headers: {
-            //                 "Content-Type": "application/json"
-            //             },
-            //             body: JSON.stringify(payload)
-            //         })
-            //             .then(response => {
-            //                 if (!response.ok) {
-            //                     submitButton.style.visibility = 'visible';
-            //                     throw new Error(`HTTP error! status: ${response.status}`);
-            //                 }
-            //                 return response.json();
-            //             })
-            //             .then(data => {
-            //                 alert("Billing details submitted successfully!");
-            //                 // Clear the form after successful submission
-            //                 todos = [];
-            //                 updateList();
-            //                 document.getElementById('buyer-user-name').value = '';
+            const baseUrl = isDevelopment ? 'http://localhost:8000/' : 'https://dharikarsath01.pythonanywhere.com/';
 
-            //                 document.getElementById('totalDeductions').innerHTML = `
-            //     <div class="h5 mb-0 text-danger">₹0.00</div>
-            //     <div class="small text-muted"></div>
-            // `;
-            //                 document.getElementById('totalProducts').innerHTML = `
-            //     <div class="h5 mb-0">₹0.00</div>
-            //     <small class="text-muted">Base Amount</small>
-            // `;
-            //                 document.getElementById('finalAmount').innerHTML = `
-            //     <div class="h4 mb-0 text-primary">₹0.00</div>
-            //     <small class="text-muted">Final Amount</small>
-            // `;
-            //                 // Reset expenses
-            //                 document.querySelectorAll('.expense-row').forEach(row => row.remove());
-            //                 addExpenseRow();
-            //                 submitbtn.style.visibility = 'visible';
-            //             })
-            //             .catch(error => {
-            //                 console.error("Error submitting billing details:", error);
-            //                 alert("Failed to submit billing details. Please try again.");
-            //                 submitbtn.style.visibility = 'visible';
-            //             });
-
-
-
-
-
-
-
-                    // Submit to server
-                    // fetch("http://192.168.0.6:8000/update_sheet", {
-                    fetch("https://dharikarsath01.pythonanywhere.com/update_sheet", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify(payload)
+                // Submit to server
+                fetch(baseUrl + "update_sheet", {
+                    // fetch("https://dharikarsath01.pythonanywhere.com/update_sheet", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            submitButton.style.visibility = 'visible';
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
                     })
-                        .then(response => {
-                            if (!response.ok) {
-                                submitButton.style.visibility = 'visible';
-                                throw new Error(`HTTP error! status: ${response.status}`);
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            // alert("Billing details submitted successfully!");
-                            // Clear the form after successful submission
-            //                 todos = [];
-            //                 updateList();
-            //                 document.getElementById('buyer-user-name').value = '';
-
-            //                 document.getElementById('totalDeductions').innerHTML = `
-            //     <div class="h5 mb-0 text-danger">₹0.00</div>
-            //     <div class="small text-muted"></div>
-            // `;
-            //                 document.getElementById('totalProducts').innerHTML = `
-            //     <div class="h5 mb-0">₹0.00</div>
-            //     <small class="text-muted">Base Amount</small>
-            // `;
-            //                 document.getElementById('finalAmount').innerHTML = `
-            //     <div class="h4 mb-0 text-primary">₹0.00</div>
-            //     <small class="text-muted">Final Amount</small>
-            // `;
-            //                 // Reset expenses
-            //                 document.querySelectorAll('.expense-row').forEach(row => row.remove());
-            //                 addExpenseRow();
-            //                 submitbtn.style.visibility = 'visible';
-                            // window.location.reload();
-                            // window.location.href = "thankyou.html";
-                            window.location.replace("thankyou")
-                        })
-                        .catch(error => {
-                            console.error("Error submitting billing details:", error);
-                            alert("Failed to submit billing details. Please try again.");
-                            submitbtn.style.visibility = 'visible';
-                        });
-                }
-
-
-
-
-
-            // Submit to server
-            // fetch("http://192.168.31.204:8000/update_sheet", {
-        //     fetch("https://dharikarsath01.pythonanywhere.com/update_sheet", {
-        //         method: "POST",
-        //         headers: {
-        //             "Content-Type": "application/json"
-        //         },
-        //         body: JSON.stringify(payload)
-        //     })
-
-        //     window.location.replace("thankyou");
-        // }
-
-
-
+                    .then(data => {
+                        window.location.replace( "thankyou.html" );
+                        // window.location.replace("thankyou")
+                    })
+                    .catch(error => {
+                        console.error("Error submitting billing details:", error);
+                        alert("Failed to submit billing details. Please try again.");
+                        submitbtn.style.visibility = 'visible';
+                    });
+            }
 
     </script>
 </body>

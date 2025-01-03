@@ -1,12 +1,21 @@
+const driversListInfo = [
+    {name: "Selvam"},
+    {name: "Pandi"},
+    {name: "Ganeshan"},
+    {name: "Saghul"},
+    {name: "Varusha"},
+    {name: "Avudai amman agency"},
+]
 
-const users = [
-    { name: "Selvam", address: "Karia patti", gst_number: "Nil" },
-    { name: "Pandi",  address: "Thirumansolai", gst_number: "Nil" },
-    { name: "Ganeshan",  address: "SS kottai", gst_number: "Nil" },
-    { name: "saghul ",  address: "Kilavalavu", gst_number: "Nil" },
-    { name: "Varusha",  address: "Muthusamy patti", gst_number: "Nil" },
-    { name: "Avudai amman agency",  address: "Silambani vadakku, Devakottai", gst_number: "33AIAPL7054RIZV" }
-];
+const lineListInfo = [
+    {line: "Karia patti"},
+    {line: "Thirumansolai"},
+    {line: "SS kottai"},
+    {line: "Kilavalavu"},
+    {line: "Muthusamy patti"},
+    {line: "Silambani vadakku, Devakottai"},
+    {line: "Athikulam"},
+]
 
 
 

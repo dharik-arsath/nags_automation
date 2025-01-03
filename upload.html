@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/8.1.0/mdb.min.css" rel="stylesheet" />
+    <style>
+        .upload-area {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 20px;
+        }
+        .preview-image {
+            max-height: 200px;
+            max-width: 100%;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-6">
+                <form id="uploadForm">
+                    <div class="upload-area" id="uploadArea">
+                        <input type="file" id="fileUpload" class="d-none" />
+                        <div id="uploadPrompt">
+                            <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
+                            <p class="mb-0">Click to upload file</p>
+                        </div>
+                        <div id="fileName" class="mt-2"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mx-3">Upload</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/8.1.0/mdb.min.js"></script>
+    <script>
+        const form = document.getElementById('uploadForm');
+        const uploadArea = document.getElementById('uploadArea');
+        const fileUpload = document.getElementById('fileUpload');
+        const fileName = document.getElementById('fileName');
+
+        const isDevelopment = window.location.hostname === 'localhost';
+
+        // Set the API URL based on the environment
+        const baseUrl = isDevelopment ? 'http://localhost:8000/' : 'https://dharikarsath01.pythonanywhere.com/';
+
+        uploadArea.addEventListener('click', () => fileUpload.click());
+
+        fileUpload.addEventListener('change', (e) => {
+            if (e.target.files[0]) {
+                fileName.textContent = e.target.files[0].name;
+            }
+        });
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('file', fileUpload.files[0]);
+            
+            console.log(baseUrl + "/upload")
+            // Add your upload logic here
+            fetch(baseUrl + "/upload", {
+                method: 'POST',
+                body: formData
+            }).then(resp => {
+                if(resp.status == 200){
+                    alert("File Uploaded Successfully")
+                    window.location.reload();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

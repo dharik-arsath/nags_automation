@@ -1,4 +1,4 @@
-const driversListInfo = [
+const driverListInfo = [
     {name: "Selvam"},
     {name: "Pandi"},
     {name: "Ganeshan"},
@@ -17,6 +17,13 @@ const lineListInfo = [
     {line: "Athikulam"},
 ]
 
+const expensesListInfo = [
+    {expense: "Petrol"},
+    {expense: "Puncture"},
+    {expense: "Food"},
+    {expense: "Key"},
+    {expense: "Vehicle repair"}
+]
 
 
 

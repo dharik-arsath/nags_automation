@@ -7,9 +7,9 @@ from flask_cors import CORS
 from flask import abort
 import json
 from notify_telegram import send_photo, send_message
-import asyncio 
+import asyncio
 from loguru import logger
-from utils import parse_expense,generate_id
+from utils import parse_expense, generate_id
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -18,35 +18,7 @@ from uuid import uuid4
 from tabulate import tabulate
 
 
-# def format_msg(sheet_info: list):
-#     prod_count = 1
-#     msg = ""
-#     for prod in sheet_info:
-#         msg += f"{prod_count}."
-        
-#         for key, val in prod.items():
-#             if key != "expenses":
-#                 msg += f"    {key.replace('_', ' ').title()}  : {prod[key]}\n"
-
-#         prod_count += 1
-
-#         msg += "\n\n"
-    
-
-#     msg += "\n     Expenses:\n"
-#     msg += "----------------------------------\n"
-#     exp = parse_expense(prod)
-#     if exp is None:
-#         msg += f"         No Expenses added\n"
-#     else:
-#         for exp_key, exp_val in exp.items():
-#             msg += f"         {exp_key.replace('_', ' ').title()} : {exp_val}\n"
-        
-#     msg += "\n\n"
-        
-        
-
-#     return msg 
+from tabulate import tabulate
 
 
 def format_msg(data):
@@ -54,17 +26,25 @@ def format_msg(data):
     total_amount = 0
     discount = 0
     commission = 0
-    others = 0
+    expenses = {}
 
     # Create table rows
     table_rows = []
     for item in data:
         product_name = f"{item['product_name']}"
-        table_rows.append(["ADD", product_name, item['final_amount']])
-        total_amount += item['final_amount']
-        discount += item['discount']
-        commission += item['commission']
-        others += item['total_expense']
+        table_rows.append(["ADD", product_name, item["final_amount"]])
+        total_amount += item["final_amount"]
+        discount += item["discount"]
+        commission += item["commission"]
+
+        # Process expenses
+        for expense in item["expenses"]:
+            description = expense["description"]
+            amount = expense["amount"]
+            if description in expenses:
+                expenses[description] += amount
+            else:
+                expenses[description] = amount
 
     # Create summary rows
     summary_rows = [
@@ -72,18 +52,36 @@ def format_msg(data):
         ["SUB", "DISCOUNT", discount],
         ["", "TOTAL", total_amount - discount],
         ["SUB", "COMMISSION", commission],
-        ["", "TOTAL", round( total_amount - discount - commission, 4 )],
-        ["SUB", "OTHERS", others],
-        ["", "TOTAL", round( total_amount - discount - commission - others, 4 )]
+        ["", "TOTAL", round(total_amount - discount - commission, 4)],
     ]
 
+    # Create expense rows
+    expense_rows = []
+    total_expenses = 0
+    for description, amount in expenses.items():
+        expense_rows.append(["SUB", description, amount])
+        total_expenses += amount
+    expense_rows.append(["", "TOTAL EXPENSES", total_expenses])
+
+    # Create final total row
+    final_total = round(total_amount - discount - commission - total_expenses, 4)
+    final_total_row = ["", "FINAL TOTAL", final_total]
+
     # Generate table
-    table = tabulate(table_rows + summary_rows, headers=["", "Product", "Amount"], tablefmt="grid", maxcolwidths=[
-        None, 10,None
-    ])
-    telegram_message = f'<pre>{table}</pre>'
+    table = tabulate(
+        table_rows + summary_rows + expense_rows + [final_total_row],
+        headers=["", "Product", "Amount"],
+        tablefmt="grid",
+        maxcolwidths=[None, 10, None],
+    )
+    telegram_message = f"<pre>{table}</pre>"
 
     return telegram_message
+
+
+# data = [{"date": "2025-01-02", "driver_name": "Avudai amman agency", "line": "Karia patti", "product_name": "Mango 200ml PET", "base_amount": 200.0, "final_amount": 180.0, "discount": 0.0, "commission": 20.0, "kuraivu_cases": 0, "kuraivu_pieces": 0, "adhiga_varavu_cases": 0, "adhiga_varavu_pieces": 0, "expenses": [{"description": "Petrol", "amount": 0}, {"description": "Food", "amount": 0}], "total_expense": 0}, {"date": "2025-01-02", "driver_name": "Avudai amman agency", "line": "Kilavalavu", "product_name": "200ml color", "base_amount": 400.0, "final_amount": 350.0, "discount": 0.0, "commission": 50.0, "kuraivu_cases": 0, "kuraivu_pieces": 0, "adhiga_varavu_cases": 0, "adhiga_varavu_pieces": 0, "expenses": [{"description": "Petrol", "amount": 0}, {"description": "Food", "amount": 0}], "total_expense": 0}]
+
+# asyncio.run( send_message( format_msg(data) ) )
 
 class SheetInfo(BaseModel):
     date: str

@@ -6,42 +6,82 @@ from datetime import datetime
 from flask_cors import CORS
 from flask import abort
 import json
-from notify_telegram import send_message
+from notify_telegram import send_photo, send_message
 import asyncio 
 from loguru import logger
 from utils import parse_expense,generate_id
 from pathlib import Path
 
+import matplotlib.pyplot as plt
+from tabulate import tabulate
+from uuid import uuid4
+from tabulate import tabulate
 
-def format_msg(sheet_info: list):
-    prod_count = 1
-    msg = ""
-    for prod in sheet_info:
-        msg += f"{prod_count}."
+
+# def format_msg(sheet_info: list):
+#     prod_count = 1
+#     msg = ""
+#     for prod in sheet_info:
+#         msg += f"{prod_count}."
         
-        for key, val in prod.items():
-            if key != "expenses":
-                msg += f"    {key.replace('_', ' ').title()}  : {prod[key]}\n"
+#         for key, val in prod.items():
+#             if key != "expenses":
+#                 msg += f"    {key.replace('_', ' ').title()}  : {prod[key]}\n"
 
-        prod_count += 1
+#         prod_count += 1
 
-        msg += "\n\n"
+#         msg += "\n\n"
     
 
-    msg += "\n     Expenses:\n"
-    msg += "----------------------------------\n"
-    exp = parse_expense(prod)
-    if exp is None:
-        msg += f"         No Expenses added\n"
-    else:
-        for exp_key, exp_val in exp.items():
-            msg += f"         {exp_key.replace('_', ' ').title()} : {exp_val}\n"
+#     msg += "\n     Expenses:\n"
+#     msg += "----------------------------------\n"
+#     exp = parse_expense(prod)
+#     if exp is None:
+#         msg += f"         No Expenses added\n"
+#     else:
+#         for exp_key, exp_val in exp.items():
+#             msg += f"         {exp_key.replace('_', ' ').title()} : {exp_val}\n"
         
-    msg += "\n\n"
+#     msg += "\n\n"
         
         
 
-    return msg 
+#     return msg 
+
+
+def format_msg(data):
+    # Initialize variables
+    total_amount = 0
+    discount = 0
+    commission = 0
+    others = 0
+
+    # Create table rows
+    table_rows = []
+    for item in data:
+        product_name = f"{item['product_name']}"
+        table_rows.append(["ADD", product_name, item['final_amount']])
+        total_amount += item['final_amount']
+        discount += item['discount']
+        commission += item['commission']
+        others += item['total_expense']
+
+    # Create summary rows
+    summary_rows = [
+        ["", "Total", total_amount],
+        ["SUB", "DISCOUNT", discount],
+        ["", "TOTAL", total_amount - discount],
+        ["SUB", "COMMISSION", commission],
+        ["", "TOTAL", round( total_amount - discount - commission, 4 )],
+        ["SUB", "OTHERS", others],
+        ["", "TOTAL", round( total_amount - discount - commission - others, 4 )]
+    ]
+
+    # Generate table
+    table = tabulate(table_rows + summary_rows, headers=["", "Product", "Amount"], tablefmt="grid")
+    telegram_message = f'<pre>{table}</pre>'
+
+    return telegram_message
 
 class SheetInfo(BaseModel):
     date: str
@@ -62,7 +102,7 @@ class SheetInfo(BaseModel):
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
-
+logger.add("loguru.log")
 
 @app.route("/", methods=["GET"])
 def index():
@@ -83,24 +123,25 @@ def update_sheet():
         sheet_info = SheetInfo(**data)
         sheet_info_dict = sheet_info.model_dump()
         # sheet_info_dict["expenses"] = str( sheet_info_dict["expenses"] )
-        print(sheet_info_dict)
         sheet_info_dict["_id"] = id 
         resp = update_google_sheet(sheet_info_dict)
         all_resp.append(resp)
 
     try:
-        update_on_telegram(all_resp)
+        update_on_telegram(all_resp) 
     except Exception as e:
-        pass 
+        logger.error(e)
 
     return jsonify({"status":True})
 
 
 def update_on_telegram(sheet_info: list):
-    sheet_msg_formated = format_msg(sheet_info)
+    data = format_msg(sheet_info)
+    
+    resp = asyncio.run(send_message(data))
+    logger.info(f"update performed on telegram: {resp}")
 
-    resp = asyncio.run( send_message(sheet_msg_formated ))
-    return jsonify({"status": True})
+    return 
 
 
 @app.route('/thankyou')
@@ -126,4 +167,3 @@ def upload():
     resp = make_response()
 
     return resp 
-

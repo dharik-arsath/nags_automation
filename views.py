@@ -78,7 +78,9 @@ def format_msg(data):
     ]
 
     # Generate table
-    table = tabulate(table_rows + summary_rows, headers=["", "Product", "Amount"], tablefmt="grid")
+    table = tabulate(table_rows + summary_rows, headers=["", "Product", "Amount"], tablefmt="grid", maxcolwidths=[
+        None, 10,None
+    ])
     telegram_message = f'<pre>{table}</pre>'
 
     return telegram_message

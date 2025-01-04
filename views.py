@@ -37,14 +37,14 @@ def format_msg(data):
         discount += item["discount"]
         commission += item["commission"]
 
-        # Process expenses
-        for expense in item["expenses"]:
-            description = expense["description"]
-            amount = expense["amount"]
-            if description in expenses:
-                expenses[description] += amount
-            else:
-                expenses[description] = amount
+    # Process expenses
+    for expense in item["expenses"]:
+        description = expense["description"]
+        amount = expense["amount"]
+        if description in expenses:
+            expenses[description] += amount
+        else:
+            expenses[description] = amount
 
     # Create summary rows
     summary_rows = [

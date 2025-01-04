@@ -179,35 +179,6 @@
             </div>
             <div class="card-body">
                 <div id="expenses-container">
-                    <div class="expense-row mb-2 position-relative">
-                        <div class="row g-2">
-                            <div class="col-8">
-                                <div class="form-outline mb-3">
-                                    <input type="text" list="expenseOptions"
-                                        class="form-control expense-description active">
-                                    <label class="form-label">Description</label>
-                                    <datalist id="expenseOptions">
-                                        <option value="Petrol">
-                                        <option value="Food">
-                                        <option value="Puncture">
-                                        <option value="Key">
-                                        <option value="Vehicle repair">
-                                    </datalist>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="form-outline mb-3">
-                                    <input type="number" class="form-control expense-amount" value="0">
-                                    <label class="form-label">Amount</label>
-                                </div>
-                            </div>
-                            <div class="col-1">
-                                <button class="btn btn-link text-danger p-0" onclick="removeExpenseRow(this)">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -772,7 +743,7 @@
 
             const isDevelopment = window.location.hostname === 'localhost'
             
-            const baseUrl = isDevelopment ? 'http://localhost:8000/' : 'https://dharikarsath01.pythonanywhere.com/';
+            const baseUrl = isDevelopment ? 'http://localhost:8000/' : 'https://nagaraj1.pythonanywhere.com/';
 
                 // Submit to server
                 fetch(baseUrl + "update_sheet", {

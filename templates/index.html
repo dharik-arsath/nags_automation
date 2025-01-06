@@ -103,7 +103,7 @@
                                     <div class="col-6">
                                         <div class="form-outline">
                                             <input type="number" class="form-control" id="editTodoDiscount" value="0"
-                                                min="0">
+                                                min="0" readonly>
                                             <label class="form-label">Discount</label>
                                         </div>
                                     </div>
@@ -310,7 +310,8 @@
 
             const caseCount = Number(document.getElementById("editTodoCases").value);
             const pieceCount = Number(document.getElementById("editTodoPieces").value);
-            const discount = Number(document.getElementById("editTodoDiscount").value);
+            // const discount = Number(document.getElementById("editTodoDiscount").value);
+            const discount = document.getElementById("editTodoDiscount").value = (caseCount * selectedProduct.discount.case) + (pieceCount * selectedProduct.discount.piece) ;
             // const commission = Number(document.getElementById("editTodoCommission").value);
             const kuraivu = Number(document.getElementById("editTodoKuraivuPieces").value);
             // const adhigaVaravu = Number(document.getElementById("editTodoAdhigaVaravu").value);

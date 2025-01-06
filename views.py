@@ -95,7 +95,6 @@ def format_msg(data):
     driver_name = data[0]['driver_name']
     line = data[0]['line']
     date = data[0]['date']
-    current_time = data["time"]
 
     # Create table rows
     table_rows = []
@@ -138,7 +137,7 @@ def format_msg(data):
     final_total_row = ["", "FINAL TOTAL", final_total]
 
     # Generate table
-    header = f"**Driver Name:** {driver_name}\n**Line:** {line}\n**Date:** {date}\n**Time:** {current_time}\n\n"
+    header = f"**Driver Name:** {driver_name}\n**Line:** {line}\n**Date:** {date}\n\n"
     table = tabulate(
         table_rows + summary_rows + expense_rows + [final_total_row],
         headers=["", "Product", "Amount"],

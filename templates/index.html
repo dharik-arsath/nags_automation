@@ -29,10 +29,17 @@
             </div>
             <div class="card-body">
                 <div class="form-outline mb-3">
-                    <input list="buyer-list" class="form-control" id="buyer-user-name" autofocus autocomplete="off">
+                    <input type="text" class="form-control active dropdown-toggle" id="buyer-user-name"
+                        data-mdb-dropdown-init aria-expanded="false" autocomplete="off" autofocus>
                     <label class="form-label">Driver Name</label>
-                    <datalist id="buyer-list"></datalist>
+
+                    <!-- Dropdown menu -->
+                    <ul class="dropdown-menu w-100" id="driver-dropdown" aria-labelledby="buyer-user-name">
+                    </ul>
                 </div>
+
+
+
                 <div class="form-outline mb-3">
                     <input type="date" class="form-control" id="date">
                     <label class="form-label">Date of Issue</label>
@@ -69,7 +76,7 @@
                                 <label class="form-label">Product Name</label>
 
                                 <!-- Dropdown menu -->
-                                <ul class="dropdown-menu w-100" aria-labelledby="product-input">
+                                <ul class="dropdown-menu w-100" id="productDropdown" aria-labelledby="product-input">
                                 </ul>
                             </div>
 
@@ -574,12 +581,7 @@
 
        // Initialize datalists
         if (typeof driverListInfo !== 'undefined' && typeof lineListInfo !== 'undefined') {
-            const buyerList = document.getElementById('buyer-list');
             const lineList = document.getElementById('buyer-line');
-
-            driverListInfo.forEach(user => {
-                buyerList.innerHTML += `<option value="${user.name}">`;
-            });
 
             lineListInfo.forEach(line => {
                 lineList.innerHTML += `<option value="${line.line}">`;
@@ -775,6 +777,63 @@
                 });
         }
 
+
+
+
+        function filterDrivers(query) {
+            return driverListInfo.filter(driver => driver.name.toLowerCase().includes(query.toLowerCase()));
+        }
+
+        // Handle user input and update dropdown
+        const driverName = document.getElementById('buyer-user-name');
+        const driverMenu = document.getElementById('driver-dropdown');
+
+        // Render all items by default
+        function renderDriversDropdown() {
+            driverMenu.innerHTML = '';  // Clear existing items
+            driverListInfo.forEach(driver => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `<a class="dropdown-item" href="#">${driver.name.toLowerCase()}</a>`;
+                driverMenu.appendChild(listItem);
+            });
+        }
+
+        // // Initial render of all items
+        // // renderAllItems();
+        driverName.addEventListener("click", () => {
+            renderDriversDropdown();
+        })
+
+        driverName.addEventListener('input', function () {
+            const query = driverName.value.trim().toLowerCase();
+
+            if (query.length === 0) {
+                renderDriversDropdown(); // Show all items if no input
+                return;
+            }
+
+            const matches = filterDrivers(query);
+            console.log(matches )
+            driverMenu.innerHTML = '';  // Clear the dropdown
+
+            matches.forEach(match => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `<a class="dropdown-item" href="#">${match.name}</a>`;
+                driverMenu.appendChild(listItem);
+            });
+        });
+
+        // Handle dropdown item selection
+        driverMenu.addEventListener('click', function (e) {
+            if (e.target && e.target.matches('.dropdown-item')) {
+                driverName.value = e.target.textContent.trim();
+                driverMenu.innerHTML = '';  // Close dropdown after selection
+
+                document.getElementById('buyer-user-name').dispatchEvent(new Event('input'));
+            }
+        });
+
+
     </script>
 
 
@@ -839,7 +898,7 @@
 
         // Handle user input and update dropdown
         const input = document.getElementById('product-input');
-        const dropdownMenu = document.querySelector('.dropdown-menu');
+        const dropdownMenu = document.getElementById('productDropdown');
 
         // Render all items by default
         function renderAllItems() {

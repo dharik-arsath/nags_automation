@@ -63,12 +63,17 @@
                     </div>
                     <div class="modal-body">
                         <form id="todoForm">
-                            <!-- Basic Info -->
                             <div class="form-outline mb-3">
-                                <input list="product-title" id="product-input" class="form-control" autocomplete="off">
+                                <input type="text" class="form-control active dropdown-toggle" id="product-input"
+                                    data-mdb-dropdown-init aria-expanded="false" autocomplete="off">
                                 <label class="form-label">Product Name</label>
-                                <datalist id="product-title"></datalist>
+
+                                <!-- Dropdown menu -->
+                                <ul class="dropdown-menu w-100" aria-labelledby="product-input">
+                                </ul>
                             </div>
+
+
                             <div class="form-outline mb-3">
                                 <input list="buyer-line" class="form-control" id="buyer-lineid" autocomplete="off">
                                 <label class="form-label">Area</label>
@@ -304,8 +309,7 @@
 
         function updateAmount() {
             const productName = document.getElementById('product-input').value;
-            const selectedProduct = products.find(product => product.name === productName);
-
+            const selectedProduct = products.find(product => product.name.toLowerCase() === productName);
             if (!selectedProduct) return;
 
             const caseCount = Number(document.getElementById("editTodoCases").value);
@@ -568,7 +572,7 @@
                 document.getElementById(id).addEventListener('input', updateAmount);
             });
 
-        // Initialize datalists
+       // Initialize datalists
         if (typeof driverListInfo !== 'undefined' && typeof lineListInfo !== 'undefined') {
             const buyerList = document.getElementById('buyer-list');
             const lineList = document.getElementById('buyer-line');
@@ -743,36 +747,150 @@
             };
 
             const isDevelopment = window.location.hostname === 'localhost'
-            
+
             const baseUrl = isDevelopment ? 'http://localhost:8000/' : 'https://nagaraj1.pythonanywhere.com/';
 
-                // Submit to server
-                fetch(baseUrl + "update_sheet", {
-                    // fetch("https://dharikarsath01.pythonanywhere.com/update_sheet", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(payload)
+            // Submit to server
+            fetch(baseUrl + "update_sheet", {
+                // fetch("https://dharikarsath01.pythonanywhere.com/update_sheet", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        submitButton.style.visibility = 'visible';
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
                 })
-                    .then(response => {
-                        if (!response.ok) {
-                            submitButton.style.visibility = 'visible';
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
+                .then(data => {
+                    if (isDevelopment) {
+                        window.location.replace("thankyou.html")
+                    } else {
                         window.location.replace("thankyou")
-                    })
-                    .catch(error => {
-                        console.error("Error submitting billing details:", error);
-                        alert("Failed to submit billing details. Please try again.");
-                        submitbtn.style.visibility = 'visible';
-                    });
-            }
+                    }
+                })
+                .catch(error => {
+                    console.error("Error submitting billing details:", error);
+                    alert("Failed to submit billing details. Please try again.");
+                    submitbtn.style.visibility = 'visible';
+                });
+        }
 
     </script>
+
+
+
+
+
+    <script>
+        // TrieNode and Trie implementation
+        class TrieNode {
+            constructor() {
+                this.children = {};
+                this.isEndOfWord = false;
+            }
+        }
+
+        class Trie {
+            constructor() {
+                this.root = new TrieNode();
+            }
+
+            insert(word) {
+                let node = this.root;
+                for (let char of word) {
+                    if (!node.children[char]) {
+                        node.children[char] = new TrieNode();
+                    }
+                    node = node.children[char];
+                }
+                node.isEndOfWord = true;
+            }
+
+            findWordsWithPrefix(prefix) {
+                let node = this.root;
+                for (let char of prefix) {
+                    if (!node.children[char]) {
+                        return [];
+                    }
+                    node = node.children[char];
+                }
+                return this._collectWords(node, prefix);
+            }
+
+            _collectWords(node, prefix) {
+                let words = [];
+                if (node.isEndOfWord) {
+                    words.push(prefix);
+                }
+                for (let char in node.children) {
+                    words = words.concat(this._collectWords(node.children[char], prefix + char));
+                }
+                return words;
+            }
+        }
+
+        // Initialize the Trie and insert products
+        // const products2 = ["product 1", "product 2", "product 3", "product 4", "other products"];
+        const trie = new Trie();
+        products.forEach(product => {
+            trie.insert(product.name.toLowerCase())
+        }
+        );
+
+        // Handle user input and update dropdown
+        const input = document.getElementById('product-input');
+        const dropdownMenu = document.querySelector('.dropdown-menu');
+
+        // Render all items by default
+        function renderAllItems() {
+            dropdownMenu.innerHTML = '';  // Clear existing items
+            products.forEach(product => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `<a class="dropdown-item" href="#">${product.name.toLowerCase()}</a>`;
+                dropdownMenu.appendChild(listItem);
+            });
+        }
+
+        // Initial render of all items
+        // renderAllItems();
+        input.addEventListener("click", () => {
+            renderAllItems();
+        })
+
+        input.addEventListener('input', function () {
+            const query = input.value.trim().toLowerCase();
+
+            if (query.length === 0) {
+                renderAllItems(); // Show all items if no input
+                return;
+            }
+
+            const matches = trie.findWordsWithPrefix(query);
+
+            dropdownMenu.innerHTML = '';  // Clear the dropdown
+
+            matches.forEach(match => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `<a class="dropdown-item" href="#">${match}</a>`;
+                dropdownMenu.appendChild(listItem);
+            });
+        });
+
+        // Handle dropdown item selection
+        dropdownMenu.addEventListener('click', function (e) {
+            if (e.target && e.target.matches('.dropdown-item')) {
+                input.value = e.target.textContent.trim();
+                dropdownMenu.innerHTML = '';  // Close dropdown after selection
+            }
+        });
+    </script>
+
+
 </body>
 
 </html>

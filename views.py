@@ -89,6 +89,7 @@ def format_msg(data):
     total_amount = 0
     discount = 0
     commission = 0
+    final_amount = 0
     expenses = {}
 
     # Get driver name, line, and date
@@ -100,10 +101,15 @@ def format_msg(data):
     table_rows = []
     for item in data:
         product_name = f"{item['product_name']}"
-        table_rows.append(["ADD", product_name, item["final_amount"]])
-        total_amount += item["final_amount"]
+        table_rows.append(["ADD", product_name, item["base_amount"]])
+        print("*" * 20)
+        print(f'{item.get("adhiga_varavu_pieces")}')
+        # if item.get("adhiga_varavu_pieces") is not None and item.get("adhiga_varavu_pieces") > 0:
+        #     table_rows.append(["ADD", "adhuga_varavu", item["adhiga_varavu_pieces"]])
+        total_amount += item["base_amount"]
         discount += item["discount"]
         commission += item["commission"]
+        final_amount += item["final_amount"]
 
     # Process expenses
     for item in data:
@@ -119,9 +125,8 @@ def format_msg(data):
     summary_rows = [
         ["", "Total", total_amount],
         ["SUB", "DISCOUNT", discount],
-        ["", "TOTAL", total_amount - discount],
         ["SUB", "COMMISSION", commission],
-        ["", "TOTAL", round(total_amount - discount - commission, 4)],
+        ["", "TOTAL", round(final_amount, 4)],
     ]
 
     # Create expense rows
@@ -134,6 +139,7 @@ def format_msg(data):
 
     # Create final total row
     final_total = round(total_amount - discount - commission - total_expenses, 4)
+    # final_total = round(final_amount, 4)
     final_total_row = ["", "FINAL TOTAL", final_total]
 
     # Generate table

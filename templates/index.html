@@ -81,11 +81,22 @@
                             </div>
 
 
-                            <div class="form-outline mb-3">
+                            <!-- <div class="form-outline mb-3">
                                 <input list="buyer-line" class="form-control" id="buyer-lineid" autocomplete="off">
                                 <label class="form-label">Area</label>
                                 <datalist id="buyer-line"></datalist>
+                            </div> -->
+
+                            <div class="form-outline mb-3">
+                                <input type="text" class="form-control active dropdown-toggle" id="buyer-lineid"
+                                    data-mdb-dropdown-init aria-expanded="false" autocomplete="off">
+                                <label class="form-label">Area</label>
+
+                                <!-- Dropdown menu -->
+                                <ul class="dropdown-menu w-100" id="lineDropdown" aria-labelledby="buyer-lineid">
+                                </ul>
                             </div>
+
 
                             <!-- Quantity Section -->
                             <div class="mb-3 p-2 bg-light rounded">
@@ -322,13 +333,14 @@
             const caseCount = Number(document.getElementById("editTodoCases").value);
             const pieceCount = Number(document.getElementById("editTodoPieces").value);
             // const discount = Number(document.getElementById("editTodoDiscount").value);
-            const discount = document.getElementById("editTodoDiscount").value = (caseCount * selectedProduct.discount.case) + (pieceCount * selectedProduct.discount.piece) ;
+            const discount = document.getElementById("editTodoDiscount").value = (caseCount * selectedProduct.discount.case) + (pieceCount * selectedProduct.discount.piece);
             // const commission = Number(document.getElementById("editTodoCommission").value);
             const kuraivu = Number(document.getElementById("editTodoKuraivuPieces").value);
             // const adhigaVaravu = Number(document.getElementById("editTodoAdhigaVaravu").value);
 
             const commission = document.getElementById("editTodoCommission").value = (caseCount * selectedProduct.commission.case) + (pieceCount * selectedProduct.commission.piece);
-            let totalAmount = (caseCount + pieceCount) * selectedProduct.price.case;
+            // let totalAmount = (caseCount + pieceCount) * selectedProduct.price.case;
+            let totalAmount = (caseCount * selectedProduct.price.case) + (pieceCount * selectedProduct.price.piece);
             totalAmount -= discount;
             totalAmount -= commission;
 
@@ -356,9 +368,12 @@
             todos.forEach(todo => {
                 // Calculate base amount
                 const productInfo = products.find(p => p.name === todo.title);
-                const basePrice = productInfo ? productInfo.price.case : 0;
-                const totalQuantity = Number(todo.cases) + Number(todo.pieces);
-                const baseAmount = totalQuantity * basePrice;
+                const basePriceCase = productInfo ? productInfo.price.case : 0;
+                const basePricePiece = productInfo ? productInfo.price.piece : 0;
+                const caseQuantity = Number(todo.cases);
+                const pieceQuantity = Number(todo.pieces);
+
+                const baseAmount = (caseQuantity * basePriceCase) + (pieceQuantity * basePricePiece);
 
                 // Add to total base amount
                 totalBaseAmount += baseAmount;
@@ -367,16 +382,11 @@
                 totalDiscounts += Number(todo.discount) || 0;
                 totalCommissions += Number(todo.commission) || 0;
                 totalKuraivu += (Number(todo.kuraivu_pieces) * (productInfo ? productInfo.price.piece : 0)) || 0;
-                // totalAdhigaVaravu += (Number(todo.adhigaVaravu) * (productInfo ? productInfo.price.piece : 0)) || 0;
             });
 
             // Add constant expenses
             // Get total expenses
             const constantExpenses = getExpensesTotal();
-            // const diesel = parseFloat(document.getElementById('dieselExpense').value) || 0;
-            // const damage = parseFloat(document.getElementById('vehicleDamage').value) || 0;
-            // const other = parseFloat(document.getElementById('otherExpenseAmount').value) || 0;
-            // const constantExpenses = diesel + damage + other;
 
             // Calculate total deductions
             const totalDeductions = totalDiscounts + totalCommissions + constantExpenses;
@@ -425,10 +435,14 @@
             }
 
             const productInfo = products.find(p => p.name === document.getElementById('product-input').value);
-            const basePrice = productInfo ? productInfo.price.case : 0;
-            const totalQuantity = Number(document.getElementById("editTodoCases").value) + Number(document.getElementById("editTodoPieces").value);
-            const baseAmount = totalQuantity * basePrice;
+            const basePriceCase = productInfo ? productInfo.price.case : 0;
+            const basePricePiece = productInfo ? productInfo.price.piece : 0;
 
+            // const totalQuantity = Number(document.getElementById("editTodoCases").value) + Number(document.getElementById("editTodoPieces").value);
+            const totalQuantityCases  = Number(document.getElementById("editTodoCases").value) ;
+            const totalQuantityPieces = Number(document.getElementById("editTodoPieces").value);
+
+            const baseAmount = (basePriceCase * totalQuantityCases) + (basePricePiece * totalQuantityPieces);
             const formData = {
                 title: document.getElementById('product-input').value,
                 line: document.getElementById('buyer-lineid').value,
@@ -463,9 +477,13 @@
             list.innerHTML = todos.map(todo => {
                 // Calculate base amount before any deductions
                 const productInfo = products.find(p => p.name === todo.title);
-                const basePrice = productInfo ? productInfo.price.case : 0;
-                const totalQuantity = Number(todo.cases) + Number(todo.pieces);
-                const baseAmount = totalQuantity * basePrice;
+                const basePrice_case = productInfo ? productInfo.price.case : 0;
+                const basePrice_piece = productInfo? productInfo.price.piece: 0;
+
+                const case_quantity = Number(todo.cases);
+                const piece_quantity = Number(todo.pieces);
+
+                const baseAmount = (case_quantity * basePrice_case) + (piece_quantity * basePrice_piece)
 
                 // Calculate deductions and additions
                 const totalDeductions = Number(todo.discount) + Number(todo.commission)
@@ -579,15 +597,6 @@
                 document.getElementById(id).addEventListener('input', updateAmount);
             });
 
-       // Initialize datalists
-        if (typeof driverListInfo !== 'undefined' && typeof lineListInfo !== 'undefined') {
-            const lineList = document.getElementById('buyer-line');
-
-            lineListInfo.forEach(line => {
-                lineList.innerHTML += `<option value="${line.line}">`;
-            })
-        }
-
 
         document.getElementById('buyer-user-name').addEventListener('input', function () {
             this.classList.remove('required-field');
@@ -606,6 +615,49 @@
 
 
         // Add expense row functionality
+        //     function addExpenseRow() {
+        //         const container = document.getElementById('expenses-container');
+        //         const newRow = document.createElement('div');
+        //         newRow.className = 'expense-row mb-2 position-relative';
+        //         newRow.innerHTML = `
+        //                     <div class="row g-2">
+        //                         <div class="col-8">
+        //                             <div class="form-outline mb-3">
+        //                                 <input type="text" list="expenseOptions"
+        //                                     class="form-control expense-description active">
+        //                                 <label class="form-label">Description</label>
+        //                                 <datalist id="expenseOptions">
+        //                                     <option value="Petrol">
+        //                                     <option value="Food">
+        //                                     <option value="Puncture">
+        //                                     <option value="Key">
+        //                                     <option value="Vehicle repair">
+        //                                 </datalist>
+        //                             </div>
+        //                         </div>
+        //                         <div class="col-3">
+        //                             <div class="form-outline mb-3">
+        //                                 <input type="number" class="form-control expense-amount" value="0">
+        //                                 <label class="form-label">Amount</label>
+        //                             </div>
+        //                         </div>
+        //                         <div class="col-1">
+        //                             <button class="btn btn-link text-danger p-0" onclick="removeExpenseRow(this)">
+        //                                 <i class="fas fa-times"></i>
+        //                             </button>
+        //                         </div>
+        //                     </div>
+        // `;
+
+        //         container.appendChild(newRow);
+
+        //         newRow.querySelectorAll('.form-outline').forEach((formOutline) => {
+        //             new mdb.Input(formOutline).init();
+        //         });
+        //         // // initializeFormLabels(); // Add this line
+        //     }
+
+
         function addExpenseRow() {
             const container = document.getElementById('expenses-container');
             const newRow = document.createElement('div');
@@ -614,16 +666,18 @@
                         <div class="row g-2">
                             <div class="col-8">
                                 <div class="form-outline mb-3">
-                                    <input type="text" list="expenseOptions"
-                                        class="form-control expense-description active">
+                                    <input type="text"
+                                    class="form-control expense-description active dropdown-toggle" data-mdb-dropdown-init aria-expanded="false" autocomplete="off" id="expenseOptions">
                                     <label class="form-label">Description</label>
-                                    <datalist id="expenseOptions">
-                                        <option value="Petrol">
-                                        <option value="Food">
-                                        <option value="Puncture">
-                                        <option value="Key">
-                                        <option value="Vehicle repair">
-                                    </datalist>
+
+
+                                    <ul class="dropdown-menu w-100" id="expenseDropdown" aria-labelledby="expenseOptions">
+                                        <li><a class="dropdown-item" href="#">Petrol</a></li>
+                                        <li><a class="dropdown-item" href="#">Food</a></li>
+                                        <li><a class="dropdown-item" href="#">Puncture</a></li>
+                                        <li><a class="dropdown-item" href="#">Key</a></li>
+                                        <li><a class="dropdown-item" href="#">Vehicle repair</a></li>
+                                    </ul>
                                 </div>
                             </div>
                             <div class="col-3">
@@ -641,16 +695,32 @@
     `;
 
             container.appendChild(newRow);
-            console.log(newRow)
-            newRow.querySelectorAll('.form-outline').forEach((formOutline) => {
-                console.log(formOutline);
-            });
 
             newRow.querySelectorAll('.form-outline').forEach((formOutline) => {
                 new mdb.Input(formOutline).init();
             });
-            // initializeFormLabels(); // Add this line
+            const dropdownInputs = newRow.querySelectorAll('.dropdown-toggle');
+            dropdownInputs.forEach(input => {
+                new mdb.Dropdown(input); // Initialize the dropdown for dynamically added inputs
+            });
+
+
+            // Add event listener for dropdown item click
+            const expenseOptionsMenu = newRow.querySelector('#expenseDropdown');
+            const expenseOptionInput = newRow.querySelector('#expenseOptions');
+
+            expenseOptionsMenu.addEventListener("click", (e) => {
+                if (e.target && e.target.matches('.dropdown-item')) {
+                    // Set input value to the clicked item's text content
+                    expenseOptionInput.value = e.target.textContent.trim();
+
+                    // Optionally, you can hide the dropdown after selection
+                    expenseOptionsMenu.classList.remove('show'); // Close the dropdown after selection
+                }
+            });
         }
+
+
 
         function removeExpenseRow(button) {
             if (document.querySelectorAll('.expense-row').length > 0) {
@@ -743,7 +813,7 @@
                 entries: billingEntries
             };
 
-            const isDevelopment = window.location.hostname === 'localhost'
+            const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === "127.0.0.1"
 
             const baseUrl = isDevelopment ? 'http://localhost:8000/' : 'https://nagaraj1.pythonanywhere.com/';
 
@@ -776,6 +846,74 @@
                     submitbtn.style.visibility = 'visible';
                 });
         }
+
+        function filterArea(query) {
+            return lineListInfo.filter(line => line.line.toLowerCase().includes(query.toLowerCase()));
+        }
+
+        // Handle user input and update dropdown
+        const lineName = document.getElementById('buyer-lineid');
+        const lineMenu = document.getElementById('lineDropdown');
+
+        // Render all items by default
+        function renderLineDropdown() {
+            lineMenu.innerHTML = '';  // Clear existing items
+            lineListInfo.forEach(line => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `<a class="dropdown-item" href="#">${line.line.toLowerCase()}</a>`;
+                lineMenu.appendChild(listItem);
+            });
+        }
+
+
+
+        // // Initial render of all items
+        // // renderAllItems();
+        lineName.addEventListener("click", () => {
+            renderLineDropdown();
+        })
+
+        lineName.addEventListener('input', function () {
+            const query = lineName.value.trim().toLowerCase();
+
+            if (query.length === 0) {
+                renderLineDropdown(); // Show all items if no input
+                return;
+            }
+
+            const matches = filterArea(query);
+            lineMenu.innerHTML = '';  // Clear the dropdown
+
+            matches.forEach(match => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `<a class="dropdown-item" href="#">${match.line}</a>`;
+                lineMenu.appendChild(listItem);
+            });
+        });
+
+        // Handle dropdown item selection
+        lineMenu.addEventListener('click', function (e) {
+            if (e.target && e.target.matches('.dropdown-item')) {
+                lineName.value = e.target.textContent.trim();
+                lineMenu.innerHTML = '';  // Close dropdown after selection
+
+                document.getElementById('buyer-lineid').dispatchEvent(new Event('input'));
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -813,7 +951,7 @@
             }
 
             const matches = filterDrivers(query);
-            console.log(matches )
+            console.log(matches)
             driverMenu.innerHTML = '';  // Clear the dropdown
 
             matches.forEach(match => {
@@ -942,6 +1080,7 @@
                 dropdownMenu.innerHTML = '';  // Close dropdown after selection
             }
         });
+
     </script>
 
 

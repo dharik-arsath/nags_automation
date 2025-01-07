@@ -576,7 +576,6 @@
         if (typeof driverListInfo !== 'undefined' && typeof lineListInfo !== 'undefined') {
             const buyerList = document.getElementById('buyer-list');
             const lineList = document.getElementById('buyer-line');
-            const productList = document.getElementById('product-title');
 
             driverListInfo.forEach(user => {
                 buyerList.innerHTML += `<option value="${user.name}">`;
@@ -585,10 +584,6 @@
             lineListInfo.forEach(line => {
                 lineList.innerHTML += `<option value="${line.line}">`;
             })
-
-            products.forEach(product => {
-                productList.innerHTML += `<option value="${product.name}">`;
-            });
         }
 
 

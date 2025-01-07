@@ -47,6 +47,7 @@ def update_google_sheet(data_dict: dict):
         "FOOD": "",
         "PUNCTURE":"",
         "KEY" : "",
+        "VEHICLE_REPAIR" : "",
         "TIME" : "time"
     }
     
@@ -57,21 +58,22 @@ def update_google_sheet(data_dict: dict):
     # Create a list of values in the same order as the sheet headers
     row_data = []
     expenses = None
+    expense_flag = False
     for header in headers:
         if header in COLUMN_MAPPING:
             key = COLUMN_MAPPING[header]
             value = data_dict.get(key, '')  # Use empty string if key doesn't exist
             if header == "TRANSACTION ID":
                 value = data_dict["_id"]
-            if header == "PETROL" or header == "FOOD" or header == "PUNCTURE" or header == "KEY":
+            if header == "PETROL" or header == "FOOD" or header == "PUNCTURE" or header == "KEY" or header == "VEHICLE_REPAIR":
                 if expenses is None:
                     expenses = parse_expense(data_dict)
                     if expenses is None:
                         value = ""
                     else:
-                        value = expenses.get(header.title(), "")
+                        value = expenses.get(header.title())
                 else:
-                    value = expenses.get(header.title(), "")
+                    value = expenses.get(header.title(), 0)
             
             row_data.append(value)
         else:

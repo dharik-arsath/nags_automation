@@ -41,6 +41,18 @@
 
 
                 <div class="form-outline mb-3">
+                    <input type="text" class="form-control active dropdown-toggle" id="buyer-lineid"
+                        data-mdb-dropdown-init aria-expanded="false" autocomplete="off">
+                    <label class="form-label">Area</label>
+
+                    <!-- Dropdown menu -->
+                    <ul class="dropdown-menu w-100" id="lineDropdown" aria-labelledby="buyer-lineid">
+                    </ul>
+                </div>
+
+
+
+                <div class="form-outline mb-3">
                     <input type="date" class="form-control" id="date">
                     <label class="form-label">Date of Issue</label>
                 </div>
@@ -79,24 +91,6 @@
                                 <ul class="dropdown-menu w-100" id="productDropdown" aria-labelledby="product-input">
                                 </ul>
                             </div>
-
-
-                            <!-- <div class="form-outline mb-3">
-                                <input list="buyer-line" class="form-control" id="buyer-lineid" autocomplete="off">
-                                <label class="form-label">Area</label>
-                                <datalist id="buyer-line"></datalist>
-                            </div> -->
-
-                            <div class="form-outline mb-3">
-                                <input type="text" class="form-control active dropdown-toggle" id="buyer-lineid"
-                                    data-mdb-dropdown-init aria-expanded="false" autocomplete="off">
-                                <label class="form-label">Area</label>
-
-                                <!-- Dropdown menu -->
-                                <ul class="dropdown-menu w-100" id="lineDropdown" aria-labelledby="buyer-lineid">
-                                </ul>
-                            </div>
-
 
                             <!-- Quantity Section -->
                             <div class="mb-3 p-2 bg-light rounded">
@@ -439,7 +433,7 @@
             const basePricePiece = productInfo ? productInfo.price.piece : 0;
 
             // const totalQuantity = Number(document.getElementById("editTodoCases").value) + Number(document.getElementById("editTodoPieces").value);
-            const totalQuantityCases  = Number(document.getElementById("editTodoCases").value) ;
+            const totalQuantityCases = Number(document.getElementById("editTodoCases").value) ;
             const totalQuantityPieces = Number(document.getElementById("editTodoPieces").value);
 
             const baseAmount = (basePriceCase * totalQuantityCases) + (basePricePiece * totalQuantityPieces);
@@ -457,8 +451,7 @@
                 amount: document.getElementById("editTodoAmount").value,
                 base_amount: baseAmount
             };
-            // saveTodo
-            if (formData.title && formData.line) {
+            if (formData.title) {
                 todos.push({ id: currentId++, ...formData });
                 updateList();
                 document.getElementById('todoForm').reset();
@@ -478,7 +471,7 @@
                 // Calculate base amount before any deductions
                 const productInfo = products.find(p => p.name === todo.title);
                 const basePrice_case = productInfo ? productInfo.price.case : 0;
-                const basePrice_piece = productInfo? productInfo.price.piece: 0;
+                const basePrice_piece = productInfo ? productInfo.price.piece : 0;
 
                 const case_quantity = Number(todo.cases);
                 const piece_quantity = Number(todo.pieces);
@@ -552,7 +545,7 @@
                             <small class="text-muted d-block mb-1">Additions:</small>
                             <div class="ms-3">
                                 <div class="d-flex justify-content-between text-success">
-                                    <span>Adhiga Varavu (${todo.kuraivu_pieces} pieces)</span>
+                                    <span>Kuraivu (${todo.kuraivu_pieces} pieces)</span>
                                     <span>+₹${totalAdditions.toFixed(2)}</span>
                                 </div>
                             </div>
@@ -672,11 +665,11 @@
 
 
                                     <ul class="dropdown-menu w-100" id="expenseDropdown" aria-labelledby="expenseOptions">
-                                        <li><a class="dropdown-item" href="#">Petrol</a></li>
-                                        <li><a class="dropdown-item" href="#">Food</a></li>
-                                        <li><a class="dropdown-item" href="#">Puncture</a></li>
-                                        <li><a class="dropdown-item" href="#">Key</a></li>
-                                        <li><a class="dropdown-item" href="#">Vehicle repair</a></li>
+                                        <li><a class="dropdown-item" >Petrol</a></li>
+                                        <li><a class="dropdown-item" >Food</a></li>
+                                        <li><a class="dropdown-item" >Puncture</a></li>
+                                        <li><a class="dropdown-item" >Key</a></li>
+                                        <li><a class="dropdown-item" >Vehicle_Repair</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -801,6 +794,7 @@
                 adhiga_varavu_pieces: Number(todo.adhigaVaravu_pieces),
                 base_amount: Number(todo.base_amount),
                 final_amount: Number(todo.amount),
+                // final_amount: Number(todo.amount),
                 // diesel: Number(diesel),
                 // vehicle_damage: Number(vehicleDamage),
                 // other_expense: Number(otherExpenseAmount),

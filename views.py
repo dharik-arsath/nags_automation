@@ -111,15 +111,14 @@ def format_msg(data):
         commission += item["commission"]
         final_amount += item["final_amount"]
 
-    # Process expenses
-    for item in data:
-        for expense in item["expenses"]:
-            description = expense["description"]
-            amount = expense["amount"]
-            if description in expenses:
-                expenses[description] += amount
-            else:
-                expenses[description] = amount
+
+    for expense in item["expenses"]:
+        description = expense["description"]
+        amount = expense["amount"]
+        if description in expenses:
+            expenses[description] += amount
+        else:
+            expenses[description] = amount
 
     # Create summary rows
     summary_rows = [
@@ -200,13 +199,13 @@ def update_sheet():
     for data in data_json:
         sheet_info = SheetInfo(**data)
         sheet_info_dict = sheet_info.model_dump()
-        # sheet_info_dict["expenses"] = str( sheet_info_dict["expenses"] )
         sheet_info_dict["_id"] = id 
         resp = update_google_sheet(sheet_info_dict)
         all_resp.append(resp)
 
     try:
-        update_on_telegram(all_resp) 
+        # update_on_telegram(all_resp) 
+        pass
     except Exception as e:
         logger.error(e)
 

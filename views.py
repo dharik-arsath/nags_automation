@@ -204,8 +204,7 @@ def update_sheet():
         all_resp.append(resp)
 
     try:
-        # update_on_telegram(all_resp) 
-        pass
+        update_on_telegram(all_resp) 
     except Exception as e:
         logger.error(e)
 

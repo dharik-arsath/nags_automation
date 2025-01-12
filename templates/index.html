@@ -597,17 +597,47 @@
             });
 
 
-        document.getElementById('buyer-user-name').addEventListener('input', function () {
+        // document.getElementById('buyer-user-name').addEventListener('input', function () {
+        //     this.classList.remove('required-field');
+        //     const name = document.getElementById('buyer-user-name').value
+        //     console.log(name)
+        //     if (!name) {
+        //         document.getElementById("product_add").style.visibility = "hidden";
+        //     }
+        //     if (name.length > 0) {
+        //         document.getElementById("product_add").style.visibility = "visible";
+        //     }
+        // });
+
+        document.getElementById('buyer-user-name').addEventListener("input", validateFields);
+        document.getElementById("buyer-lineid").addEventListener("input", validateFields);
+
+        function validateFields() {
+            // Get values from both fields
+            const driverName = document.getElementById('buyer-user-name').value.trim();
+            const area = document.getElementById('buyer-lineid').value.trim();
+
+            // Remove required field styling when user starts typing
             this.classList.remove('required-field');
-            const name = document.getElementById('buyer-user-name').value
-            console.log(name)
-            if (!name) {
-                document.getElementById("product_add").style.visibility = "hidden";
+
+            // Get the product add button
+            const productAddButton = document.getElementById("product_add");
+
+            // Check if both fields have values
+            if (driverName && area) {
+                productAddButton.style.visibility = "visible";
+            } else {
+                productAddButton.style.visibility = "hidden";
             }
-            if (name.length > 0) {
-                document.getElementById("product_add").style.visibility = "visible";
+
+            // Optional: Add visual feedback for empty fields
+            if (!driverName) {
+                document.getElementById('buyer-user-name').classList.add('required-field');
             }
-        });
+            if (!area) {
+                document.getElementById('buyer-lineid').classList.add('required-field');
+            }
+        }
 
 
 

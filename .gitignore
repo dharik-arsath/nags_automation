@@ -5,3 +5,4 @@ thankyou*.html
 .vscode/settings.json
 static/js/data.js
 loguru.log
+*pyc*

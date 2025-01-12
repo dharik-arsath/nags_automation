@@ -1,43 +1,54 @@
-from flask import Flask, Request, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response
 from flask import render_template
-from sheet import update_google_sheet
-from pydantic import BaseModel, Field
-from datetime import datetime
+# from sheet import update_google_sheet
+from pydantic import BaseModel
 from flask_cors import CORS
 from flask import abort
 import json
-from notify_telegram import send_photo, send_message
+from notify_telegram import send_message
 import asyncio
 from loguru import logger
-from utils import parse_expense, generate_id
+from utils import generate_id
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 from tabulate import tabulate
-from uuid import uuid4
-from tabulate import tabulate
+from sheets.sheet import ProductSheetHandler
+from sheets.sheet_dto import ValidateSheetInfo, ValidateExpenseInfo
+from sheets.expense_sheet import ExpenseSheetHandler
+from sheets.sheet_helper import authenticate
 
-
-from tabulate import tabulate
-
+gc = authenticate()
 
 # def format_msg(data):
 #     # Initialize variables
 #     total_amount = 0
 #     discount = 0
 #     commission = 0
+#     final_amount = 0
 #     expenses = {}
+
+#     # Get driver name, line, and date
+#     driver_name = data[0]['driver_name']
+#     line = data[0]['line']
+#     date = data[0]['date']
 
 #     # Create table rows
 #     table_rows = []
+#     additional_amount = 0
 #     for item in data:
 #         product_name = f"{item['product_name']}"
-#         table_rows.append(["ADD", product_name, item["final_amount"]])
-#         total_amount += item["final_amount"]
+#         table_rows.append(["ADD", product_name, item["base_amount"]])
+#         print("*" * 20)
+#         if item.get("kuraivu_amount") is not None and item.get("kuraivu_amount") > 0:
+#             table_rows.append(["ADD", "kuraivu", item["kuraivu_amount"]])
+#             additional_amount += item["kuraivu_amount"]
+#         total_amount += item["base_amount"] + additional_amount
 #         discount += item["discount"]
 #         commission += item["commission"]
+#         final_amount += item["final_amount"]
+#         additional_amount = 0
 
-#     # Process expenses
+
 #     for expense in item["expenses"]:
 #         description = expense["description"]
 #         amount = expense["amount"]
@@ -50,9 +61,8 @@ from tabulate import tabulate
 #     summary_rows = [
 #         ["", "Total", total_amount],
 #         ["SUB", "DISCOUNT", discount],
-#         ["", "TOTAL", total_amount - discount],
 #         ["SUB", "COMMISSION", commission],
-#         ["", "TOTAL", round(total_amount - discount - commission, 4)],
+#         ["", "TOTAL", round(final_amount - additional_amount, 4)],
 #     ]
 
 #     # Create expense rows
@@ -64,25 +74,24 @@ from tabulate import tabulate
 #     expense_rows.append(["", "TOTAL EXPENSES", total_expenses])
 
 #     # Create final total row
-#     final_total = round(total_amount - discount - commission - total_expenses, 4)
+#     final_total = round(final_amount  - total_expenses, 4)
+#     # final_total = round(final_amount, 4)
 #     final_total_row = ["", "FINAL TOTAL", final_total]
 
 #     # Generate table
+#     header = f"**Driver Name:** {driver_name}\n**Line:** {line}\n**Date:** {date}\n\n"
 #     table = tabulate(
 #         table_rows + summary_rows + expense_rows + [final_total_row],
 #         headers=["", "Product", "Amount"],
 #         tablefmt="grid",
 #         maxcolwidths=[None, 10, None],
 #     )
-#     telegram_message = f"<pre>{table}</pre>"
+#     telegram_message = f"<pre>{header}{table}</pre>"
 
 #     return telegram_message
 
 
 
-
-from tabulate import tabulate
-from datetime import datetime
 
 def format_msg(data):
     # Initialize variables
@@ -91,41 +100,36 @@ def format_msg(data):
     commission = 0
     final_amount = 0
     expenses = {}
-
+    entries = data["entries"]
+    expenses = data["expenses"]
+    
     # Get driver name, line, and date
-    driver_name = data[0]['driver_name']
-    line = data[0]['line']
-    date = data[0]['date']
+    driver_name = entries[0]['driver_name']
+    line = entries[0]['line']
+    date = entries[0]['date']
 
     # Create table rows
     table_rows = []
-    for item in data:
+    additional_amount = 0
+    for item in entries:
         product_name = f"{item['product_name']}"
         table_rows.append(["ADD", product_name, item["base_amount"]])
         print("*" * 20)
-        print(f'{item.get("adhiga_varavu_pieces")}')
-        # if item.get("adhiga_varavu_pieces") is not None and item.get("adhiga_varavu_pieces") > 0:
-        #     table_rows.append(["ADD", "adhuga_varavu", item["adhiga_varavu_pieces"]])
-        total_amount += item["base_amount"]
+        if item.get("kuraivu_amount") is not None and item.get("kuraivu_amount") > 0:
+            table_rows.append(["ADD", "kuraivu", item["kuraivu_amount"]])
+            additional_amount += item["kuraivu_amount"]
+        total_amount += item["base_amount"] + additional_amount
         discount += item["discount"]
         commission += item["commission"]
         final_amount += item["final_amount"]
-
-
-    for expense in item["expenses"]:
-        description = expense["description"]
-        amount = expense["amount"]
-        if description in expenses:
-            expenses[description] += amount
-        else:
-            expenses[description] = amount
+        additional_amount = 0
 
     # Create summary rows
     summary_rows = [
         ["", "Total", total_amount],
         ["SUB", "DISCOUNT", discount],
         ["SUB", "COMMISSION", commission],
-        ["", "TOTAL", round(final_amount, 4)],
+        ["", "TOTAL", round(final_amount - additional_amount, 4)],
     ]
 
     # Create expense rows
@@ -137,7 +141,7 @@ def format_msg(data):
     expense_rows.append(["", "TOTAL EXPENSES", total_expenses])
 
     # Create final total row
-    final_total = round(total_amount - discount - commission - total_expenses, 4)
+    final_total = round(final_amount  - total_expenses, 4)
     # final_total = round(final_amount, 4)
     final_total_row = ["", "FINAL TOTAL", final_total]
 
@@ -153,28 +157,6 @@ def format_msg(data):
 
     return telegram_message
 
-
-# data = [{"date": "2025-01-02","time":datetime.now().strftime("%H:%M:%S"), "driver_name": "Avudai amman agency", "line": "Karia patti", "product_name": "Mango 200ml PET", "base_amount": 200.0, "final_amount": 180.0, "discount": 0.0, "commission": 20.0, "kuraivu_cases": 0, "kuraivu_pieces": 0, "adhiga_varavu_cases": 0, "adhiga_varavu_pieces": 0, "expenses": [{"description": "Petrol", "amount": 0}, {"description": "Food", "amount": 0}], "total_expense": 0}, {"date": "2025-01-02", "driver_name": "Avudai amman agency", "line": "Kilavalavu", "product_name": "200ml color", "base_amount": 400.0, "final_amount": 350.0, "discount": 0.0, "commission": 50.0, "kuraivu_cases": 0, "kuraivu_pieces": 0, "adhiga_varavu_cases": 0, "adhiga_varavu_pieces": 0, "expenses": [{"description": "Petrol", "amount": 0}, {"description": "Food", "amount": 0}], "total_expense": 0}]
-
-# print(format_msg(data) )
-# asyncio.run(send_message(format_msg(data)))
-
-
-class SheetInfo(BaseModel):
-    date: str
-    time: str 
-    driver_name: str
-    line: str
-    product_name: str 
-    base_amount: float
-    final_amount: float
-    discount: float
-    commission: float
-    kuraivu_cases: int
-    kuraivu_pieces: int
-    adhiga_varavu_cases: int
-    adhiga_varavu_pieces: int 
-    expenses: list[ dict[str, object] ]
 
 
 app = Flask(__name__)
@@ -193,22 +175,28 @@ def update_sheet():
     if request_data is None:
         raise abort(400)
 
-    data_json: list[dict[str, object]] = json.loads(request_data)["entries"]
-    all_resp = []
-    id = generate_id()
-    for data in data_json:
-        sheet_info = SheetInfo(**data)
-        sheet_info_dict = sheet_info.model_dump()
-        sheet_info_dict["_id"] = id 
-        resp = update_google_sheet(sheet_info_dict)
-        all_resp.append(resp)
+    data_json: list[dict[str, object]] = json.loads(request_data)
+    print(data_json)
+    transaction_id        = generate_id()
+
+    expense_sheet_info    = ValidateExpenseInfo(transaction_id=transaction_id, expenses=data_json["expenses"])
+    expense_sheet_info    = ExpenseSheetHandler(gc, expense_sheet_info)
+    expense_sheet_info.add_expense_row()
+    total_expense         = expense_sheet_info.total_expense
+
+    
+    product_sheet_info    = ValidateSheetInfo(transaction_id=transaction_id, entries=data_json["entries"], total_expense=total_expense)
+    product_sheet_handler = ProductSheetHandler(gc, product_sheet_info)
+    product_sheet_handler.add_product_row()
+    data_json["total_expense"] = total_expense
 
     try:
-        update_on_telegram(all_resp) 
+        update_on_telegram(data_json) 
     except Exception as e:
         logger.error(e)
 
     return jsonify({"status":True})
+
 
 
 def update_on_telegram(sheet_info: list):

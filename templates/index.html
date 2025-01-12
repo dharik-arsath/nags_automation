@@ -338,7 +338,7 @@
             totalAmount -= discount;
             totalAmount -= commission;
 
-            totalAmount += (kuraivu * selectedProduct.price.piece);
+            totalAmount += (kuraivu * selectedProduct.kuraivu);
 
             document.getElementById('editTodoAmount').value = totalAmount.toFixed(2);
         }
@@ -375,7 +375,7 @@
                 // Calculate deductions
                 totalDiscounts += Number(todo.discount) || 0;
                 totalCommissions += Number(todo.commission) || 0;
-                totalKuraivu += (Number(todo.kuraivu_pieces) * (productInfo ? productInfo.price.piece : 0)) || 0;
+                totalKuraivu += (Number(todo.kuraivu_pieces) * (productInfo ? productInfo.kuraivu : 0)) || 0;
             });
 
             // Add constant expenses
@@ -433,10 +433,15 @@
             const basePricePiece = productInfo ? productInfo.price.piece : 0;
 
             // const totalQuantity = Number(document.getElementById("editTodoCases").value) + Number(document.getElementById("editTodoPieces").value);
-            const totalQuantityCases = Number(document.getElementById("editTodoCases").value) ;
+            const totalQuantityCases = Number(document.getElementById("editTodoCases").value);
             const totalQuantityPieces = Number(document.getElementById("editTodoPieces").value);
 
             const baseAmount = (basePriceCase * totalQuantityCases) + (basePricePiece * totalQuantityPieces);
+
+
+            // const kuraivuAmount = document.getElementById("editTodoKuraivuPieces").value * productInfo.price.piece;
+            const kuraivuAmount = document.getElementById("editTodoKuraivuPieces").value * productInfo.kuraivu;
+
             const formData = {
                 title: document.getElementById('product-input').value,
                 line: document.getElementById('buyer-lineid').value,
@@ -446,6 +451,7 @@
                 commission: document.getElementById("editTodoCommission").value,
                 kuraivu_pieces: document.getElementById("editTodoKuraivuPieces").value,
                 kuraivu_cases: document.getElementById("editTodoKuraivuCases").value,
+                kuraivu_amount: kuraivuAmount,
                 adhigaVaravu_cases: document.getElementById("editTodoAdhigaVaravuCases").value,
                 adhigaVaravu_pieces: document.getElementById("editTodoAdhigaVaravuPieces").value,
                 amount: document.getElementById("editTodoAmount").value,
@@ -480,7 +486,7 @@
 
                 // Calculate deductions and additions
                 const totalDeductions = Number(todo.discount) + Number(todo.commission)
-                const totalAdditions = Number(todo.kuraivu_pieces) * (productInfo ? productInfo.price.piece : 0);
+                const totalAdditions = Number(todo.kuraivu_pieces) * (productInfo ? productInfo.kuraivu : 0);
 
                 return `
         <div class="card mb-3">
@@ -759,18 +765,15 @@
             // const otherExpenseDescription = document.getElementById("otherExpenses").value;
 
 
-            const expenses = [];
+            const expenses = {};
             document.querySelectorAll('.expense-row').forEach(row => {
                 const description = row.querySelector('.expense-description').value;
                 const amount = parseFloat(row.querySelector('.expense-amount').value) || 0;
                 if (description || amount > 0) {
-                    expenses.push({
-                        description: description,
-                        amount: amount
-                    });
+                    expenses[description] = amount;
                 }
             });
-
+            console.log(expenses)
 
 
 
@@ -790,6 +793,7 @@
                 commission: Number(todo.commission),
                 kuraivu_cases: Number(todo.kuraivu_cases),
                 kuraivu_pieces: Number(todo.kuraivu_pieces),
+                kuraivu_amount: Number(todo.kuraivu_amount),
                 adhiga_varavu_cases: Number(todo.adhigaVaravu_cases),
                 adhiga_varavu_pieces: Number(todo.adhigaVaravu_pieces),
                 base_amount: Number(todo.base_amount),
@@ -799,12 +803,12 @@
                 // vehicle_damage: Number(vehicleDamage),
                 // other_expense: Number(otherExpenseAmount),
                 // other_expense_description: otherExpenseDescription
-                expenses: expenses
             }));
 
             // Prepare final payload
             const payload = {
-                entries: billingEntries
+                entries: billingEntries,
+                expenses: expenses
             };
 
             const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === "127.0.0.1"

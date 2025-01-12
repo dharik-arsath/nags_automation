@@ -14,7 +14,19 @@ spreadsheet = gc.open("nags_automation")
 report_sheet = spreadsheet.worksheet("Sheet2")
 
 
-def update_google_sheet(data_dict: dict):
+def get_avg_expense(data_dict, total_products):
+    total_expense = 0
+    expenses: list[dict] = data_dict["expenses"]
+    total_count_products = total_products
+    for expense in expenses:
+        for k,v in expense.items():
+            if k == "amount":
+                total_expense += v 
+        
+    return (total_expense / total_count_products)
+
+
+def update_google_sheet(data_dict: dict, total_products:int):
     """
     Update Google Sheet using column mapping for resilient data insertion
     
@@ -40,6 +52,7 @@ def update_google_sheet(data_dict: dict):
         'COMMISSION': 'commission',
         'KURAIVU_CASES': 'kuraivu_cases',
         'KURAIVU_PIECES': 'kuraivu_pieces',
+        "KURAIVU_AMOUNT" : "kSheet2uraivu_amount",
         "ADHIGA_VARAVU_CASES" : "adhiga_varavu_cases" ,
         "ADHIGA_VARAVU_PIECES": "adhiga_varavu_pieces",
         # "EXPENSES" : "expenses",
@@ -48,7 +61,7 @@ def update_google_sheet(data_dict: dict):
         "PUNCTURE":"",
         "KEY" : "",
         "VEHICLE_REPAIR" : "",
-        "TIME" : "time"
+        "TIME" : "time",
     }
     
     # Get all column headers from the sheet
@@ -58,13 +71,20 @@ def update_google_sheet(data_dict: dict):
     # Create a list of values in the same order as the sheet headers
     row_data = []
     expenses = None
-    expense_flag = False
     for header in headers:
         if header in COLUMN_MAPPING:
             key = COLUMN_MAPPING[header]
             value = data_dict.get(key, '')  # Use empty string if key doesn't exist
             if header == "TRANSACTION ID":
                 value = data_dict["_id"]
+            
+            # if header == "TOTAL_EXPENSE":
+            #     value = get_avg_expense(data_dict, total_products)
+            
+            # if header == "FINAL_AMOUNT":
+            #     avg_expense = get_avg_expense(data_dict, total_products)
+            #     value -= avg_expense
+
             if header == "PETROL" or header == "FOOD" or header == "PUNCTURE" or header == "KEY" or header == "VEHICLE_REPAIR":
                 if expenses is None:
                     expenses = parse_expense(data_dict)
@@ -84,21 +104,21 @@ def update_google_sheet(data_dict: dict):
             row_data.append('')
     
 
-    total_expense = 0
+    # total_expense = 0
 
-    expenses: list[dict] = data_dict["expenses"]
-    for expense in expenses:
-        print(expense)
-        for k,v in expense.items():
-            if k == "amount":
-                total_expense += v
+    # expenses: list[dict] = data_dict["expenses"]
+    # for expense in expenses:
+    #     print(expense)
+    #     for k,v in expense.items():
+    #         if k == "amount":
+    #             total_expense += v
         
-    row_data.append(total_expense)
+    # row_data.append(total_expense)
 
 
     # Append the row to the sheet
     report_sheet.append_row(row_data)
-    data_dict["total_expense"] = total_expense
+    # data_dict["total_expense"] = get_avg_expense(data_dict,total_products)
     return data_dict
 
 

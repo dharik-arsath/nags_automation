@@ -1,5 +1,7 @@
-from sheets.sheet_helper import authenticate,get_workbook, get_sheet, generate_transactional_id
+from sheets.sheet_helper import authenticate,get_workbook, get_sheet
 from sheets.sheet_dto import ValidateSheetInfo
+from tenacity import retry,wait_exponential
+
 
 
 
@@ -20,6 +22,7 @@ data_dict = {
 
 
 COLUMN_MAPPING = {
+    "ORDER ID" : "",
     "TRANSACTION ID" : "",
     'DATE': 'date',
     'DRIVER NAME': 'driver_name',
@@ -75,8 +78,11 @@ class ProductSheetHandler:
                 else:
                     value   = ""
 
-                if header == "TRANSACTION ID":
+                # if header == "TRANSACTION ID":
+                #     value = self.sheet_info.transaction_id
+                if header == "ORDER ID":
                     value = self.sheet_info.transaction_id
+
                 if header == "FINAL_AMOUNT":
                     self.final_amount += value 
 
@@ -99,6 +105,7 @@ class ProductSheetHandler:
         
         return row_data
     
+    @retry(wait=wait_exponential(multiplier=1, min=4, max=10), reraise=True)
     def add_product_row(self):
         rows = self.parse_product_entries()
         return self.sheet.append_rows(rows)

@@ -1,4 +1,3 @@
-import asyncio
 from telegram import Bot 
 from tenacity import retry,wait_exponential
 from loguru import logger
@@ -6,7 +5,6 @@ from telegram.request import HTTPXRequest
 
 from dotenv import load_dotenv
 
-import telegram
 
 
 import os 

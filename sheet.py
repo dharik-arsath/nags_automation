@@ -1,6 +1,5 @@
 import gspread
-from datetime import datetime
-from utils import parse_expense,generate_id
+from utils import parse_expense
 
 
 #dep id = AKfycbxEoJW56-68jritKZlByqAviO3AZabfNdgHBVoJeqEQaO9wB0k2evGMuknKcv3uGYuILw

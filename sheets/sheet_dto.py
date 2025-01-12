@@ -19,11 +19,11 @@ class SheetInfo(BaseModel):
 
 
 class ValidateSheetInfo(BaseModel):
-    transaction_id  : str 
+    transaction_id  : int
     total_expense   : float 
 
     entries         : Sequence[SheetInfo]
 
 class ValidateExpenseInfo(BaseModel):
-    transaction_id  : str 
+    transaction_id  : int
     expenses        : Optional[dict[str, float]] = Field(default=None)

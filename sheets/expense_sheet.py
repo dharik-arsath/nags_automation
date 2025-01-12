@@ -1,9 +1,11 @@
 from sheets.sheet_helper import get_workbook, get_sheet
 from sheets.sheet_dto import ValidateExpenseInfo
+from tenacity import retry,wait_exponential
 
 
 
 COLUMN_MAPPING = {
+    "ORDER ID" : "",
     "TRANSACTION ID": "",
     "PETROL": "Petrol",
     "FOOD": "Food",
@@ -34,7 +36,6 @@ class ExpenseSheetHandler:
     def compute_expense(self):
         headers = self.sheet.row_values(1)
         row_data = []
-        total_expense = 0
         for header in headers:
             if header not in COLUMN_MAPPING:
                 row_data.append("")
@@ -49,9 +50,10 @@ class ExpenseSheetHandler:
                 value   = ""
 
             
-            if header == "TRANSACTION ID":
+            # if header == "TRANSACTION ID":
+            #     value = self.expense_info.transaction_id
+            if header == "ORDER ID":
                 value = self.expense_info.transaction_id
-            
 
             row_data.append(value)
         
@@ -64,6 +66,7 @@ class ExpenseSheetHandler:
         
         return row_data
     
+    @retry(wait=wait_exponential(multiplier=1, min=4, max=10), reraise=True)
     def add_expense_row(self):
         row = self.compute_expense()
         return self.sheet.append_row(row)

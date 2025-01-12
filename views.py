@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify, make_response
 from flask import render_template
 # from sheet import update_google_sheet
-from pydantic import BaseModel
 from flask_cors import CORS
 from flask import abort
 import json
@@ -15,82 +14,9 @@ from tabulate import tabulate
 from sheets.sheet import ProductSheetHandler
 from sheets.sheet_dto import ValidateSheetInfo, ValidateExpenseInfo
 from sheets.expense_sheet import ExpenseSheetHandler
-from sheets.sheet_helper import authenticate
+from sheets.sheet_helper import authenticate, get_numeric_id_from_main_sheet
 
 gc = authenticate()
-
-# def format_msg(data):
-#     # Initialize variables
-#     total_amount = 0
-#     discount = 0
-#     commission = 0
-#     final_amount = 0
-#     expenses = {}
-
-#     # Get driver name, line, and date
-#     driver_name = data[0]['driver_name']
-#     line = data[0]['line']
-#     date = data[0]['date']
-
-#     # Create table rows
-#     table_rows = []
-#     additional_amount = 0
-#     for item in data:
-#         product_name = f"{item['product_name']}"
-#         table_rows.append(["ADD", product_name, item["base_amount"]])
-#         print("*" * 20)
-#         if item.get("kuraivu_amount") is not None and item.get("kuraivu_amount") > 0:
-#             table_rows.append(["ADD", "kuraivu", item["kuraivu_amount"]])
-#             additional_amount += item["kuraivu_amount"]
-#         total_amount += item["base_amount"] + additional_amount
-#         discount += item["discount"]
-#         commission += item["commission"]
-#         final_amount += item["final_amount"]
-#         additional_amount = 0
-
-
-#     for expense in item["expenses"]:
-#         description = expense["description"]
-#         amount = expense["amount"]
-#         if description in expenses:
-#             expenses[description] += amount
-#         else:
-#             expenses[description] = amount
-
-#     # Create summary rows
-#     summary_rows = [
-#         ["", "Total", total_amount],
-#         ["SUB", "DISCOUNT", discount],
-#         ["SUB", "COMMISSION", commission],
-#         ["", "TOTAL", round(final_amount - additional_amount, 4)],
-#     ]
-
-#     # Create expense rows
-#     expense_rows = []
-#     total_expenses = 0
-#     for description, amount in expenses.items():
-#         expense_rows.append(["SUB", description, amount])
-#         total_expenses += amount
-#     expense_rows.append(["", "TOTAL EXPENSES", total_expenses])
-
-#     # Create final total row
-#     final_total = round(final_amount  - total_expenses, 4)
-#     # final_total = round(final_amount, 4)
-#     final_total_row = ["", "FINAL TOTAL", final_total]
-
-#     # Generate table
-#     header = f"**Driver Name:** {driver_name}\n**Line:** {line}\n**Date:** {date}\n\n"
-#     table = tabulate(
-#         table_rows + summary_rows + expense_rows + [final_total_row],
-#         headers=["", "Product", "Amount"],
-#         tablefmt="grid",
-#         maxcolwidths=[None, 10, None],
-#     )
-#     telegram_message = f"<pre>{header}{table}</pre>"
-
-#     return telegram_message
-
-
 
 
 def format_msg(data):
@@ -176,18 +102,20 @@ def update_sheet():
         raise abort(400)
 
     data_json: list[dict[str, object]] = json.loads(request_data)
-    print(data_json)
-    transaction_id        = generate_id()
+    # transaction_id        = generate_id()
+    order_id              = get_numeric_id_from_main_sheet(gc)
 
-    expense_sheet_info    = ValidateExpenseInfo(transaction_id=transaction_id, expenses=data_json["expenses"])
+    expense_sheet_info    = ValidateExpenseInfo(transaction_id=order_id, expenses=data_json["expenses"])
     expense_sheet_info    = ExpenseSheetHandler(gc, expense_sheet_info)
     expense_sheet_info.add_expense_row()
     total_expense         = expense_sheet_info.total_expense
 
     
-    product_sheet_info    = ValidateSheetInfo(transaction_id=transaction_id, entries=data_json["entries"], total_expense=total_expense)
+    product_sheet_info    = ValidateSheetInfo(transaction_id=order_id, entries=data_json["entries"], total_expense=total_expense)
     product_sheet_handler = ProductSheetHandler(gc, product_sheet_info)
     product_sheet_handler.add_product_row()
+
+
     data_json["total_expense"] = total_expense
 
     try:
@@ -200,14 +128,16 @@ def update_sheet():
 
 
 def update_on_telegram(sheet_info: list):
-    data = format_msg(sheet_info)
-    
-    resp = asyncio.run(send_message(data))
-    logger.info(f"update performed on telegram: {resp}")
+    try:
+        data = format_msg(sheet_info)
+        resp = asyncio.run(send_message(data))
+        logger.info(f"update performed on telegram: {resp}")
+
+    except Exception as e:
+        logger.error(f"Error updating on telegram: {e}")
+
 
     return 
-
-
 @app.route('/thankyou')
 def thank_you():
     return render_template('thankyou.html')

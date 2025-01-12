@@ -67,6 +67,5 @@ class ExpenseSheetHandler:
         return row_data
     
     @retry(wait=wait_exponential(multiplier=1, min=4, max=10), reraise=True)
-    def add_expense_row(self):
-        row = self.compute_expense()
+    def add_expense_row(self, row: list):
         return self.sheet.append_row(row)

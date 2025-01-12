@@ -32,6 +32,8 @@ COLUMN_MAPPING = {
     'FINAL_AMOUNT': 'final_amount',
     'DISCOUNT': 'discount',
     'COMMISSION': 'commission',
+    "CASE_QUANTITY" : "cases",
+    "PIECE_QUANTITY": "pieces",
     'KURAIVU_CASES': 'kuraivu_cases',
     'KURAIVU_PIECES': 'kuraivu_pieces',
     "KURAIVU_AMOUNT" : "kuraivu_amount",
@@ -78,8 +80,6 @@ class ProductSheetHandler:
                 else:
                     value   = ""
 
-                # if header == "TRANSACTION ID":
-                #     value = self.sheet_info.transaction_id
                 if header == "ORDER ID":
                     value = self.sheet_info.transaction_id
 
@@ -106,8 +106,7 @@ class ProductSheetHandler:
         return row_data
     
     @retry(wait=wait_exponential(multiplier=1, min=4, max=10), reraise=True)
-    def add_product_row(self):
-        rows = self.parse_product_entries()
+    def add_product_row(self, rows: list):
         return self.sheet.append_rows(rows)
         
 

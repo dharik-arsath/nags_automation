@@ -98,14 +98,14 @@
                                 <div class="row g-2">
                                     <div class="col-6">
                                         <div class="form-outline">
-                                            <input type="number" class="form-control" id="editTodoCases" value="0"
+                                            <input type="number" class="form-control active" id="editTodoCases"
                                                 min="0">
                                             <label class="form-label">Cases</label>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-outline">
-                                            <input type="number" class="form-control" id="editTodoPieces" value="0"
+                                            <input type="number" class="form-control active" id="editTodoPieces"
                                                 min="0">
                                             <label class="form-label">Pieces</label>
                                         </div>
@@ -140,15 +140,15 @@
                                 <div class="row g-2">
                                     <div class="col-6">
                                         <div class="form-outline mb-3">
-                                            <input type="number" class="form-control" id="editTodoKuraivuCases"
-                                                value="0" min="0">
+                                            <input type="number" class="form-control active" id="editTodoKuraivuCases"
+                                                min="0">
                                             <label class="form-label">Kuraivu(in cases)</label>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-outline">
-                                            <input type="number" class="form-control" id="editTodoKuraivuPieces"
-                                                value="0" min="0">
+                                            <input type="number" class="form-control active" id="editTodoKuraivuPieces"
+                                                min="0">
                                             <label class="form-label">Kuraivu(in pieces)</label>
                                         </div>
                                     </div>
@@ -156,15 +156,15 @@
                                 <div class="row g-2">
                                     <div class="col-6">
                                         <div class="form-outline mb-3">
-                                            <input type="number" class="form-control" id="editTodoAdhigaVaravuCases"
-                                                value="0" min="0">
+                                            <input type="number" class="form-control active" id="editTodoAdhigaVaravuCases"
+                                                min="0">
                                             <label class="form-label">Adhiga Varavu(in cases)</label>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-outline">
-                                            <input type="number" class="form-control" id="editTodoAdhigaVaravuPieces"
-                                                value="0" min="0">
+                                            <input type="number" class="form-control active" id="editTodoAdhigaVaravuPieces"
+                                                min="0">
                                             <label class="form-label">Adhiga Varavu(in pieces)</label>
                                         </div>
                                     </div>
@@ -445,15 +445,15 @@
             const formData = {
                 title: document.getElementById('product-input').value,
                 line: document.getElementById('buyer-lineid').value,
-                cases: document.getElementById("editTodoCases").value,
-                pieces: document.getElementById("editTodoPieces").value,
-                discount: document.getElementById("editTodoDiscount").value,
+                cases: document.getElementById("editTodoCases").value || 0,
+                pieces: document.getElementById("editTodoPieces").value || 0,
+                discount: document.getElementById("editTodoDiscount").value ,
                 commission: document.getElementById("editTodoCommission").value,
-                kuraivu_pieces: document.getElementById("editTodoKuraivuPieces").value,
-                kuraivu_cases: document.getElementById("editTodoKuraivuCases").value,
+                kuraivu_pieces: document.getElementById("editTodoKuraivuPieces").value || 0,
+                kuraivu_cases: document.getElementById("editTodoKuraivuCases").value || 0,
                 kuraivu_amount: kuraivuAmount,
-                adhigaVaravu_cases: document.getElementById("editTodoAdhigaVaravuCases").value,
-                adhigaVaravu_pieces: document.getElementById("editTodoAdhigaVaravuPieces").value,
+                adhigaVaravu_cases: document.getElementById("editTodoAdhigaVaravuCases").value || 0,
+                adhigaVaravu_pieces: document.getElementById("editTodoAdhigaVaravuPieces").value || 0,
                 amount: document.getElementById("editTodoAmount").value,
                 base_amount: baseAmount
             };
@@ -711,7 +711,7 @@
                             </div>
                             <div class="col-3">
                                 <div class="form-outline mb-3">
-                                    <input type="number" class="form-control expense-amount" value="0">
+                                    <input type="number" class="form-control expense-amount">
                                     <label class="form-label">Amount</label>
                                 </div>
                             </div>

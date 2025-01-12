@@ -15,9 +15,11 @@ from sheets.sheet import ProductSheetHandler
 from sheets.sheet_dto import ValidateSheetInfo, ValidateExpenseInfo
 from sheets.expense_sheet import ExpenseSheetHandler
 from sheets.sheet_helper import authenticate, get_numeric_id_from_main_sheet
+import concurrent.futures
+from functools import lru_cache
+
 
 gc = authenticate()
-
 
 def format_msg(data):
     # Initialize variables
@@ -90,6 +92,7 @@ CORS(app)  # Enable CORS for all routes
 logger.add("loguru.log")
 
 @app.route("/", methods=["GET"])
+@lru_cache()
 def index():
     return render_template("index.html")
 
@@ -107,21 +110,20 @@ def update_sheet():
 
     expense_sheet_info    = ValidateExpenseInfo(transaction_id=order_id, expenses=data_json["expenses"])
     expense_sheet_info    = ExpenseSheetHandler(gc, expense_sheet_info)
-    expense_sheet_info.add_expense_row()
+    expense_rows          = expense_sheet_info.compute_expense()
     total_expense         = expense_sheet_info.total_expense
-
     
     product_sheet_info    = ValidateSheetInfo(transaction_id=order_id, entries=data_json["entries"], total_expense=total_expense)
     product_sheet_handler = ProductSheetHandler(gc, product_sheet_info)
-    product_sheet_handler.add_product_row()
+    product_rows          = product_sheet_handler.parse_product_entries()
 
+    
+    data_json["total_expense"] = total_expense    
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as exec:
+        future1 = exec.submit(expense_sheet_info.add_expense_row, expense_rows)
+        future2 = exec.submit(product_sheet_handler.add_product_row, product_rows)
+        future3 = exec.submit(update_on_telegram, data_json)
 
-    data_json["total_expense"] = total_expense
-
-    try:
-        update_on_telegram(data_json) 
-    except Exception as e:
-        logger.error(e)
 
     return jsonify({"status":True})
 

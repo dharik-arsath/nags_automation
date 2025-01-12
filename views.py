@@ -35,13 +35,15 @@ def format_msg(data):
     driver_name = entries[0]['driver_name']
     line = entries[0]['line']
     date = entries[0]['date']
+    date_split = date.split("-")
+    date = date_split[-1] + "-" + date_split[-2] + "-" + date_split[-3]
 
     # Create table rows
     table_rows = []
     additional_amount = 0
     for item in entries:
         product_name = f"{item['product_name']}"
-        table_rows.append(["ADD", product_name, item["base_amount"]])
+        table_rows.append(["ADD", product_name + " " + f"{item["cases"]}C / {item["pieces"]}P", item["base_amount"]])
         print("*" * 20)
         if item.get("kuraivu_amount") is not None and item.get("kuraivu_amount") > 0:
             table_rows.append(["ADD", "kuraivu", item["kuraivu_amount"]])

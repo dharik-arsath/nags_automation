@@ -43,7 +43,7 @@ def format_msg(data):
     additional_amount = 0
     for item in entries:
         product_name = f"{item['product_name']}"
-        table_rows.append(["ADD", product_name + " " + f"{item["cases"]}C / {item["pieces"]}P", item["base_amount"]])
+        table_rows.append(["ADD", product_name + " " + f"{item['cases']}C / {item['pieces']}P", item["base_amount"]])
         print("*" * 20)
         if item.get("kuraivu_amount") is not None and item.get("kuraivu_amount") > 0:
             table_rows.append(["ADD", "kuraivu", item["kuraivu_amount"]])

@@ -703,9 +703,11 @@
                                     <ul class="dropdown-menu w-100" id="expenseDropdown" aria-labelledby="expenseOptions">
                                         <li><a class="dropdown-item" >Petrol</a></li>
                                         <li><a class="dropdown-item" >Food</a></li>
-                                        <li><a class="dropdown-item" >Puncture</a></li>
+                                        <li><a class="dropdown-item" >Rep</a></li>
                                         <li><a class="dropdown-item" >Key</a></li>
                                         <li><a class="dropdown-item" >Vehicle_Repair</a></li>
+                                        <li><a class="dropdown-item" >Gpay</a></li>
+
                                     </ul>
                                 </div>
                             </div>
@@ -884,7 +886,7 @@
         const lineMenu = document.getElementById('lineDropdown');
 
         // Render all items by default
-        function renderLineDropdown() {
+        function renderLineDropdown() {lineDropdown
             lineMenu.innerHTML = '';  // Clear existing items
             lineListInfo.forEach(line => {
                 const listItem = document.createElement('li');

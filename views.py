@@ -12,14 +12,21 @@ from pathlib import Path
 
 from tabulate import tabulate
 from sheets.sheet import ProductSheetHandler
-from sheets.sheet_dto import ValidateSheetInfo, ValidateExpenseInfo
+from sheets.sheet_dto import ValidateSheetInfo, ValidateExpenseInfo, SheetManager
 from sheets.expense_sheet import ExpenseSheetHandler
-from sheets.sheet_helper import authenticate, get_numeric_id_from_main_sheet
+from sheets.sheet_helper import authenticate, get_numeric_id_from_main_sheet, get_sheet_by_id, get_workbook_by_id,generate_numeric_id
 import concurrent.futures
 from functools import lru_cache
-
+import os 
+from flask import send_file
 
 gc = authenticate()
+workbook = get_workbook_by_id(gc, os.getenv("NAGS_WORKBOOK_ID"))
+items_sheet    = get_sheet_by_id(workbook, os.getenv("ITEM_SHEET_ID"))
+expense_sheet  = get_sheet_by_id(workbook, os.getenv("EXPENSE_SHEET_ID"))
+
+items_sheet_manager   = SheetManager(gc=gc, spreadsheet=workbook, worksheet=items_sheet)
+expense_sheet_manager = SheetManager(gc=gc, spreadsheet=workbook, worksheet=expense_sheet)
 
 def format_msg(data):
     # Initialize variables
@@ -108,15 +115,16 @@ def update_sheet():
 
     data_json: list[dict[str, object]] = json.loads(request_data)
     # transaction_id        = generate_id()
-    order_id              = get_numeric_id_from_main_sheet(gc)
+    # order_id              = get_numeric_id_from_main_sheet(gc)
+    order_id              = generate_numeric_id(items_sheet_manager)
 
     expense_sheet_info    = ValidateExpenseInfo(transaction_id=order_id, expenses=data_json["expenses"])
-    expense_sheet_info    = ExpenseSheetHandler(gc, expense_sheet_info)
+    expense_sheet_info    = ExpenseSheetHandler(expense_sheet_manager, expense_sheet_info)
     expense_rows          = expense_sheet_info.compute_expense()
     total_expense         = expense_sheet_info.total_expense
     
     product_sheet_info    = ValidateSheetInfo(transaction_id=order_id, entries=data_json["entries"], total_expense=total_expense)
-    product_sheet_handler = ProductSheetHandler(gc, product_sheet_info)
+    product_sheet_handler = ProductSheetHandler(items_sheet_manager, product_sheet_info)
     product_rows          = product_sheet_handler.parse_product_entries()
 
     
@@ -164,4 +172,17 @@ def upload():
 
     resp = make_response()
 
+    return resp 
+
+
+@app.route("/download", methods=["GET"])
+def download():
+    path_at = Path("static/js/data.js")
+    if not path_at.exists():
+        resp = make_response()
+        resp.status_code = 404
+        return resp 
+    
+    
+    resp = send_file(str(path_at),as_attachment=True)
     return resp 

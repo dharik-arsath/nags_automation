@@ -1,5 +1,15 @@
 from pydantic import BaseModel, Field
 from typing import Sequence, Optional
+import gspread
+
+
+class SheetManager(BaseModel):
+    gc: gspread.client.Client
+    spreadsheet: gspread.spreadsheet.Spreadsheet
+    worksheet  : gspread.worksheet.Worksheet
+
+    class Config:
+        arbitrary_types_allowed=True
 
 class SheetInfo(BaseModel):
     date                            : str

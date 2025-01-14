@@ -2,6 +2,7 @@ from sheets.sheet_helper import get_workbook, get_sheet
 from sheets.sheet_dto import ValidateExpenseInfo
 from tenacity import retry,wait_exponential
 from copy import deepcopy
+from sheets.sheet_dto import SheetManager
 
 
 COLUMN_MAPPING = {
@@ -20,10 +21,11 @@ COLUMN_MAPPING = {
 
 
 class ExpenseSheetHandler:
-    def __init__(self, gc, expense_info: ValidateExpenseInfo):        
-        self.gc                  = gc
-        self.workbook            = get_workbook(self.gc, "nags_automation")
-        self.sheet               = get_sheet(self.workbook, "Total Expense")
+    def __init__(self, sheet_manager: SheetManager , expense_info: ValidateExpenseInfo):        
+        self.gc                  = sheet_manager.gc
+        self.workbook            = sheet_manager.spreadsheet
+        self.sheet               = sheet_manager.worksheet
+
         self.expense_info        = expense_info
         self._total_expense       = 0
 

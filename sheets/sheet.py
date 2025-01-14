@@ -1,7 +1,7 @@
 from sheets.sheet_helper import authenticate,get_workbook, get_sheet
 from sheets.sheet_dto import ValidateSheetInfo
 from tenacity import retry,wait_exponential
-
+from sheets.sheet_dto import SheetManager
 
 
 
@@ -46,10 +46,10 @@ COLUMN_MAPPING = {
 
 
 class ProductSheetHandler:
-    def __init__(self, gc, sheet_info: ValidateSheetInfo):
-        self.gc             = gc 
-        self.workbook       = get_workbook(self.gc, "nags_automation")
-        self.sheet          = get_sheet(self.workbook, "items")
+    def __init__(self, sheet_manager: SheetManager,  sheet_info: ValidateSheetInfo):
+        self.gc             = sheet_manager.gc 
+        self.workbook       = sheet_manager.spreadsheet
+        self.sheet          = sheet_manager.worksheet
         self.sheet_info     = sheet_info
         self._final_amount   = 0
 

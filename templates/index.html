@@ -82,15 +82,39 @@
                     </div>
                     <div class="modal-body">
                         <form id="todoForm">
-                            <div class="form-outline mb-3">
-                                <input type="text" class="form-control active dropdown-toggle" id="product-input"
-                                    data-mdb-dropdown-init aria-expanded="false" autocomplete="off">
-                                <label class="form-label">Product Name</label>
+                            <div class="p-2 bg-light rounded">
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <div class="form-outline mb-3">
+                                            <input type="text" class="form-control active dropdown-toggle"
+                                                id="product-input" data-mdb-dropdown-init aria-expanded="false"
+                                                autocomplete="off">
+                                            <label class="form-label">Product Name</label>
 
-                                <!-- Dropdown menu -->
-                                <ul class="dropdown-menu w-100" id="productDropdown" aria-labelledby="product-input">
-                                </ul>
+                                            <!-- Dropdown menu -->
+                                            <ul class="dropdown-menu w-100" id="productDropdown"
+                                                aria-labelledby="product-input">
+                                            </ul>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-6">
+                                        <div class="form-outline mb-3">
+                                            <input type="text" class="form-control active dropdown-toggle"
+                                                id="product-size" data-mdb-dropdown-init aria-expanded="false"
+                                                autocomplete="off">
+                                            <label class="form-label">Sub Category</label>
+
+                                            <!-- Dropdown menu -->
+                                            <ul class="dropdown-menu w-100" id="productSizeDropdown"
+                                                aria-labelledby="product-size">
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+
 
                             <!-- Quantity Section -->
                             <div class="mb-3 p-2 bg-light rounded">
@@ -98,8 +122,7 @@
                                 <div class="row g-2">
                                     <div class="col-6">
                                         <div class="form-outline">
-                                            <input type="number" class="form-control active" id="editTodoCases"
-                                                min="0">
+                                            <input type="number" class="form-control active" id="editTodoCases" min="0">
                                             <label class="form-label">Cases</label>
                                         </div>
                                     </div>
@@ -156,15 +179,15 @@
                                 <div class="row g-2">
                                     <div class="col-6">
                                         <div class="form-outline mb-3">
-                                            <input type="number" class="form-control active" id="editTodoAdhigaVaravuCases"
-                                                min="0">
+                                            <input type="number" class="form-control active"
+                                                id="editTodoAdhigaVaravuCases" min="0">
                                             <label class="form-label">Adhiga Varavu(in cases)</label>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-outline">
-                                            <input type="number" class="form-control active" id="editTodoAdhigaVaravuPieces"
-                                                min="0">
+                                            <input type="number" class="form-control active"
+                                                id="editTodoAdhigaVaravuPieces" min="0">
                                             <label class="form-label">Adhiga Varavu(in pieces)</label>
                                         </div>
                                     </div>
@@ -319,10 +342,39 @@
             new mdb.Input(formOutline).init();
         });
 
+        function getSelectedProduct() {
+            const productName = productInput.value.trim().toLowerCase(); // Get the selected product name from input
+            const sizeName = Number(sizeInput.value.trim()); // Get the selected size from size input
+
+            // Filter products matching both name and size
+            const matchingProducts = products.filter(product =>
+                product.name.toLowerCase() === productName &&
+                (!sizeName || product.size === sizeName) // Match size if provided
+            );
+
+            if (matchingProducts.length > 0) {
+                return matchingProducts[0]; // Return all matching products
+            } else {
+                console.warn('No products found for the selected name and size.');
+                return null;
+            }
+        }
         function updateAmount() {
             const productName = document.getElementById('product-input').value;
-            const selectedProduct = products.find(product => product.name.toLowerCase() === productName);
-            if (!selectedProduct) return;
+            const selectedProduct = getSelectedProduct();
+            if (!selectedProduct) {
+                ['editTodoCases', 'editTodoPieces', 'editTodoDiscount',
+                    'editTodoCommission', 'editTodoKuraivuPieces', "product-size", "editTodoKuraivuCases", "editTodoAdhigaVaravuPieces", "editTodoAdhigaVaravuCases",
+                    "editTodoAmount"
+                ]
+                    .forEach(id => {
+                        document.getElementById(id).value = ""
+                        // document.getElementById(id).dispatchEvent(new Event('input'));
+                    });
+
+
+                return
+            };
 
             const caseCount = Number(document.getElementById("editTodoCases").value);
             const pieceCount = Number(document.getElementById("editTodoPieces").value);
@@ -420,12 +472,17 @@
 
 
         function saveTodo() {
-            const driverName = document.getElementById('buyer-user-name').value;
-            if (!driverName.trim()) {
-                alert('Please select driver name first');
-                document.getElementById('buyer-user-name').classList.add('required-field');
-                closeModal('addTodoModal');
-                return;
+            var is_all_filled = false;
+            [ "product-input", "product-size"].forEach(ids => {
+                var data = Number( document.getElementById(ids).value);
+                console.log(data);
+                if(data === 0){
+                    is_all_filled = true;
+                    return ;
+                }
+            })
+            if(is_all_filled){
+                return ;
             }
 
             const productInfo = products.find(p => p.name === document.getElementById('product-input').value);
@@ -436,6 +493,10 @@
             const totalQuantityCases = Number(document.getElementById("editTodoCases").value);
             const totalQuantityPieces = Number(document.getElementById("editTodoPieces").value);
 
+            if(totalQuantityCases === 0 && totalQuantityPieces === 0){
+                return ;
+            }
+
             const baseAmount = (basePriceCase * totalQuantityCases) + (basePricePiece * totalQuantityPieces);
 
 
@@ -444,10 +505,11 @@
 
             const formData = {
                 title: document.getElementById('product-input').value,
+                size: document.getElementById("product-size").value,
                 line: document.getElementById('buyer-lineid').value,
                 cases: document.getElementById("editTodoCases").value || 0,
                 pieces: document.getElementById("editTodoPieces").value || 0,
-                discount: document.getElementById("editTodoDiscount").value ,
+                discount: document.getElementById("editTodoDiscount").value,
                 commission: document.getElementById("editTodoCommission").value,
                 kuraivu_pieces: document.getElementById("editTodoKuraivuPieces").value || 0,
                 kuraivu_cases: document.getElementById("editTodoKuraivuCases").value || 0,
@@ -591,9 +653,10 @@
 
         // Event listeners for amount calculation
         ['product-input', 'editTodoCases', 'editTodoPieces', 'editTodoDiscount',
-            'editTodoCommission', 'editTodoKuraivuPieces']
+            'editTodoCommission', 'editTodoKuraivuPieces', "product-size"]
             .forEach(id => {
                 document.getElementById(id).addEventListener('input', updateAmount);
+                // document.getElementById(id).dispatchEvent(new Event('input'));
             });
 
 
@@ -817,7 +880,7 @@
                 driver_name: driverName,
                 date: date,
                 time: timeStr,
-                product_name: todo.title,
+                product_name: todo.title + " (" + todo.size + ")",
                 line: todo.line,
                 cases: Number(todo.cases),
                 pieces: Number(todo.pieces),
@@ -886,7 +949,8 @@
         const lineMenu = document.getElementById('lineDropdown');
 
         // Render all items by default
-        function renderLineDropdown() {lineDropdown
+        function renderLineDropdown() {
+            lineDropdown
             lineMenu.innerHTML = '';  // Clear existing items
             lineListInfo.forEach(line => {
                 const listItem = document.createElement('li');
@@ -1002,6 +1066,48 @@
         });
 
 
+
+        const sizeInput = document.getElementById('product-size');
+        const sizeDropdownMenu = document.getElementById('productSizeDropdown');
+        const productInput = document.getElementById('product-input'); // Assuming this input is for the chosen product
+        function renderSizesForSelectedProduct() {
+            sizeDropdownMenu.innerHTML = ''; // Clear existing items
+
+            const selectedProductName = productInput.value.toLowerCase(); // Get the chosen product name
+            const uniqueSizes = new Set();
+
+            // Filter sizes for the chosen product
+            products
+                .filter(product => product.name.toLowerCase() === selectedProductName)
+                .forEach(product => {
+                    const size = product.size; // Assuming `size` is a property in the product object
+                    if (!uniqueSizes.has(size)) {
+                        uniqueSizes.add(size);
+
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `<a class="dropdown-item" href="#">${size}</a>`;
+                        sizeDropdownMenu.appendChild(listItem);
+                    }
+                });
+        }
+
+        // Attach an event listener to the size input
+        sizeInput.addEventListener("click", () => {
+            renderSizesForSelectedProduct();
+        });
+
+
+
+        // Handle dropdown item selection
+        sizeDropdownMenu.addEventListener('click', function (e) {
+            if (e.target && e.target.matches('.dropdown-item')) {
+                sizeInput.value = e.target.textContent.trim();
+                sizeDropdownMenu.innerHTML = '';  // Close dropdown after selection
+                sizeInput.dispatchEvent(new Event('input'));
+            }
+        });
+
+
     </script>
 
 
@@ -1070,19 +1176,29 @@
 
         // Render all items by default
         function renderAllItems() {
-            dropdownMenu.innerHTML = '';  // Clear existing items
+            dropdownMenu.innerHTML = ''; // Clear existing items
+
+            // Use a Set to keep track of unique product names
+            const uniqueProductNames = new Set();
+
             products.forEach(product => {
-                const listItem = document.createElement('li');
-                listItem.innerHTML = `<a class="dropdown-item" href="#">${product.name.toLowerCase()}</a>`;
-                dropdownMenu.appendChild(listItem);
+                const lowerCaseName = product.name.toLowerCase();
+
+                if (!uniqueProductNames.has(lowerCaseName)) {
+                    uniqueProductNames.add(lowerCaseName);
+
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `<a class="dropdown-item" href="#">${lowerCaseName}</a>`;
+                    dropdownMenu.appendChild(listItem);
+                }
             });
         }
 
-        // Initial render of all items
-        // renderAllItems();
+        // Initial render of unique items
         input.addEventListener("click", () => {
             renderAllItems();
-        })
+        });
+
 
         input.addEventListener('input', function () {
             const query = input.value.trim().toLowerCase();
@@ -1108,6 +1224,7 @@
             if (e.target && e.target.matches('.dropdown-item')) {
                 input.value = e.target.textContent.trim();
                 dropdownMenu.innerHTML = '';  // Close dropdown after selection
+                input.dispatchEvent(new Event('input'))
             }
         });
 

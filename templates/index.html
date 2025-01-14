@@ -359,6 +359,23 @@
                 return null;
             }
         }
+
+
+        function getSelectedProductFromTodoObject(todo) {
+            // Filter products matching both name and size
+            const matchingProducts = products.filter(product =>
+                product.name.toLowerCase() === todo.title &&
+                (product.size === Number( todo.size )) // Match size if provided
+            );
+
+            if (matchingProducts.length > 0) {
+                return matchingProducts[0]; // Return all matching products
+            } else {
+                console.warn('No products found for the selected name and size.');
+                return null;
+            }
+        }
+
         function updateAmount() {
             const productName = document.getElementById('product-input').value;
             const selectedProduct = getSelectedProduct();
@@ -413,7 +430,7 @@
 
             todos.forEach(todo => {
                 // Calculate base amount
-                const productInfo = products.find(p => p.name === todo.title);
+                const productInfo = getSelectedProductFromTodoObject(todo)
                 const basePriceCase = productInfo ? productInfo.price.case : 0;
                 const basePricePiece = productInfo ? productInfo.price.piece : 0;
                 const caseQuantity = Number(todo.cases);
@@ -485,7 +502,7 @@
                 return ;
             }
 
-            const productInfo = products.find(p => p.name === document.getElementById('product-input').value);
+            const productInfo = getSelectedProduct();
             const basePriceCase = productInfo ? productInfo.price.case : 0;
             const basePricePiece = productInfo ? productInfo.price.piece : 0;
 
@@ -537,7 +554,7 @@
             const list = document.getElementById('productList');
             list.innerHTML = todos.map(todo => {
                 // Calculate base amount before any deductions
-                const productInfo = products.find(p => p.name === todo.title);
+                const productInfo = getSelectedProductFromTodoObject(todo);
                 const basePrice_case = productInfo ? productInfo.price.case : 0;
                 const basePrice_piece = productInfo ? productInfo.price.piece : 0;
 

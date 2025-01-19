@@ -113,7 +113,7 @@ def update_sheet():
     if request_data is None:
         raise abort(400)
 
-    data_json: list[dict[str, object]] = json.loads(request_data)
+    data_json = json.loads(request_data)
     # transaction_id        = generate_id()
     # order_id              = get_numeric_id_from_main_sheet(gc)
     order_id              = generate_numeric_id(items_sheet_manager)
@@ -124,6 +124,7 @@ def update_sheet():
     total_expense         = expense_sheet_info.total_expense
     
     product_sheet_info    = ValidateSheetInfo(transaction_id=order_id, entries=data_json["entries"], total_expense=total_expense)
+    print(product_sheet_info)
     product_sheet_handler = ProductSheetHandler(items_sheet_manager, product_sheet_info)
     product_rows          = product_sheet_handler.parse_product_entries()
 
@@ -132,7 +133,7 @@ def update_sheet():
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as exec:
         future1 = exec.submit(expense_sheet_info.add_expense_row, expense_rows)
         future2 = exec.submit(product_sheet_handler.add_product_row, product_rows)
-        future3 = exec.submit(update_on_telegram, data_json)
+        # future3 = exec.submit(update_on_telegram, data_json)
 
 
     return jsonify({"status":True})

@@ -21,6 +21,10 @@ class SheetInfo(BaseModel):
     final_amount                    : float
     discount                        : float
     commission                      : float
+    goods_upload_cases              : int 
+    goods_upload_pieces             : int 
+    goods_return_cases              : int 
+    goods_return_pieces             : int 
     cases                           : int 
     pieces                          : int 
     kuraivu_cases                   : int

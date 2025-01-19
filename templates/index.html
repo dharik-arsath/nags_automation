@@ -116,20 +116,70 @@
                             </div>
 
 
-                            <!-- Quantity Section -->
+
+
+                            <!-- Goods Upload Section -->
                             <div class="mb-3 p-2 bg-light rounded">
-                                <small class="text-muted d-block mb-2">Quantity</small>
+                                <small class="text-muted d-block mb-2">Goods Upload</small>
                                 <div class="row g-2">
                                     <div class="col-6">
                                         <div class="form-outline">
-                                            <input type="number" class="form-control active" id="editTodoCases" min="0">
+                                            <input type="number" class="form-control active" id="goods_up_cases" min="0"
+                                            onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                                            <label class="form-label">Goods Upload Cases</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-outline">
+                                            <input type="number" class="form-control active" id="goods_up_pieces"
+                                                min="0" max="24" onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                                oninput="validatePieces(this)">
+                                            <label class="form-label">Goods Upload Pieces</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Goods Return Section -->
+                            <div class="mb-3 p-2 bg-light rounded">
+                                <small class="text-muted d-block mb-2">Goods Return</small>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <div class="form-outline">
+                                            <input type="number" class="form-control active" id="goods_ret_cases" min="0" 
+                                            onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                                            <label class="form-label">Goods Return Cases</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-outline">
+                                            <input type="number" class="form-control active" id="goods_ret_pieces"
+                                                min="0" max="24" onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                                oninput="validatePieces(this)">
+                                            <label class="form-label">Goods Return Pieces</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                            <!-- Sales Section -->
+                            <div class="mb-3 p-2 bg-light rounded">
+                                <small class="text-muted d-block mb-2">Sales</small>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <div class="form-outline">
+                                            <input type="number" class="form-control active" id="editTodoCases" min="0" 
+                                            onkeypress="return event.charCode >= 48 && event.charCode <= 57" disabled>
                                             <label class="form-label">Cases</label>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-outline">
                                             <input type="number" class="form-control active" id="editTodoPieces"
-                                                min="0">
+                                                min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" disabled>
                                             <label class="form-label">Pieces</label>
                                         </div>
                                     </div>
@@ -223,65 +273,6 @@
             </div>
         </div>
 
-        <!-- 
-        <div class="card mb-3" style="visibility: hidden;" id="constant_expenses">
-            <div class="card-header py-2 d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Expenses</h5>
-                <button class="btn btn-primary btn-sm" onclick="addExpenseRow()">
-                    <i class="fas fa-plus me-2"></i>Add Expense
-                </button>
-            </div>
-            <div class="card-body">
-                <div id="expenses-container">
-                    <div class="expense-row mb-2 position-relative">
-                        <div class="row g-2">
-                            <div class="col-8">
-                                <div class="form-outline mb-3">
-                                    <input type="text" class="form-control expense-description active" value="Petrol">
-                                    <label class="form-label">Description</label>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="form-outline mb-3">
-                                    <input type="number" class="form-control expense-amount" value="0">
-                                    <label class="form-label">Amount</label>
-                                </div>
-                            </div>
-                            <div class="col-1">
-                                <button class="btn btn-link text-danger p-0" onclick="removeExpenseRow(this)">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="expense-row mb-2 position-relative">
-
-                        <div class="row g-2">
-                            <div class="col-8">
-                                <div class="form-outline mb-3">
-                                    <input type="text" class="form-control expense-description active" value="Food">
-                                    <label class="form-label">Description</label>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="form-outline mb-3">
-                                    <input type="number" class="form-control expense-amount" value="0">
-                                    <label class="form-label">Amount</label>
-                                </div>
-                            </div>
-                            <div class="col-1">
-                                <button class="btn btn-link text-danger p-0" onclick="removeExpenseRow(this)">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-
-
 
 
 
@@ -327,13 +318,26 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/8.1.0/mdb.umd.min.js"></script>
     <!-- <script src="static/js/data.js"></script> -->
     <script src="{{url_for('static', filename='js/data.js')}}"></script>
-
+    <script src="{{url_for('static', filename='js/validator.js')}}"></script>
     <script>
         // Call this after adding new expense rows and during initial load
         // document.addEventListener('DOMContentLoaded', initializeFormLabels);
 
         let todos = [];
         let currentId = 0;
+
+        const salesFields = {
+            cases: document.getElementById("editTodoCases"),
+            pieces: document.getElementById("editTodoPieces")
+        }
+
+        const goodsFields = {
+            "up_cases": document.getElementById("goods_up_cases"),
+            "up_pieces": document.getElementById("goods_up_pieces"),
+            "ret_cases": document.getElementById("goods_ret_cases"),
+            "ret_pieces": document.getElementById("goods_ret_pieces")
+        }
+
 
         // Initialize date and form
         const localDate = new Date();
@@ -359,6 +363,94 @@
                 return null;
             }
         }
+
+        function getGoodsData() {
+            return {
+                up_cases: Number( goodsFields.up_cases.value ),
+                up_pieces: Number( goodsFields.up_pieces.value ),
+                ret_cases: Number( goodsFields.ret_cases.value ),
+                ret_pieces: Number( goodsFields.ret_pieces.value ),
+            };
+        }
+
+        function getSalesData(){
+            return {
+                cases: Number(salesFields.cases.value),
+                pieces: Number(salesFields.pieces.value)
+            }
+        }
+
+        /**
+            * @param {salesFields} data The data to set the case and piece count.
+        */
+        function setSalesData(data) { 
+            if (data && typeof data === 'object') {
+                salesFields.cases.value = data.cases;
+                salesFields.pieces.value = data.pieces;
+            } else {
+                console.error("Invalid data provided to setCasePieceData");
+                salesFields.cases.value = "";
+                salesFields.pieces.value = "";
+            }
+        }
+
+        function calculateSalesFromReturns() {
+            const localgoodsFields = {
+                "up_cases": Number( goodsFields.up_cases.value ),   // Initial cases taken
+                "up_pieces": Number( goodsFields.up_pieces.value ), // Initial pieces taken
+                "ret_cases": Number(goodsFields.ret_cases.value), // Returned cases
+                "ret_pieces": Number(goodsFields.ret_pieces.value) // Returned pieces
+            };
+
+            // Total pieces initially taken (cases * 24 pieces per case)
+            const piecesPerCase = 24;
+            const totalUpPieces  = (localgoodsFields.up_cases * piecesPerCase) + localgoodsFields.up_pieces;
+            const totalRetPieces = (localgoodsFields.ret_cases * piecesPerCase) + localgoodsFields.ret_pieces;
+
+            const remainingPieces = totalUpPieces - totalRetPieces;
+
+            console.log(remainingPieces)
+            
+            if (remainingPieces < 0 ){
+                alert("You cannot sale more than you taken")
+
+                return ;
+            }
+
+            let soldCases  = 0;
+            let soldPieces = 0;
+
+            if(remainingPieces % piecesPerCase == 0){
+                soldCases = remainingPieces / piecesPerCase; 
+            }
+            else{
+                soldCases = Math.floor(remainingPieces / piecesPerCase);
+                soldPieces = remainingPieces % piecesPerCase;
+            }
+            
+            // Return sales data if needed
+            return {
+                cases: soldCases,
+                pieces: soldPieces
+            };
+        }
+
+
+        [
+            'goods_ret_cases', "goods_ret_pieces", "goods_up_cases", "goods_up_pieces"
+        ].forEach(id => {
+            document.getElementById(id).addEventListener(
+                "input", () => {
+                    let sales = calculateSalesFromReturns();
+                    if(!sales){
+                        goodsFields.ret_cases.value = ""
+                        return ;
+                    }
+                    setSalesData(sales);
+                    salesFields.cases.dispatchEvent(new Event('input'));
+                }
+            )
+        })
 
 
         function getSelectedProductFromTodoObject(todo) {
@@ -520,6 +612,8 @@
             // const kuraivuAmount = document.getElementById("editTodoKuraivuPieces").value * productInfo.price.piece;
             const kuraivuAmount = document.getElementById("editTodoKuraivuPieces").value * productInfo.kuraivu;
 
+            const goodsData    = getGoodsData();
+
             const formData = {
                 title: document.getElementById('product-input').value,
                 size: document.getElementById("product-size").value,
@@ -527,6 +621,10 @@
                 cases: document.getElementById("editTodoCases").value || 0,
                 pieces: document.getElementById("editTodoPieces").value || 0,
                 discount: document.getElementById("editTodoDiscount").value,
+                goods_upload_cases: goodsData.up_cases,
+                goods_upload_pieces: goodsData.up_pieces,
+                goods_return_cases: goodsData.ret_cases,
+                goods_return_pieces: goodsData.ret_pieces,
                 commission: document.getElementById("editTodoCommission").value,
                 kuraivu_pieces: document.getElementById("editTodoKuraivuPieces").value || 0,
                 kuraivu_cases: document.getElementById("editTodoKuraivuCases").value || 0,
@@ -675,19 +773,7 @@
                 document.getElementById(id).addEventListener('input', updateAmount);
                 // document.getElementById(id).dispatchEvent(new Event('input'));
             });
-
-
-        // document.getElementById('buyer-user-name').addEventListener('input', function () {
-        //     this.classList.remove('required-field');
-        //     const name = document.getElementById('buyer-user-name').value
-        //     console.log(name)
-        //     if (!name) {
-        //         document.getElementById("product_add").style.visibility = "hidden";
-        //     }
-        //     if (name.length > 0) {
-        //         document.getElementById("product_add").style.visibility = "visible";
-        //     }
-        // });
+        
 
         document.getElementById('buyer-user-name').addEventListener("input", validateFields);
         document.getElementById("buyer-lineid").addEventListener("input", validateFields);
@@ -718,54 +804,6 @@
                 document.getElementById('buyer-lineid').classList.add('required-field');
             }
         }
-
-
-
-
-
-        // Add expense row functionality
-        //     function addExpenseRow() {
-        //         const container = document.getElementById('expenses-container');
-        //         const newRow = document.createElement('div');
-        //         newRow.className = 'expense-row mb-2 position-relative';
-        //         newRow.innerHTML = `
-        //                     <div class="row g-2">
-        //                         <div class="col-8">
-        //                             <div class="form-outline mb-3">
-        //                                 <input type="text" list="expenseOptions"
-        //                                     class="form-control expense-description active">
-        //                                 <label class="form-label">Description</label>
-        //                                 <datalist id="expenseOptions">
-        //                                     <option value="Petrol">
-        //                                     <option value="Food">
-        //                                     <option value="Puncture">
-        //                                     <option value="Key">
-        //                                     <option value="Vehicle repair">
-        //                                 </datalist>
-        //                             </div>
-        //                         </div>
-        //                         <div class="col-3">
-        //                             <div class="form-outline mb-3">
-        //                                 <input type="number" class="form-control expense-amount" value="0">
-        //                                 <label class="form-label">Amount</label>
-        //                             </div>
-        //                         </div>
-        //                         <div class="col-1">
-        //                             <button class="btn btn-link text-danger p-0" onclick="removeExpenseRow(this)">
-        //                                 <i class="fas fa-times"></i>
-        //                             </button>
-        //                         </div>
-        //                     </div>
-        // `;
-
-        //         container.appendChild(newRow);
-
-        //         newRow.querySelectorAll('.form-outline').forEach((formOutline) => {
-        //             new mdb.Input(formOutline).init();
-        //         });
-        //         // // initializeFormLabels(); // Add this line
-        //     }
-
 
         function addExpenseRow() {
             const container = document.getElementById('expenses-container');
@@ -910,11 +948,10 @@
                 adhiga_varavu_pieces: Number(todo.adhigaVaravu_pieces),
                 base_amount: Number(todo.base_amount),
                 final_amount: Number(todo.amount),
-                // final_amount: Number(todo.amount),
-                // diesel: Number(diesel),
-                // vehicle_damage: Number(vehicleDamage),
-                // other_expense: Number(otherExpenseAmount),
-                // other_expense_description: otherExpenseDescription
+                goods_upload_cases: Number(todo.goods_upload_cases),
+                goods_upload_pieces: Number(todo.goods_upload_pieces),
+                goods_return_cases : Number(todo.goods_return_cases),
+                goods_return_pieces: Number(todo.goods_return_pieces)
             }));
 
             // Prepare final payload

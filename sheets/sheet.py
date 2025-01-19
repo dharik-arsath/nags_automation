@@ -32,6 +32,10 @@ COLUMN_MAPPING = {
     'FINAL_AMOUNT': 'final_amount',
     'DISCOUNT': 'discount',
     'COMMISSION': 'commission',
+    "GOODS_UPLOAD_CASES": "goods_upload_cases",
+    "GOODS_UPLOAD_PIECES": "goods_upload_pieces",
+    "GOODS_RETURN_CASES": "goods_return_cases",
+    "GOODS_RETURN_PIECES": "goods_return_pieces",
     "CASE_QUANTITY" : "cases",
     "PIECE_QUANTITY": "pieces",
     'KURAIVU_CASES': 'kuraivu_cases',
@@ -111,11 +115,13 @@ class ProductSheetHandler:
         
 
 if __name__ == "__main__":
+    data_dict = '{"entries":[{"driver_name":"pandi","date":"2025-01-19","time":"19:42","product_name":"badam milk (456)","line":"karia patti","cases":9,"pieces":0,"discount":0,"commission":162,"kuraivu_cases":0,"kuraivu_pieces":0,"kuraivu_amount":0,"adhiga_varavu_cases":0,"adhiga_varavu_pieces":0,"base_amount":4104,"final_amount":3942,"goods_upload_cases":10,"goods_upload_pieces":0,"goods_return_cases":1,"goods_return_pieces":0}],"expenses":{}}'
+    import json 
+    data_dict = json.loads(data_dict)
+    data_dict["transaction_id"] = 123
+    data_dict["total_expense"] = 121212
     vsi = ValidateSheetInfo.model_validate(data_dict)
 
     gc = authenticate()
-
-    sheet = ProductSheetHandler(gc, vsi)
-
-    resp = sheet.add_product_row()
-    resp 
+    # sheet_manager = SheetManager(gc, )
+    # sheet = ProductSheetHandler()

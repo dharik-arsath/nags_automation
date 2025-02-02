@@ -1,6 +1,6 @@
 .env
 credentials.json
-index*.html
+#index*.html
 thankyou*.html
 .vscode/settings.json
 static/js/data.js

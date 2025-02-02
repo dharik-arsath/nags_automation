@@ -19,6 +19,7 @@ import concurrent.futures
 from functools import lru_cache
 import os 
 from flask import send_file
+from flask import Request
 
 gc = authenticate()
 workbook = get_workbook_by_id(gc, os.getenv("NAGS_WORKBOOK_ID"))
@@ -100,6 +101,15 @@ app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 logger.add("loguru.log")
 
+
+@app.before_request
+def before_request():
+    logger.info(f"Request: {request.method} {request.url}")
+    logger.info(f"Headers: {request.headers}")
+    logger.info(f"data: {request.data}")
+    return 
+
+
 @app.route("/", methods=["GET"])
 @lru_cache()
 def index():
@@ -133,7 +143,7 @@ def update_sheet():
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as exec:
         future1 = exec.submit(expense_sheet_info.add_expense_row, expense_rows)
         future2 = exec.submit(product_sheet_handler.add_product_row, product_rows)
-        # future3 = exec.submit(update_on_telegram, data_json)
+        future3 = exec.submit(update_on_telegram, data_json)
 
 
     return jsonify({"status":True})
@@ -187,3 +197,8 @@ def download():
     
     resp = send_file(str(path_at),as_attachment=True)
     return resp 
+
+
+@app.route("/health", methods=["GET"])
+async def health():
+    return jsonify({"status":True})

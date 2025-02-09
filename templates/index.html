@@ -1437,6 +1437,11 @@
                 DOM.inputs.product.dispatchEvent(new Event('input'));
             }
         });
+
+        function deleteTodo(id) {
+            todos = todos.filter(todo => todo.id !== id);
+            updateList();
+        }
     </script>
 
 

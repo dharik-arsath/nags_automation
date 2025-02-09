@@ -110,7 +110,7 @@ def format_msg(data):
     expense_rows.append(["", "Total Expenses", total_expenses])
 
     # Create final total row
-    final_total = round(final_amount - total_expenses, 4)
+    final_total = round(final_amount - total_expenses, 4) + (credits.get("receivable") - credits.get("payable") )
     final_total_row = ["", "FINAL TOTAL", final_total]
 
     # Generate table
@@ -167,15 +167,13 @@ def update_sheet():
 
     # Add credits to total expense calculation
     credits = data_json.get("credits", {})
-    credit_payable = credits.get("payable", 0)
-    credit_receivable = credits.get("receivable", 0)
-    total_expense = total_expense + credit_payable - credit_receivable
 
     # Handle product entries
     product_sheet_info = ValidateSheetInfo(
         transaction_id=order_id, 
         entries=data_json["entries"], 
-        total_expense=total_expense
+        total_expense=total_expense,
+        credits=credits
     )
     product_sheet_handler = ProductSheetHandler(items_sheet_manager, product_sheet_info)
     product_rows = product_sheet_handler.parse_product_entries()

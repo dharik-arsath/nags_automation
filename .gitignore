@@ -6,3 +6,6 @@ thankyou*.html
 static/js/data.js
 loguru.log
 *pyc*
+index.html
+static/js/data_bkup.js
+static/js/data_no.js

@@ -46,6 +46,8 @@ COLUMN_MAPPING = {
     "TIME" : "time",
     "TOTAL EXPENSE" : "",
     "NET AMOUNT" : "",
+    "CREDIT PAYABLE": "credit_payable",
+    "CREDIT RECEIVABLE": "credit_receivable",
 }
 
 
@@ -113,12 +115,21 @@ class ProductSheetHandler:
         
 
         final_amount = self.final_amount
+        credits_payable = self.sheet_info.credits.get("payable", 0)
+        credits_receivable = self.sheet_info.credits.get("receivable", 0)
+
         try:
             net_amout_idx = headers.index("NET AMOUNT")
-            row_data[-1][net_amout_idx] = final_amount - self.sheet_info.total_expense
+            row_data[-1][net_amout_idx] = ( final_amount - self.sheet_info.total_expense ) + credits_receivable - credits_payable
 
             total_expense_idx = headers.index("TOTAL EXPENSE")
             row_data[-1][total_expense_idx] = self.sheet_info.total_expense
+
+            credit_payable_idx = headers.index("CREDIT PAYABLE")
+            row_data[-1][credit_payable_idx] = self.sheet_info.credits.get("payable")
+
+            credit_receivable_idx = headers.index("CREDIT RECEIVABLE")
+            row_data[-1][credit_receivable_idx] = self.sheet_info.credits.get("receivable")
             
         except Exception as e:  
             print(e)

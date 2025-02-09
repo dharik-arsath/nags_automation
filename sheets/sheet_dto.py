@@ -31,12 +31,13 @@ class SheetInfo(BaseModel):
     kuraivu_pieces                  : int
     kuraivu_amount                  : float
     adhiga_varavu_cases             : int
-    adhiga_varavu_pieces            : int 
+    adhiga_varavu_pieces            : int
 
 
 class ValidateSheetInfo(BaseModel):
     transaction_id  : int
     total_expense   : float 
+    credits         : dict[str, int | float]
 
     entries         : Sequence[SheetInfo]
 

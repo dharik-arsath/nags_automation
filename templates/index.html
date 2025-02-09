@@ -17,6 +17,10 @@
         .form-outline input[type=number] {
             -moz-appearance: textfield;
         }
+
+        .w-100px {
+            width: 100px !important;
+        }
     </style>
 </head>
 
@@ -97,20 +101,6 @@
                                             </ul>
                                         </div>
                                     </div>
-
-<!-- 
-                                    <div class="col-6">
-                                        <div class="form-outline mb-3">
-                                            <input type="text" class="form-control active dropdown-toggle"
-                                                id="product-size" data-mdb-dropdown-init aria-expanded="false"
-                                                autocomplete="off">
-                                            <label class="form-label">Sub Category</label>
-
-                                            <ul class="dropdown-menu w-100" id="productSizeDropdown"
-                                                aria-labelledby="product-size">
-                                            </ul>
-                                        </div>
-                                    </div> -->
                                 </div>
                             </div>
 
@@ -188,11 +178,22 @@
                             <div class="mb-3 p-2 bg-light rounded">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <small class="text-muted">Discounts</small>
-                                    <button type="button" class="btn btn-primary btn-sm" onclick="addDiscountRow()">
-                                        <i class="fas fa-plus me-2"></i>Add Discount
+                                    <button type="button" class="btn btn-primary btn-sm w-100px" onclick="addDiscountRow()">
+                                        <i class="fas fa-plus me-2"></i>Add
                                     </button>
                                 </div>
                                 <div id="discounts-container"></div>
+                            </div>
+
+                            <!-- Commission Section -->
+                            <div class="mb-3 p-2 bg-light rounded">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <small class="text-muted">Commissions</small>
+                                    <button type="button" class="btn btn-primary btn-sm w-100px" onclick="addCommissionRow()">
+                                        <i class="fas fa-plus me-2"></i>Add
+                                    </button>
+                                </div>
+                                <div id="commissions-container"></div>
                             </div>
 
                             <!-- Financial Section -->
@@ -269,6 +270,30 @@
             </div>
         </div>
 
+
+        <!-- Add this after the expenses card and before the summary card -->
+        <div class="card mb-3" id="credit-section", style="visibility: hidden;">
+            <div class="card-header py-2">
+                <h5 class="mb-0">Credits</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-6">
+                        <div class="form-outline">
+                            <input type="number" class="form-control active credit-amount" id="creditPayable" min="0">
+                            <label class="form-label">Credit as Payable</label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-outline">
+                            <input type="number" class="form-control active credit-amount" id="creditReceivable" min="0">
+                            <label class="form-label">Credit as Receivable</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="card mb-3" id="constant_expenses" style="visibility: hidden;">
             <div class="card-header py-2 d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Expenses</h5>
@@ -281,11 +306,6 @@
                 </div>
             </div>
         </div>
-
-
-
-
-
 
         <!-- Summary Card -->
         <div class="card mb-3">
@@ -355,7 +375,9 @@
                 kuraivuPieces: document.getElementById('editTodoKuraivuPieces'),
                 adhigaVaravuCases: document.getElementById('editTodoAdhigaVaravuCases'),
                 adhigaVaravuPieces: document.getElementById('editTodoAdhigaVaravuPieces'),
-                amount: document.getElementById('editTodoAmount')
+                amount: document.getElementById('editTodoAmount'),
+                creditPayable: document.getElementById('creditPayable'),
+                creditReceivable: document.getElementById('creditReceivable')
             },
             // Dropdowns
             dropdowns: {
@@ -368,7 +390,9 @@
                 productList: document.getElementById('productList'),
                 expenses: document.getElementById('expenses-container'),
                 discounts: document.getElementById('discounts-container'),
-                constantExpenses: document.getElementById('constant_expenses')
+                commissions: document.getElementById('commissions-container'),
+                constantExpenses: document.getElementById('constant_expenses'),
+                creditSection: document.getElementById("credit-section")
             },
             // Buttons
             buttons: {
@@ -531,22 +555,18 @@
             const caseCount = Number(DOM.inputs.salesCases.value);
             const pieceCount = Number(DOM.inputs.salesPieces.value);
             
-            // Only include explicitly added discounts
+            // Calculate discount and commission using the new methods
             const discount = calculateDiscounts();
+            const commission = calculateCommissions();
+            
             DOM.inputs.discount.value = Number(discount);
-
-            const commission = (caseCount * selectedProduct.commission.case) + 
-                              (pieceCount * selectedProduct.commission.piece);
-            DOM.inputs.commission.value = commission;
+            DOM.inputs.commission.value = Number(commission);
 
             const kuraivu = Number(DOM.inputs.kuraivuPieces.value);
             let totalAmount = (caseCount * selectedProduct.price.case) + 
                              (pieceCount * selectedProduct.price.piece);
             
-            // Only subtract discount if explicitly added
-            if (discount > 0) {
-                totalAmount -= discount;
-            }
+            totalAmount -= discount;
             totalAmount -= commission;
             totalAmount += (kuraivu * selectedProduct.kuraivu);
 
@@ -585,12 +605,14 @@
             });
 
             const constantExpenses = getExpensesTotal();
+            const creditPayable = Number(DOM.inputs.creditPayable.value) || 0;
+            const creditReceivable = Number(DOM.inputs.creditReceivable.value) || 0;
 
-            // Calculate total deductions
-            const totalDeductions = totalDiscounts + totalCommissions + constantExpenses;
+            // Calculate total deductions including credit payable
+            const totalDeductions = totalDiscounts + totalCommissions + constantExpenses + creditPayable;
 
-            // Calculate final amount
-            const finalAmount = totalBaseAmount - totalDeductions + totalKuraivu;
+            // Calculate final amount including both credits
+            const finalAmount = totalBaseAmount - totalDeductions + totalKuraivu + creditReceivable;
 
             // Update display with detailed breakdown
             DOM.summary.totalProducts.innerHTML = `
@@ -603,7 +625,8 @@
                     ${totalDiscounts > 0 ? `Discounts: ₹${totalDiscounts.toFixed(2)}<br>` : ''}
                     ${totalCommissions > 0 ? `Commissions: ₹${totalCommissions.toFixed(2)}<br>` : ''}
                     ${constantExpenses > 0 ? `Expenses: ₹${constantExpenses.toFixed(2)}<br>` : ''}
-                    ${totalAdhigaVaravu > 0 ? `<span class="text-success">Adhiga Varavu: +₹${totalAdhigaVaravu.toFixed(2)}</span>` : ''}
+                    ${creditPayable > 0 ? `Credit Payable: ₹${creditPayable.toFixed(2)}<br>` : ''}
+                    ${creditReceivable > 0 ? `<span class="text-success">Credit Receivable: +₹${creditReceivable.toFixed(2)}</span>` : ''}
                 </div>
             `;
 
@@ -707,7 +730,8 @@
             }).join('');
 
             DOM.buttons.submit.parentElement.style.visibility = todos.length > 0 ? 'visible' : 'hidden';
-            DOM.containers.constantExpenses.style.visibility = todos.length > 0 ? 'visible' : 'hidden';
+            DOM.containers.constantExpenses.style.visibility  = todos.length > 0 ? 'visible' : 'hidden';
+            DOM.containers.creditSection.style.visibility     = todos.length > 0 ? 'visible' : 'hidden'; 
             updateSummary();
         }
 
@@ -832,11 +856,17 @@
         }
 
 
-        // Add event listener for expense amounts
+        // Add event listeners for expense amounts
         document.addEventListener('input', function (e) {
             if (e.target.classList.contains('expense-amount')) {
                 updateSummary();
             }
+        });
+
+
+        // Add event listeners for credit inputs
+        ['creditPayable', 'creditReceivable'].forEach(id => {
+            DOM.inputs[id].addEventListener('input', updateSummary);
         });
 
         function submitBillingDetails() {
@@ -854,38 +884,43 @@
             const localTime = new Date();
             const timeStr = `${localTime.getHours().toString().padStart(2, '0')}:${localTime.getMinutes().toString().padStart(2, '0')}`;
 
-            // Create array to store all billing entries
-            const billingEntries = todos.map(todo => ({
-                driver_name: DOM.inputs.driverName.value,
-                date: DOM.inputs.date.value,
-                time: timeStr,
-                product_name: todo.title + " (" + todo.size + ")",
-                line: todo.line,
-                cases: Number(todo.cases),
-                pieces: Number(todo.pieces),
-                discount: Number(todo.discount),
-                commission: Number(todo.commission),
-                kuraivu_cases: Number(todo.kuraivu_cases),
-                kuraivu_pieces: Number(todo.kuraivu_pieces),
-                kuraivu_amount: Number(todo.kuraivu_amount),
-                adhiga_varavu_cases: Number(todo.adhigaVaravu_cases),
-                adhiga_varavu_pieces: Number(todo.adhigaVaravu_pieces),
-                base_amount: Number(todo.base_amount),
-                final_amount: Number(todo.amount),
-                goods_upload_cases: Number(todo.goods_upload_cases),
-                goods_upload_pieces: Number(todo.goods_upload_pieces),
-                goods_return_cases: Number(todo.goods_return_cases),
-                goods_return_pieces: Number(todo.goods_return_pieces)
-            }));
+            const billingEntries = todos.map(todo => {
+                return {
+                    driver_name: DOM.inputs.driverName.value,
+                    date: DOM.inputs.date.value,
+                    time: timeStr,
+                    product_name: todo.title,
+                    line: todo.line,
+                    goods_upload_cases: Number(todo.goods_upload_cases) || 0,
+                    goods_upload_pieces: Number(todo.goods_upload_pieces) || 0,
+                    goods_return_cases: Number(todo.goods_return_cases) || 0,
+                    goods_return_pieces: Number(todo.goods_return_pieces) || 0,
+                    cases: Number(todo.cases) || 0,
+                    pieces: Number(todo.pieces) || 0,
+                    discount: todo.discounts,         // Use stored discount entries
+                    commission: todo.commissions,     // Use stored commission entries
+                    kuraivu_pieces: Number(todo.kuraivu_pieces) || 0,
+                    kuraivu_cases: Number(todo.kuraivu_cases) || 0,
+                    kuraivu_amount: Number(todo.kuraivu_amount) || 0,
+                    adhiga_varavu_cases: Number(todo.adhigaVaravu_cases) || 0,
+                    adhiga_varavu_pieces: Number(todo.adhigaVaravu_pieces) || 0,
+                    final_amount: Number(todo.amount),
+                    base_amount: todo.base_amount
+                };
+            });
 
-            // Prepare final payload
             const payload = {
                 entries: billingEntries,
-                expenses: expenses
+                expenses: expenses,
+                credits: {
+                    payable: Number(DOM.inputs.creditPayable.value) || 0,
+                    receivable: Number(DOM.inputs.creditReceivable.value) || 0
+                }
             };
 
-            const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === "127.0.0.1"
+            console.log(payload.entries);
 
+            const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === "127.0.0.1";
             const baseUrl = isDevelopment ? 'http://localhost:8000/' : 'https://nagaraj1.pythonanywhere.com/';
 
             // Submit to server
@@ -897,25 +932,25 @@
                 },
                 body: JSON.stringify(payload)
             })
-                .then(response => {
-                    if (!response.ok) {
-                        DOM.buttons.submit.style.visibility = 'visible';
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (isDevelopment) {
-                        window.location.replace("thankyou.html")
-                    } else {
-                        window.location.replace("thankyou")
-                    }
-                })
-                .catch(error => {
-                    console.error("Error submitting billing details:", error);
-                    alert("Failed to submit billing details. Please try again.");
+            .then(response => {
+                if (!response.ok) {
                     DOM.buttons.submit.style.visibility = 'visible';
-                });
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (isDevelopment) {
+                    window.location.replace("thankyou.html");
+                } else {
+                    window.location.replace("thankyou");
+                }
+            })
+            .catch(error => {
+                console.error("Error submitting billing details:", error);
+                alert("Failed to submit billing details. Please try again.");
+                DOM.buttons.submit.style.visibility = 'visible';
+            });
         }
 
         function filterArea(query) {
@@ -1148,7 +1183,7 @@
             products
                 .filter(product => product.name.toLowerCase() === selectedProductName)
                 .forEach(product => {
-                    const size = product.size;
+                    const size = product.discount.case;
                     if (!uniqueSizes.has(size)) {
                         uniqueSizes.add(size);
                         const listItem = document.createElement('li');
@@ -1173,7 +1208,7 @@
                 // Find the product with matching size
                 const productWithSize = products.find(p => 
                     p.name.toLowerCase() === selectedProduct.name.toLowerCase() && 
-                    p.size === Number(size)
+                    p.discount.case === Number(size)
                 );
                 console.log(productWithSize)
                 
@@ -1206,6 +1241,26 @@
 
             if (totalQuantityCases === 0 && totalQuantityPieces === 0) return;
 
+            // Collect discount entries
+            const discountEntries = [];
+            DOM.containers.discounts.querySelectorAll('.discount-row').forEach(row => {
+                discountEntries.push({
+                    size: Number(row.querySelector('.discount-size').value),
+                    cases: Number(row.querySelector('.discount-cases').value) || 0,
+                    pieces: Number(row.querySelector('.discount-pieces').value) || 0
+                });
+            });
+
+            // Collect commission entries
+            const commissionEntries = [];
+            DOM.containers.commissions.querySelectorAll('.commission-row').forEach(row => {
+                commissionEntries.push({
+                    size: Number(row.querySelector('.commission-size').value),
+                    cases: Number(row.querySelector('.commission-cases').value) || 0,
+                    pieces: Number(row.querySelector('.commission-pieces').value) || 0
+                });
+            });
+
             const baseAmount = (totalQuantityCases * selectedProduct.price.case) + 
                               (totalQuantityPieces * selectedProduct.price.piece);
             const kuraivuAmount = DOM.inputs.kuraivuPieces.value * selectedProduct.kuraivu;
@@ -1227,7 +1282,9 @@
                 adhigaVaravu_cases: DOM.inputs.adhigaVaravuCases.value || 0,
                 adhigaVaravu_pieces: DOM.inputs.adhigaVaravuPieces.value || 0,
                 amount: DOM.inputs.amount.value,
-                base_amount: baseAmount
+                base_amount: baseAmount,
+                discounts: discountEntries,        // Store discount entries
+                commissions: commissionEntries     // Store commission entries
             };
 
             if (formData.title) {
@@ -1237,6 +1294,149 @@
                 closeModal('addTodoModal');
             }
         }
+
+        function addCommissionRow() {
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'commission-row mb-3';
+            
+            rowDiv.innerHTML = `
+                <div class="row g-2">
+                    <div class="col-3">
+                        <div class="form-outline">
+                            <input type="text" class="form-control active dropdown-toggle commission-size" 
+                                data-mdb-dropdown-init aria-expanded="false" autocomplete="off">
+                            <label class="form-label">Size</label>
+                            <ul class="dropdown-menu w-100 commission-size-dropdown">
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="form-outline">
+                            <input type="number" class="form-control active commission-cases" min="0">
+                            <label class="form-label">Cases</label>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="form-outline">
+                            <input type="number" class="form-control active commission-pieces" min="0" max="24">
+                            <label class="form-label">Pieces</label>
+                        </div>
+                    </div>
+                    <div class="col-3 d-flex align-items-center">
+                        <button type="button" class="btn btn-danger btn-sm" onclick="removeCommissionRow(this)">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            DOM.containers.commissions.appendChild(rowDiv);
+            
+            // Initialize MDB form elements
+            rowDiv.querySelectorAll('.form-outline').forEach((formOutline) => {
+                new mdb.Input(formOutline).init();
+            });
+
+            const sizeInput = rowDiv.querySelector('.commission-size');
+            const dropdownMenu = rowDiv.querySelector('.commission-size-dropdown');
+            
+            sizeInput.addEventListener('click', () => {
+                renderCommissionSizes(dropdownMenu);
+            });
+
+            dropdownMenu.addEventListener('click', function(e) {
+                if (e.target && e.target.matches('.dropdown-item')) {
+                    sizeInput.value = e.target.textContent.trim();
+                    dropdownMenu.innerHTML = '';
+                    sizeInput.dispatchEvent(new Event('input'));
+                }
+            });
+
+            // Add event listeners for amount calculation
+            const commissionInputs = rowDiv.querySelectorAll('.commission-size, .commission-cases, .commission-pieces');
+            commissionInputs.forEach(input => {
+                input.addEventListener('input', updateAmount);
+            });
+
+            const dropdownInputs = rowDiv.querySelectorAll('.dropdown-toggle');
+            dropdownInputs.forEach(input => {
+                new mdb.Dropdown(input);
+            });
+        }
+
+        function renderCommissionSizes(dropdownMenu) {
+            dropdownMenu.innerHTML = '';
+            const selectedProductName = DOM.inputs.product.value.toLowerCase();
+            const uniqueSizes = new Set();
+
+            products
+                .filter(product => product.name.toLowerCase() === selectedProductName)
+                .forEach(product => {
+                    const size = product.commission.case;
+                    if (!uniqueSizes.has(size)) {
+                        uniqueSizes.add(size);
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `<a class="dropdown-item" href="#">${size}</a>`;
+                        dropdownMenu.appendChild(listItem);
+                    }
+                });
+        }
+
+        function calculateCommissions() {
+            const commissionRows = document.querySelectorAll('.commission-row');
+            let totalCommission = 0;
+            const selectedProduct = getSelectedProduct();
+            
+            if (!selectedProduct) return 0;
+            
+            commissionRows.forEach(row => {
+                const size = row.querySelector('.commission-size').value;
+                const cases = parseInt(row.querySelector('.commission-cases').value) || 0;
+                const pieces = parseInt(row.querySelector('.commission-pieces').value) || 0;
+                
+                // Find the product with matching size
+                const productWithSize = products.find(p => 
+                    p.name.toLowerCase() === selectedProduct.name.toLowerCase() && 
+                    p.commission.case === Number(size)
+                );
+                
+                if (productWithSize) {
+                    totalCommission += (cases * productWithSize.commission.case) + 
+                                     (pieces * productWithSize.commission.piece);
+                }
+            });
+            
+            return totalCommission;
+        }
+
+        function removeCommissionRow(button) {
+            const row = button.closest('.commission-row');
+            row.remove();
+            updateAmount();
+        }
+
+        // Update product selection handler
+        DOM.dropdowns.product.addEventListener('click', function(e) {
+            if (e.target && e.target.matches('.dropdown-item')) {
+                const newProductName = e.target.textContent.trim();
+                const currentProductName = DOM.inputs.product.value.trim();
+                
+                // Only clear if selecting a different product
+                if (newProductName !== currentProductName) {
+                    DOM.forms.todo.reset();
+                    DOM.containers.discounts.innerHTML = '';  // Clear discount rows
+                    DOM.containers.commissions.innerHTML = ''; // Clear commission rows
+                }
+                
+                // Set the new product
+                const productId = e.target.dataset.productId;
+                DOM.inputs.product.value = newProductName;
+                DOM.inputs.product.dataset.productId = productId;
+                
+                DOM.dropdowns.product.innerHTML = '';
+                DOM.inputs.product.dispatchEvent(new Event('input'));
+            }
+        });
     </script>
 
 

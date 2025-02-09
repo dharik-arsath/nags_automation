@@ -38,6 +38,7 @@ def format_msg(data):
     expenses = {}
     entries = data["entries"]
     expenses = data["expenses"]
+    credits = data.get("credits", {"payable": 0, "receivable": 0})
     
     # Get driver name, line, and date
     driver_name = entries[0]['driver_name']
@@ -46,29 +47,59 @@ def format_msg(data):
     date_split = date.split("-")
     date = date_split[-1] + "-" + date_split[-2] + "-" + date_split[-3]
 
-    # Create table rows
+    # Create table rows for products and their base amounts
     table_rows = []
-    additional_amount = 0
     for item in entries:
         product_name = f"{item['product_name']}"
-        table_rows.append(["ADD", product_name + " " + f"{item['cases']}C / {item['pieces']}P", item["base_amount"]])
-        print("*" * 20)
-        if item.get("kuraivu_amount") is not None and item.get("kuraivu_amount") > 0:
-            table_rows.append(["ADD", "kuraivu", item["kuraivu_amount"]])
-            additional_amount += item["kuraivu_amount"]
-        total_amount += item["base_amount"] + additional_amount
-        discount += item["discount"]
-        commission += item["commission"]
-        final_amount += item["final_amount"]
-        additional_amount = 0
 
-    # Create summary rows
+        # Add sales info with base amount
+        table_rows.append(["ADD", product_name + " " + f"{item['cases']}C / {item['pieces']}P", item["base_amount"]])
+        total_amount += item["base_amount"]
+
+
+        # Add goods upload/return info
+        table_rows.append(["INFO", f"Goods Upload: {item['goods_upload_cases']}C / {item['goods_upload_pieces']}P", 0])
+        table_rows.append(["INFO", f"Goods Return: {item['goods_return_cases']}C / {item['goods_return_pieces']}P", 0])
+        
+    # Add total before deductions
+    table_rows.append(["", "Total Before Deductions", total_amount])
+    table_rows.append(["", "---------------", "--------"])
+
+    # Process all deductions
+    deduction_rows = []
+    for item in entries:
+        # Add individual discounts
+        for discount_entry in item.get('discount', []):
+            discount_amount = (discount_entry['cases'] * discount_entry['size']) + (discount_entry['pieces'] * (discount_entry['size']/24))
+            deduction_rows.append(["SUB", f"Discount ({discount_entry['size']}) - {item['product_name']}", discount_amount])
+            discount += discount_amount
+
+        # Add individual commissions
+        for commission_entry in item.get('commission', []):
+            commission_amount = (commission_entry['cases'] * commission_entry['size']) + (commission_entry['pieces'] * (commission_entry['size']/24))
+            deduction_rows.append(["SUB", f"Commission ({commission_entry['size']}) - {item['product_name']}", commission_amount])
+            commission += commission_amount
+
+        if item.get("kuraivu_amount") is not None and item.get("kuraivu_amount") > 0:
+            deduction_rows.append(["ADD", f"Kuraivu - {item['product_name']}", item["kuraivu_amount"]])
+        
+        final_amount += item["final_amount"]
+
+    # Add total deductions summary
     summary_rows = [
-        ["", "Total", total_amount],
-        ["SUB", "DISCOUNT", discount],
-        ["SUB", "COMMISSION", commission],
-        ["", "TOTAL", round(final_amount - additional_amount, 4)],
+        ["SUB", "Total Discount", discount],
+        ["SUB", "Total Commission", commission],
     ]
+
+    # Add credits
+    if credits["payable"] > 0:
+        summary_rows.append(["SUB", "Credit Payable", credits["payable"]])
+    if credits["receivable"] > 0:
+        summary_rows.append(["ADD", "Credit Receivable", credits["receivable"]])
+
+    # Add total after deductions
+    summary_rows.append(["", "Total After Deductions", final_amount])
+    summary_rows.append(["", "---------------", "--------"])
 
     # Create expense rows
     expense_rows = []
@@ -76,18 +107,17 @@ def format_msg(data):
     for description, amount in expenses.items():
         expense_rows.append(["SUB", description, amount])
         total_expenses += amount
-    expense_rows.append(["", "TOTAL EXPENSES", total_expenses])
+    expense_rows.append(["", "Total Expenses", total_expenses])
 
     # Create final total row
-    final_total = round(final_amount  - total_expenses, 4)
-    # final_total = round(final_amount, 4)
+    final_total = round(final_amount - total_expenses, 4)
     final_total_row = ["", "FINAL TOTAL", final_total]
 
     # Generate table
     header = f"**Driver Name:** {driver_name}\n**Line:** {line}\n**Date:** {date}\n\n"
     table = tabulate(
-        table_rows + summary_rows + expense_rows + [final_total_row],
-        headers=["", "Product", "Amount"],
+        table_rows + deduction_rows + summary_rows + expense_rows + [final_total_row],
+        headers=["", "Description", "Amount"],
         tablefmt="grid",
         maxcolwidths=[None, 10, None],
     )
@@ -124,29 +154,39 @@ def update_sheet():
         raise abort(400)
 
     data_json = json.loads(request_data)
-    # transaction_id        = generate_id()
-    # order_id              = get_numeric_id_from_main_sheet(gc)
-    order_id              = generate_numeric_id(items_sheet_manager)
+    order_id = generate_numeric_id(items_sheet_manager)
 
-    expense_sheet_info    = ValidateExpenseInfo(transaction_id=order_id, expenses=data_json["expenses"])
-    expense_sheet_info    = ExpenseSheetHandler(expense_sheet_manager, expense_sheet_info)
-    expense_rows          = expense_sheet_info.compute_expense()
-    total_expense         = expense_sheet_info.total_expense
-    
-    product_sheet_info    = ValidateSheetInfo(transaction_id=order_id, entries=data_json["entries"], total_expense=total_expense)
-    print(product_sheet_info)
+    # Handle expenses
+    expense_sheet_info = ValidateExpenseInfo(
+        transaction_id=order_id, 
+        expenses=data_json["expenses"]
+    )
+    expense_sheet_info = ExpenseSheetHandler(expense_sheet_manager, expense_sheet_info)
+    expense_rows = expense_sheet_info.compute_expense()
+    total_expense = expense_sheet_info.total_expense
+
+    # Add credits to total expense calculation
+    credits = data_json.get("credits", {})
+    credit_payable = credits.get("payable", 0)
+    credit_receivable = credits.get("receivable", 0)
+    total_expense = total_expense + credit_payable - credit_receivable
+
+    # Handle product entries
+    product_sheet_info = ValidateSheetInfo(
+        transaction_id=order_id, 
+        entries=data_json["entries"], 
+        total_expense=total_expense
+    )
     product_sheet_handler = ProductSheetHandler(items_sheet_manager, product_sheet_info)
-    product_rows          = product_sheet_handler.parse_product_entries()
+    product_rows = product_sheet_handler.parse_product_entries()
 
-    
     data_json["total_expense"] = total_expense    
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as exec:
         future1 = exec.submit(expense_sheet_info.add_expense_row, expense_rows)
         future2 = exec.submit(product_sheet_handler.add_product_row, product_rows)
         future3 = exec.submit(update_on_telegram, data_json)
 
-
-    return jsonify({"status":True})
+    return jsonify({"status": True})
 
 
 

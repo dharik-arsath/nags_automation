@@ -68,7 +68,6 @@ class ProductSheetHandler:
         return self._final_amount
 
     def parse_product_entries(self):
-
         headers = self.sheet.row_values(1)
         row_data = []
         for entry in self.sheet_info.entries:
@@ -78,11 +77,29 @@ class ProductSheetHandler:
                     row.append("")
                     continue 
                 
-                key         = COLUMN_MAPPING[header]
+                key = COLUMN_MAPPING[header]
                 if hasattr(entry, key):
-                    value   = getattr(entry, key)
+                    value = getattr(entry, key)
                 else:
-                    value   = ""
+                    value = ""
+
+                if header == "DISCOUNT":
+                    # Sum up all discounts for this entry
+                    total_discount = 0
+                    for discount in entry.discount:
+                        discount_amount = (discount.get('cases', 0) * discount.get('size', 0)) + \
+                                        (discount.get('pieces', 0) * (discount.get('size', 0)/24))
+                        total_discount += discount_amount
+                    value = total_discount
+
+                if header == "COMMISSION":
+                    # Sum up all commissions for this entry
+                    total_commission = 0
+                    for commission in entry.commission:
+                        commission_amount = (commission.get('cases', 0) * commission.get('size', 0)) + \
+                                          (commission.get('pieces', 0) * (commission.get('size', 0)/24))
+                        total_commission += commission_amount
+                    value = total_commission
 
                 if header == "ORDER ID":
                     value = self.sheet_info.transaction_id

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Sequence, Optional
+from typing import List, Sequence, Optional
 import gspread
 
 
@@ -19,8 +19,8 @@ class SheetInfo(BaseModel):
     product_name                    : str 
     base_amount                     : float
     final_amount                    : float
-    discount                        : float
-    commission                      : float
+    discount                        : List[ dict[str, int | float] ]
+    commission                      : List[ dict[str, int | float] ]
     goods_upload_cases              : int 
     goods_upload_pieces             : int 
     goods_return_cases              : int 

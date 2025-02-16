@@ -9,3 +9,5 @@ loguru.log
 index.html
 static/js/data_bkup.js
 static/js/data_no.js
+
+**__pycache__**

@@ -185,6 +185,19 @@
                                 <div id="discounts-container"></div>
                             </div>
 
+
+
+                            <!-- Gain Section -->
+                            <div class="mb-3 p-2 bg-light rounded">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <small class="text-muted">Gains</small>
+                                    <button type="button" class="btn btn-primary btn-sm w-100px" onclick="addGainRow()">
+                                        <i class="fas fa-plus me-2"></i>Add
+                                    </button>
+                                </div>
+                                <div id="gains-container"></div>
+                            </div>
+
                             <!-- Commission Section -->
                             <div class="mb-3 p-2 bg-light rounded">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -390,6 +403,7 @@
                 productList: document.getElementById('productList'),
                 expenses: document.getElementById('expenses-container'),
                 discounts: document.getElementById('discounts-container'),
+                gains: document.getElementById('gains-container'),
                 commissions: document.getElementById('commissions-container'),
                 constantExpenses: document.getElementById('constant_expenses'),
                 creditSection: document.getElementById("credit-section")
@@ -558,9 +572,13 @@
             // Calculate discount and commission using the new methods
             const discount = calculateDiscounts();
             const commission = calculateCommissions();
-            
+            const gains    = calculateGains();
+            console.log("toal gain is ")
+            console.log(gains)
+
             DOM.inputs.discount.value = Number(discount);
             DOM.inputs.commission.value = Number(commission);
+            // DOM.inputs.gains.value = Number(gains);
 
             const kuraivu = Number(DOM.inputs.kuraivuPieces.value);
             let totalAmount = (caseCount * selectedProduct.price.case) + 
@@ -568,6 +586,7 @@
             
             totalAmount -= discount;
             totalAmount -= commission;
+            totalAmount += gains;
             totalAmount += (kuraivu * selectedProduct.kuraivu);
 
             DOM.inputs.amount.value = totalAmount.toFixed(2);
@@ -595,8 +614,9 @@
                 const basePricePiece = productInfo ? productInfo.price.piece : 0;
                 const caseQuantity = Number(todo.cases);
                 const pieceQuantity = Number(todo.pieces);
+                const gain = calculateGains();
 
-                const baseAmount = (caseQuantity * basePriceCase) + (pieceQuantity * basePricePiece);
+                const baseAmount = (caseQuantity * basePriceCase) + (pieceQuantity * basePricePiece) + gain;
                 totalBaseAmount += baseAmount;
 
                 totalDiscounts += Number(todo.discount) || 0;
@@ -642,7 +662,8 @@
                 const basePrice_piece = productInfo ? productInfo.price.piece : 0;
                 const case_quantity = Number(todo.cases);
                 const piece_quantity = Number(todo.pieces);
-                const baseAmount = (case_quantity * basePrice_case) + (piece_quantity * basePrice_piece);
+                const gain = calculateGains();
+                const baseAmount = (case_quantity * basePrice_case) + (piece_quantity * basePrice_piece) + gain;
                 const totalDeductions = Number(todo.discount) + Number(todo.commission);
                 const totalAdditions = Number(todo.kuraivu_pieces) * (productInfo ? productInfo.kuraivu : 0);
 
@@ -1174,6 +1195,106 @@
             });
         }
 
+
+
+        function addGainRow() {
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'gain-row mb-3';
+            
+            rowDiv.innerHTML = `
+                <div class="row g-2">
+                    <div class="col-3">
+                        <div class="form-outline">
+                            <input type="text" class="form-control active dropdown-toggle gain-size" 
+                                data-mdb-dropdown-init aria-expanded="false" autocomplete="off">
+                            <label class="form-label">Size</label>
+                            <ul class="dropdown-menu w-100 gain-size-dropdown">
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="form-outline">
+                            <input type="number" class="form-control active gain-cases" min="0">
+                            <label class="form-label">Cases</label>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="form-outline">
+                            <input type="number" class="form-control active gain-pieces" min="0" max="24">
+                            <label class="form-label">Pieces</label>
+                        </div>
+                    </div>
+                    <div class="col-3 d-flex align-items-center">
+                        <button type="button" class="btn btn-danger btn-sm" onclick="removeGainRow(this)">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            DOM.containers.gains.appendChild(rowDiv);
+            
+            // Initialize MDB form elements
+            rowDiv.querySelectorAll('.form-outline').forEach((formOutline) => {
+                new mdb.Input(formOutline).init();
+            });
+
+            const sizeInput = rowDiv.querySelector('.gain-size');
+            const dropdownMenu = rowDiv.querySelector('.gain-size-dropdown');
+            
+            sizeInput.addEventListener('click', () => {
+                renderGainSizes(dropdownMenu);  // Using renderDiscountSizes directly
+            });
+
+            dropdownMenu.addEventListener('click', function(e) {
+                if (e.target && e.target.matches('.dropdown-item')) {
+                    sizeInput.value = e.target.textContent.trim();
+                    dropdownMenu.innerHTML = '';
+                    sizeInput.dispatchEvent(new Event('input'));
+                }
+            });
+
+            // Add event listeners for amount calculation
+            const gainInputs = rowDiv.querySelectorAll('.gain-size, .gain-cases, .gain-pieces');
+            gainInputs.forEach(input => {
+                input.addEventListener('input', updateAmount);
+            });
+
+            const dropdownInputs = rowDiv.querySelectorAll('.dropdown-toggle');
+            dropdownInputs.forEach(input => {
+                new mdb.Dropdown(input);
+            });
+        }
+
+
+        function removeGainRow(button) {
+            const rowToRemove = button.closest('.gain-row');
+            rowToRemove.remove();
+            updateAmount();
+        }
+
+
+        function renderGainSizes(dropdownMenu) {
+                dropdownMenu.innerHTML = '';
+                const selectedProductName = DOM.inputs.product.value.toLowerCase();
+                const uniqueSizes = new Set();
+
+                // Filter sizes for the chosen product
+                products
+                    .filter(product => product.name.toLowerCase() === selectedProductName)
+                    .forEach(product => {
+                        const size = product.gain.case;
+                        if (!uniqueSizes.has(size)) {
+                            uniqueSizes.add(size);
+                            const listItem = document.createElement('li');
+                            listItem.innerHTML = `<a class="dropdown-item" href="#">${size}</a>`;
+                            dropdownMenu.appendChild(listItem);
+                        }
+                    });
+            }
+
+
+        
         function renderDiscountSizes(dropdownMenu) {
             dropdownMenu.innerHTML = '';
             const selectedProductName = DOM.inputs.product.value.toLowerCase();
@@ -1191,6 +1312,31 @@
                         dropdownMenu.appendChild(listItem);
                     }
                 });
+        }
+
+        function calculateGains() {
+            const gainRows = document.querySelectorAll('.gain-row');
+            let totalGain = 0;
+            const selectedProduct = getSelectedProduct();
+            console.log(selectedProduct)
+            
+            if (!selectedProduct) return 0;
+            
+            gainRows.forEach(row => {
+                const size = row.querySelector('.gain-size').value;
+                const cases = parseInt(row.querySelector('.gain-cases').value) || 0;
+                const pieces = parseInt(row.querySelector('.gain-pieces').value) || 0;
+                
+                // Find the product with matching size
+                const productWithSize = products.find(p => 
+                    p.name.toLowerCase() === selectedProduct.name.toLowerCase() &&
+                    p.gain.case === Number(size)
+                )
+
+                totalGain += (cases * productWithSize.gain.case) + (pieces * productWithSize.gain.piece);
+            });
+            
+            return totalGain;
         }
 
         function calculateDiscounts() {

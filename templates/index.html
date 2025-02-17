@@ -1426,6 +1426,39 @@
                 });
             });
 
+            // Calculate total discounts, gains, and commissions
+            let totalDiscountCases = 0;
+            let totalDiscountPieces = 0;
+            discountEntries.forEach(discount => {
+                totalDiscountCases += discount.cases;
+                totalDiscountPieces += discount.pieces;
+            });
+
+            let totalCommissionCases = 0;
+            let totalCommissionPieces = 0;
+            commissionEntries.forEach(commission => {
+                totalCommissionCases += commission.cases;
+                totalCommissionPieces += commission.pieces;
+            });
+
+            let totalGainCases = 0;
+            let totalGainPieces = 0;
+            gainEntries.forEach(gain => {
+                totalGainCases += gain.cases;
+                totalGainPieces += gain.pieces;
+            });
+
+            // Validate that total discounts, gains, and commissions do not exceed total cases and pieces
+            if (totalDiscountCases > totalQuantityCases || 
+                totalDiscountPieces > totalQuantityPieces || 
+                totalCommissionCases > totalQuantityCases || 
+                totalCommissionPieces > totalQuantityPieces || 
+                totalGainCases > totalQuantityCases || 
+                totalGainPieces > totalQuantityPieces) {
+                alert("Total discounts, gains, and commissions cannot exceed total sales cases or pieces.");
+                return; // Prevent saving if validation fails
+            }
+
             const baseAmount = (totalQuantityCases * selectedProduct.price.case) + 
                               (totalQuantityPieces * selectedProduct.price.piece);
 

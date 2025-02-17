@@ -605,6 +605,7 @@
             let totalBaseAmount = 0;
             let totalDiscounts = 0;
             let totalCommissions = 0;
+            let totalGains = 0;  // Initialize total gains
             let totalKuraivu = 0;
             let totalAdhigaVaravu = 0;
 
@@ -614,15 +615,22 @@
                 const basePricePiece = productInfo ? productInfo.price.piece : 0;
                 const caseQuantity = Number(todo.cases);
                 const pieceQuantity = Number(todo.pieces);
-                const gain = calculateGains();
 
-                const baseAmount = (caseQuantity * basePriceCase) + (pieceQuantity * basePricePiece) + gain;
+                const baseAmount = (caseQuantity * basePriceCase) + (pieceQuantity * basePricePiece);
                 totalBaseAmount += baseAmount;
 
                 totalDiscounts += Number(todo.discount) || 0;
                 totalCommissions += Number(todo.commission) || 0;
                 totalKuraivu += (Number(todo.kuraivu_pieces) * (productInfo ? productInfo.kuraivu : 0)) || 0;
+
+                // Calculate total gains
+                todo.gains.forEach(gain => {
+                    totalGains += (gain.cases * gain.size) + (gain.pieces * (gain.size / 24));
+                });
             });
+
+            // Include total gains in totalBaseAmount
+            totalBaseAmount += totalGains; // Add total gains to totalBaseAmount
 
             const constantExpenses = getExpensesTotal();
             const creditPayable = Number(DOM.inputs.creditPayable.value) || 0;
@@ -632,7 +640,7 @@
             const totalDeductions = totalDiscounts + totalCommissions + constantExpenses + creditPayable;
 
             // Calculate final amount including both credits
-            const finalAmount = totalBaseAmount - totalDeductions + totalKuraivu + creditReceivable;
+            const finalAmount = totalBaseAmount - totalDeductions + totalKuraivu + creditReceivable; // No need to add gains again
 
             // Update display with detailed breakdown
             DOM.summary.totalProducts.innerHTML = `
@@ -646,7 +654,8 @@
                     ${totalCommissions > 0 ? `Commissions: ₹${totalCommissions.toFixed(2)}<br>` : ''}
                     ${constantExpenses > 0 ? `Expenses: ₹${constantExpenses.toFixed(2)}<br>` : ''}
                     ${creditPayable > 0 ? `Credit Payable: ₹${creditPayable.toFixed(2)}<br>` : ''}
-                    ${creditReceivable > 0 ? `<span class="text-success">Credit Receivable: +₹${creditReceivable.toFixed(2)}</span>` : ''}
+                    ${creditReceivable > 0 ? `<span class="text-success">Credit Receivable: +₹${creditReceivable.toFixed(2)}</span><br>` : ''}
+                    ${totalGains > 0 ? `<span class="text-success">Gains: +₹${totalGains.toFixed(2)}</span><br>` : ''}  // Display total gains
                 </div>
             `;
 
@@ -1407,8 +1416,28 @@
                 });
             });
 
+            // Collect gain entries
+            const gainEntries = [];
+            DOM.containers.gains.querySelectorAll('.gain-row').forEach(row => {
+                gainEntries.push({
+                    size: Number(row.querySelector('.gain-size').value),
+                    cases: Number(row.querySelector('.gain-cases').value) || 0,
+                    pieces: Number(row.querySelector('.gain-pieces').value) || 0
+                });
+            });
+
             const baseAmount = (totalQuantityCases * selectedProduct.price.case) + 
                               (totalQuantityPieces * selectedProduct.price.piece);
+
+            // Calculate total gains
+            let totalGains = 0;
+            gainEntries.forEach(gain => {
+                totalGains += (gain.cases * gain.size) + (gain.pieces * (gain.size / 24));
+            });
+
+            // Add total gains to base amount
+            const finalBaseAmount = baseAmount + totalGains;
+
             const kuraivuAmount = DOM.inputs.kuraivuPieces.value * selectedProduct.kuraivu;
 
             const formData = {
@@ -1428,9 +1457,10 @@
                 adhigaVaravu_cases: DOM.inputs.adhigaVaravuCases.value || 0,
                 adhigaVaravu_pieces: DOM.inputs.adhigaVaravuPieces.value || 0,
                 amount: DOM.inputs.amount.value,
-                base_amount: baseAmount,
+                base_amount: finalBaseAmount,  // Update base amount to include gains
                 discounts: discountEntries,        // Store discount entries
-                commissions: commissionEntries     // Store commission entries
+                commissions: commissionEntries,    // Store commission entries
+                gains: gainEntries                 // Store gain entries
             };
 
             if (formData.title) {

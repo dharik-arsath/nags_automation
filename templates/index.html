@@ -291,10 +291,25 @@
             </div>
             <div class="card-body">
                 <div class="row g-2">
+                    <div class="col-6 pr-4 pb-2">
+                        <div class="form-outline">
+                            <input type="text" class="form-control active" id="creditPayableDesc">
+                            <label class="form-label">Description</label>   
+                        </div>
+                    </div>
+
                     <div class="col-6">
                         <div class="form-outline">
                             <input type="number" class="form-control active credit-amount" id="creditPayable" min="0">
                             <label class="form-label">Credit as Payable</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-2">
+                    <div class="col-6 pr-4 pb-2">
+                        <div class="form-outline">
+                            <input type="text" class="form-control active" id="creditReceivableDesc">
+                            <label class="form-label">Description</label>   
                         </div>
                     </div>
                     <div class="col-6">
@@ -390,7 +405,9 @@
                 adhigaVaravuPieces: document.getElementById('editTodoAdhigaVaravuPieces'),
                 amount: document.getElementById('editTodoAmount'),
                 creditPayable: document.getElementById('creditPayable'),
-                creditReceivable: document.getElementById('creditReceivable')
+                creditPayableDesc: document.getElementById('creditPayableDesc'),
+                creditReceivable: document.getElementById('creditReceivable'),
+                creditReceivableDesc: document.getElementById('creditReceivableDesc')
             },
             // Dropdowns
             dropdowns: {
@@ -944,7 +961,9 @@
                 expenses: expenses,
                 credits: {
                     payable: Number(DOM.inputs.creditPayable.value) || 0,
-                    receivable: Number(DOM.inputs.creditReceivable.value) || 0
+                    payable_desc: DOM.inputs.creditPayableDesc.value,
+                    receivable: Number(DOM.inputs.creditReceivable.value) || 0,
+                    receivable_desc: DOM.inputs.creditReceivableDesc.value
                 }
             };
 

@@ -34,10 +34,17 @@ class SheetInfo(BaseModel):
     adhiga_varavu_pieces            : int
 
 
+class ValidateCreditInfo(BaseModel):
+    payable         : float
+    receivable      : float
+    payable_desc    : str
+    receivable_desc : str
+
 class ValidateSheetInfo(BaseModel):
     transaction_id  : int
     total_expense   : float 
-    credits         : dict[str, int | float]
+
+    credits         : Optional[ValidateCreditInfo] = Field(default=None)
 
     entries         : Sequence[SheetInfo]
 

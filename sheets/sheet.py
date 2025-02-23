@@ -48,6 +48,8 @@ COLUMN_MAPPING = {
     "NET AMOUNT" : "",
     "CREDIT PAYABLE": "credit_payable",
     "CREDIT RECEIVABLE": "credit_receivable",
+    "CREDIT PAYABLE DESCRIPTION": "payable_desc",
+    "CREDIT RECEIVABLE DESCRIPTION": "receivable_desc"
 }
 
 
@@ -115,8 +117,8 @@ class ProductSheetHandler:
         
 
         final_amount = self.final_amount
-        credits_payable = self.sheet_info.credits.get("payable", 0)
-        credits_receivable = self.sheet_info.credits.get("receivable", 0)
+        credits_payable = self.sheet_info.credits.payable
+        credits_receivable = self.sheet_info.credits.receivable
 
         try:
             net_amout_idx = headers.index("NET AMOUNT")
@@ -126,10 +128,16 @@ class ProductSheetHandler:
             row_data[-1][total_expense_idx] = self.sheet_info.total_expense
 
             credit_payable_idx = headers.index("CREDIT PAYABLE")
-            row_data[-1][credit_payable_idx] = self.sheet_info.credits.get("payable")
+            row_data[-1][credit_payable_idx] = self.sheet_info.credits.payable
 
             credit_receivable_idx = headers.index("CREDIT RECEIVABLE")
-            row_data[-1][credit_receivable_idx] = self.sheet_info.credits.get("receivable")
+            row_data[-1][credit_receivable_idx] = self.sheet_info.credits.receivable
+
+            credit_payable_desc_idx = headers.index("CREDIT PAYABLE DESCRIPTION")
+            row_data[-1][credit_payable_desc_idx] = self.sheet_info.credits.payable_desc
+
+            credit_receivable_desc_idx = headers.index("CREDIT RECEIVABLE DESCRIPTION")
+            row_data[-1][credit_receivable_desc_idx] = self.sheet_info.credits.receivable_desc
             
         except Exception as e:  
             print(e)

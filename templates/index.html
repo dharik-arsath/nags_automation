@@ -505,6 +505,9 @@
         }
 
         function calculateSalesFromReturns() {
+            const selectedProduct = getSelectedProduct();
+            if (!selectedProduct) return;
+
             const goodsData = {
                 up_cases: Number(DOM.inputs.goodsUpCases.value),   // Initial cases taken
                 up_pieces: Number(DOM.inputs.goodsUpPieces.value), // Initial pieces taken
@@ -513,7 +516,7 @@
             };
 
             // Total pieces initially taken (cases * 24 pieces per case)
-            const piecesPerCase = 24;
+            const piecesPerCase = selectedProduct.max_case_count;
             const totalUpPieces = (goodsData.up_cases * piecesPerCase) + goodsData.up_pieces;
             const totalRetPieces = (goodsData.ret_cases * piecesPerCase) + goodsData.ret_pieces;
 

@@ -18,6 +18,7 @@ import concurrent.futures
 from functools import lru_cache
 import os 
 from flask import send_file
+from data_views import data_bp
 
 gc = authenticate()
 workbook = get_workbook_by_id(gc, os.getenv("NAGS_WORKBOOK_ID"))
@@ -26,6 +27,7 @@ expense_sheet  = get_sheet_by_id(workbook, os.getenv("EXPENSE_SHEET_ID"))
 
 items_sheet_manager   = SheetManager(gc=gc, spreadsheet=workbook, worksheet=items_sheet)
 expense_sheet_manager = SheetManager(gc=gc, spreadsheet=workbook, worksheet=expense_sheet)
+
 
 # def format_msg(data):
 #     # Initialize variables
@@ -212,6 +214,7 @@ def format_msg(data):
 
 
 app = Flask(__name__)
+app.register_blueprint(data_bp)
 CORS(app)  # Enable CORS for all routes
 logger.add("loguru.log")
 

@@ -1,0 +1,322 @@
+{
+    "products": {
+        "Soda": {
+            "max_case_count": 24,
+    
+            "price": {
+                "case": 144,
+                "piece": 6
+            },
+    
+            "commission": [
+                {
+                    "case": 6,
+                    "piece": 0.25
+                },
+                {
+                    "case": 0,
+                    "piece": 0
+                }
+            ],
+            "discount": [
+                {
+                    "case": 0,
+                    "piece": 0
+                },
+                {
+                    "case": 72,
+                    "piece": 3
+                }
+            ],
+            "gain": [ 
+                {
+                    "case" : 1,
+                    "piece" : 0
+                },
+                {
+                    "case" : 2,
+                    "piece" : 0
+                },
+                {
+                    "case" : 3,
+                    "piece" : 0
+                },
+                {
+                    "case" : 10,
+                    "piece" : 0
+                }
+                
+            ],
+            "kuraivu": 4
+        },
+    
+        "Badam Milk": {
+            "max_case_count": 24,
+    
+            "price": {
+                "case": 456,
+                "piece": 19
+            },
+            
+            "commission": [
+                {
+                    "case": 18,
+                    "piece": 0.75
+                },
+                {
+                    "case": 15,
+                    "piece": 0.625
+                },
+                {
+                    "case":  10,
+                    "piece": 0.416667 
+                },
+                {
+                    "case": 0,
+                    "piece": 0
+                }
+            ],
+            "discount": [
+                {
+                    "case": 0,
+                    "piece": 0
+                },
+                {
+                    "case": 24,
+                    "piece": 1
+                },
+                {
+                    "case": 72,
+                    "piece": 3
+                },
+                {
+                    "case": 138,
+                    "piece": 5.75
+                },
+                {
+                    "case": 96,
+                    "piece": 4
+                }
+            ],
+            "gain": [
+                {
+                    "case": 100,
+                    "piece": 0
+                },
+                {
+                    "case": 30,
+                    "piece": 0
+                },
+                {
+                    "case": 20,
+                    "piece": 0
+                },
+                {
+                    "case": 10,
+                    "piece": 0
+                },
+                {
+                    "case": 5,
+                    "piece": 0
+                }
+            ],
+            "kuraivu": 2
+        },
+    
+        "200ML": {
+            "max_case_count": 24,
+    
+            "price": {
+                "case": 168,
+                "piece": 7
+            },
+    
+            "commission": [
+                {
+                    "case": 7,
+                    "piece": 0.291667
+                },
+                {
+                    "case": 0,
+                    "piece": 0
+                }
+            ],
+            "discount": [
+                {
+                    "case": 0,
+                    "piece": 0
+                },
+                {
+                    "case": 30,
+                    "piece": 1.25
+                },
+                {
+                    "case": 33,
+                    "piece": 1.375
+                },
+                {
+                    "case": 43,
+                    "piece": 1.791667
+                }
+            ],
+            "gain": [
+                {
+                    "case": 24,
+                    "piece": 1
+                },
+                {
+                    "case": 12,
+                    "piece": 0.5
+                }
+            ],
+            "kuraivu": 4
+        },
+    
+        "250ML": {
+            "max_case_count": 24,
+            
+            "price": {
+                "case": 192,
+                "piece": 8
+            },
+            "commission": [
+                {
+                    "case": 8,
+                    "piece": 0.333333333
+                },
+                {
+                    "case": 7.5,
+                    "piece": 0.3125
+                },
+                {
+                    "case": 0,
+                    "piece": 0
+                }
+            ],
+            "discount": [
+                {
+                    "case": 0,
+                    "piece": 0
+                },
+                {
+                    "case": 12,
+                    "piece": 0.5
+                },
+                {
+                    "case": 42,
+                    "piece": 1.75
+                },
+                {
+                    "case": 36,
+                    "piece": 1.5
+                },
+                {
+                    "case": 54,
+                    "piece": 2.25
+                }
+            ],
+            "gain": [
+                {
+                    "case": 20,
+                    "piece": 0
+                },
+                {
+                    "case": 30,
+                    "piece": 0
+                },
+                {
+                    "case": 40,
+                    "piece": 0
+                }
+            ],
+            "kuraivu": 4
+        },
+    
+        "PET": {
+            "max_case_count": 30,
+    
+            "price": {
+                "case": 225,
+                "piece": 7.5
+            },
+            
+            "commission": [
+                {
+                    "case": 7,
+                    "piece": 0.233333
+                }, 
+                {
+                    "case": 0,
+                    "piece": 0
+                }
+            ],
+            "discount": [
+                {
+                    "case": 0,
+                    "piece": 0
+                },
+                {
+                    "case": 10,
+                    "piece": 0.333333333
+                },
+                {
+                    "case": 15,
+                    "piece": 0.5
+                },
+                {
+                    "case": 30,
+                    "piece": 1
+                },
+                {
+                    "case": 40,
+                    "piece": 1.333333
+                }
+            ],
+            "gain": [
+                {
+                    "case": 10,
+                    "piece": 0
+                }
+            ],
+            "kuraivu": 4
+        }
+    },
+
+    "expenses": [
+        "Petrol",
+        "Food",
+        "Rep",
+        "Key",
+        "Vehicle_Repair",
+        "Gpay"
+    ],
+
+    "drivers": [
+        "Selvam",
+        "Pandi",
+        "Ganeshan",
+        "Saghul",
+        "Varusha",
+        "Siva",
+        "Saravanan",
+        "selvapandi"
+    ],
+    "line": [
+        "Karia patti",
+        "Thirumansolai",
+        "SS kottai",
+        "Kilavalavu",
+        "Muthusamy patti",
+        "Devakottai",
+        "Arupukottai",
+        "Aviyur",
+        "Natham",
+        "karaikudi",
+        "Pudur & Vandiyur",
+        "Alagarkovil",
+        "Melur",
+        "Alanganallur",
+        "Palamedu",
+        "Kelaiyur"
+    ]
+}

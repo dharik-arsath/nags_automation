@@ -114,14 +114,15 @@
                                     <div class="col-6">
                                         <div class="form-outline">
                                             <input type="number" class="form-control active" id="goods_up_cases" min="0"
-                                            onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                                                onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                                             <label class="form-label">Goods Upload Cases</label>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-outline">
                                             <input type="number" class="form-control active" id="goods_up_pieces"
-                                                min="0" max="24" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                                                min="0" max="24"
+                                                onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                                             <label class="form-label">Goods Upload Pieces</label>
                                         </div>
                                     </div>
@@ -134,15 +135,17 @@
                                 <div class="row g-2">
                                     <div class="col-6">
                                         <div class="form-outline">
-                                            <input type="number" class="form-control active" id="goods_ret_cases" min="0" 
-                                            onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                                            <input type="number" class="form-control active" id="goods_ret_cases"
+                                                min="0"
+                                                onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                                             <label class="form-label">Goods Return Cases</label>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-outline">
                                             <input type="number" class="form-control active" id="goods_ret_pieces"
-                                                min="0" max="24" onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                                min="0" max="24"
+                                                onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                                                 oninput="validatePieces(this)">
                                             <label class="form-label">Goods Return Pieces</label>
                                         </div>
@@ -159,15 +162,17 @@
                                 <div class="row g-2">
                                     <div class="col-6">
                                         <div class="form-outline">
-                                            <input type="number" class="form-control active" id="editTodoCases" min="0" 
-                                            onkeypress="return event.charCode >= 48 && event.charCode <= 57" disabled>
+                                            <input type="number" class="form-control active" id="editTodoCases" min="0"
+                                                onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                                disabled>
                                             <label class="form-label">Cases</label>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-outline">
-                                            <input type="number" class="form-control active" id="editTodoPieces"
-                                                min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" disabled>
+                                            <input type="number" class="form-control active" id="editTodoPieces" min="0"
+                                                onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                                disabled>
                                             <label class="form-label">Pieces</label>
                                         </div>
                                     </div>
@@ -178,7 +183,8 @@
                             <div class="mb-3 p-2 bg-light rounded">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <small class="text-muted">Discounts</small>
-                                    <button type="button" class="btn btn-primary btn-sm w-100px" onclick="addDiscountRow()">
+                                    <button type="button" class="btn btn-primary btn-sm w-100px"
+                                        onclick="addDiscountRow()">
                                         <i class="fas fa-plus me-2"></i>Add
                                     </button>
                                 </div>
@@ -202,7 +208,8 @@
                             <div class="mb-3 p-2 bg-light rounded">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <small class="text-muted">Commissions</small>
-                                    <button type="button" class="btn btn-primary btn-sm w-100px" onclick="addCommissionRow()">
+                                    <button type="button" class="btn btn-primary btn-sm w-100px"
+                                        onclick="addCommissionRow()">
                                         <i class="fas fa-plus me-2"></i>Add
                                     </button>
                                 </div>
@@ -285,7 +292,7 @@
 
 
         <!-- Add this after the expenses card and before the summary card -->
-        <div class="card mb-3" id="credit-section", style="visibility: hidden;">
+        <div class="card mb-3" id="credit-section" , style="visibility: hidden;">
             <div class="card-header py-2">
                 <h5 class="mb-0">Credits</h5>
             </div>
@@ -294,7 +301,7 @@
                     <div class="col-6 pr-4 pb-2">
                         <div class="form-outline">
                             <input type="text" class="form-control active" id="creditPayableDesc">
-                            <label class="form-label">Description</label>   
+                            <label class="form-label">Description</label>
                         </div>
                     </div>
 
@@ -309,12 +316,13 @@
                     <div class="col-6 pr-4 pb-2">
                         <div class="form-outline">
                             <input type="text" class="form-control active" id="creditReceivableDesc">
-                            <label class="form-label">Description</label>   
+                            <label class="form-label">Description</label>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="form-outline">
-                            <input type="number" class="form-control active credit-amount" id="creditReceivable" min="0">
+                            <input type="number" class="form-control active credit-amount" id="creditReceivable"
+                                min="0">
                             <label class="form-label">Credit as Receivable</label>
                         </div>
                     </div>
@@ -453,14 +461,13 @@
         });
 
         function getSelectedProduct() {
-            const productName = DOM.inputs.product.value.trim().toLowerCase();
-            
-            const matchingProducts = products.filter(product =>
-                product.name.toLowerCase() === productName
-            );
+            const productName = DOM.inputs.product.value.trim().toUpperCase();
 
+            const matchingProducts = Object.keys(productsV1).filter(product =>
+                product.toUpperCase() === productName
+            );
             if (matchingProducts.length > 0) {
-                return matchingProducts[0];
+                return productsV1[matchingProducts[0]];
             } else {
                 console.warn('No products found for the selected name.');
                 return null;
@@ -476,7 +483,7 @@
             };
         }
 
-        function getSalesData(){
+        function getSalesData() {
             return {
                 cases: Number(DOM.inputs.salesCases.value),
                 pieces: Number(DOM.inputs.salesPieces.value)
@@ -486,7 +493,7 @@
         /**
             * @param {salesFields} data The data to set the case and piece count.
         */
-        function setSalesData(data) { 
+        function setSalesData(data) {
             if (data && typeof data === 'object') {
                 DOM.inputs.salesCases.value = data.cases;
                 DOM.inputs.salesPieces.value = data.pieces;
@@ -507,30 +514,30 @@
 
             // Total pieces initially taken (cases * 24 pieces per case)
             const piecesPerCase = 24;
-            const totalUpPieces  = (goodsData.up_cases * piecesPerCase) + goodsData.up_pieces;
+            const totalUpPieces = (goodsData.up_cases * piecesPerCase) + goodsData.up_pieces;
             const totalRetPieces = (goodsData.ret_cases * piecesPerCase) + goodsData.ret_pieces;
 
             const remainingPieces = totalUpPieces - totalRetPieces;
 
             console.log(remainingPieces)
-            
-            if (remainingPieces < 0 ){
+
+            if (remainingPieces < 0) {
                 alert("You cannot sale more than you taken")
 
-                return ;
+                return;
             }
 
-            let soldCases  = 0;
+            let soldCases = 0;
             let soldPieces = 0;
 
-            if(remainingPieces % piecesPerCase == 0){
-                soldCases = remainingPieces / piecesPerCase; 
+            if (remainingPieces % piecesPerCase == 0) {
+                soldCases = remainingPieces / piecesPerCase;
             }
-            else{
+            else {
                 soldCases = Math.floor(remainingPieces / piecesPerCase);
                 soldPieces = remainingPieces % piecesPerCase;
             }
-            
+
             // Return sales data if needed
             return {
                 cases: soldCases,
@@ -544,9 +551,9 @@
         ].forEach(input => {
             input.addEventListener('input', () => {
                 let sales = calculateSalesFromReturns();
-                if(!sales){
+                if (!sales) {
                     DOM.inputs.goodsRetCases.value = ""
-                    return ;
+                    return;
                 }
                 setSalesData(sales);
                 DOM.inputs.salesCases.dispatchEvent(new Event('input'));
@@ -555,16 +562,15 @@
 
 
         function getSelectedProductFromTodoObject(todo) {
-            // Filter products matching both name and size
-            const matchingProducts = products.filter(product =>
-                product.name.toLowerCase() === todo.title 
-                // (product.size === Number(todo.size)) // Match size if provided
+            // Find product matching the name
+            const matchingProduct = Object.keys(productsV1).find(product =>
+                product.toLowerCase() === todo.title.toLowerCase()
             );
 
-            if (matchingProducts.length > 0) {
-                return matchingProducts[0]; // Return all matching products
+            if (matchingProduct) {
+                return productsV1[matchingProduct]; // Return the matching product
             } else {
-                console.warn('No products found for the selected name and size.');
+                console.warn('No products found for the selected name.');
                 return null;
             }
         }
@@ -574,8 +580,8 @@
             if (!selectedProduct) {
                 [
                     'salesCases', 'salesPieces', 'discount',
-                    'commission', 'kuraivuPieces', 
-                    'kuraivuCases', 'adhigaVaravuPieces', 
+                    'commission', 'kuraivuPieces',
+                    'kuraivuCases', 'adhigaVaravuPieces',
                     'adhigaVaravuCases', 'amount'
                 ].forEach(key => {
                     DOM.inputs[key].value = "";
@@ -585,11 +591,11 @@
 
             const caseCount = Number(DOM.inputs.salesCases.value);
             const pieceCount = Number(DOM.inputs.salesPieces.value);
-            
+
             // Calculate discount and commission using the new methods
             const discount = calculateDiscounts();
             const commission = calculateCommissions();
-            const gains    = calculateGains();
+            const gains = calculateGains();
             console.log("toal gain is ")
             console.log(gains)
 
@@ -598,9 +604,9 @@
             // DOM.inputs.gains.value = Number(gains);
 
             const kuraivu = Number(DOM.inputs.kuraivuPieces.value);
-            let totalAmount = (caseCount * selectedProduct.price.case) + 
-                             (pieceCount * selectedProduct.price.piece);
-            
+            let totalAmount = (caseCount * selectedProduct.price.case) +
+                (pieceCount * selectedProduct.price.piece);
+
             totalAmount -= discount;
             totalAmount -= commission;
             totalAmount += gains;
@@ -642,7 +648,7 @@
 
                 // Calculate total gains
                 todo.gains.forEach(gain => {
-                    totalGains += (gain.cases * gain.size) + (gain.pieces * (gain.size / 24));
+                    totalGains += (gain.cases * gain.size) + (gain.pieces * (gain.size / productInfo.max_case_count));
                 });
             });
 
@@ -672,7 +678,7 @@
                     ${constantExpenses > 0 ? `Expenses: ₹${constantExpenses.toFixed(2)}<br>` : ''}
                     ${creditPayable > 0 ? `Credit Payable: ₹${creditPayable.toFixed(2)}<br>` : ''}
                     ${creditReceivable > 0 ? `<span class="text-success">Credit Receivable: +₹${creditReceivable.toFixed(2)}</span><br>` : ''}
-                    ${totalGains > 0 ? `<span class="text-success">Gains: +₹${totalGains.toFixed(2)}</span><br>` : ''}  // Display total gains
+                    ${totalGains > 0 ? `<span class="text-success">Gains: +₹${totalGains.toFixed(2)}</span><br>` : ''}
                 </div>
             `;
 
@@ -683,15 +689,18 @@
 
         function updateList() {
             DOM.containers.productList.innerHTML = todos.map(todo => {
+                console.log(todo)
                 const productInfo = getSelectedProductFromTodoObject(todo);
                 const basePrice_case = productInfo ? productInfo.price.case : 0;
                 const basePrice_piece = productInfo ? productInfo.price.piece : 0;
                 const case_quantity = Number(todo.cases);
                 const piece_quantity = Number(todo.pieces);
                 const gain = calculateGains();
-                const baseAmount = (case_quantity * basePrice_case) + (piece_quantity * basePrice_piece) + gain;
+                // const baseAmount = (case_quantity * basePrice_case) + (piece_quantity * basePrice_piece) + gain;
+                const baseAmount = (case_quantity * basePrice_case) + (piece_quantity * basePrice_piece);
                 const totalDeductions = Number(todo.discount) + Number(todo.commission);
                 const totalAdditions = Number(todo.kuraivu_pieces) * (productInfo ? productInfo.kuraivu : 0);
+                const totalGains = todo.gains.reduce((acc, gain) => acc + (gain.cases * gain.size) + (gain.pieces * (gain.size / productInfo.max_case_count)), 0);
 
                 return `
                     <div class="card mb-3">
@@ -762,6 +771,17 @@
                                         </div>
                                     </div>` : ''}
 
+                                    ${totalGains > 0 ? `
+                                    <div class="col-12">
+                                        <small class="text-muted d-block mb-1">Gains:</small>
+                                        <div class="ms-3">
+                                            <div class="d-flex justify-content-between text-success">
+                                                <span>Gains</span>
+                                                <span>+₹${totalGains.toFixed(2)}</span>
+                                            </div>
+                                        </div>
+                                    </div>` : ''}
+
                                     <!-- Final Amount -->
                                     <div class="col-12 mt-2 border-top pt-2">
                                         <div class="d-flex justify-content-between">
@@ -777,8 +797,8 @@
             }).join('');
 
             DOM.buttons.submit.parentElement.style.visibility = todos.length > 0 ? 'visible' : 'hidden';
-            DOM.containers.constantExpenses.style.visibility  = todos.length > 0 ? 'visible' : 'hidden';
-            DOM.containers.creditSection.style.visibility     = todos.length > 0 ? 'visible' : 'hidden'; 
+            DOM.containers.constantExpenses.style.visibility = todos.length > 0 ? 'visible' : 'hidden';
+            DOM.containers.creditSection.style.visibility = todos.length > 0 ? 'visible' : 'hidden';
             updateSummary();
         }
 
@@ -793,7 +813,7 @@
             .forEach(key => {
                 DOM.inputs[key].addEventListener('input', updateAmount);
             });
-        
+
 
         DOM.inputs.driverName.addEventListener("input", validateFields);
         DOM.inputs.area.addEventListener("input", validateFields);
@@ -969,8 +989,8 @@
 
             console.log(payload.entries);
 
-            const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === "127.0.0.1";
-            const baseUrl = isDevelopment ? 'http://localhost:8000/' : 'https://nagaraj1.pythonanywhere.com/';
+            // const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === "127.0.0.1";
+            // const baseUrl = isDevelopment ? 'http://localhost:8000/' : 'https://nagaraj1.pythonanywhere.com/';
 
             // Submit to server
             fetch(baseUrl + "update_sheet", {
@@ -981,39 +1001,63 @@
                 },
                 body: JSON.stringify(payload)
             })
-            .then(response => {
-                if (!response.ok) {
+                .then(response => {
+                    if (!response.ok) {
+                        DOM.buttons.submit.style.visibility = 'visible';
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (isDevelopment) {
+                        window.location.replace("thankyou.html");
+                    } else {
+                        window.location.replace("thankyou");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error submitting billing details:", error);
+                    alert("Failed to submit billing details. Please try again.");
                     DOM.buttons.submit.style.visibility = 'visible';
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (isDevelopment) {
-                    window.location.replace("thankyou.html");
-                } else {
-                    window.location.replace("thankyou");
-                }
-            })
-            .catch(error => {
-                console.error("Error submitting billing details:", error);
-                alert("Failed to submit billing details. Please try again.");
-                DOM.buttons.submit.style.visibility = 'visible';
-            });
+                });
         }
 
         function filterArea(query) {
             return lineListInfo.filter(line => line.line.toLowerCase().includes(query.toLowerCase()));
         }
 
-        // Render all items by default
-        function renderLineDropdown() {
-            DOM.dropdowns.line.innerHTML = '';  // Clear existing items
-            lineListInfo.forEach(line => {
-                const listItem = document.createElement('li');
-                listItem.innerHTML = `<a class="dropdown-item" href="#">${line.line.toLowerCase()}</a>`;
-                DOM.dropdowns.line.appendChild(listItem);
-            });
+        // // Render all items by default
+        // function renderLineDropdown() {
+        //     DOM.dropdowns.line.innerHTML = '';  // Clear existing items
+        //     lineListInfo.forEach(line => {
+        //         const listItem = document.createElement('li');
+        //         listItem.innerHTML = `<a class="dropdown-item" href="#">${line.line.toLowerCase()}</a>`;
+        //         DOM.dropdowns.line.appendChild(listItem);
+        //     });
+        // }
+
+
+        async function renderLineDropdown() {
+            try {
+                // Fetch lines from the server if not already loaded
+                if (!window.lineOptions) {
+                    const response = await fetch(baseUrl + 'get_line');
+                    const lines = await response.json();
+                    
+                    window.lineOptions = lines.map(line => ({
+                        line: line
+                    }));
+                }
+
+                DOM.dropdowns.line.innerHTML = '';  // Clear existing items
+                window.lineOptions.forEach(line => {
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `<a class="dropdown-item" href="#">${line.line.toLowerCase()}</a>`;
+                    DOM.dropdowns.line.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error('Failed to fetch lines:', error);
+            }
         }
 
         // // Initial render of all items
@@ -1071,15 +1115,40 @@
             return driverListInfo.filter(driver => driver.name.toLowerCase().includes(query.toLowerCase()));
         }
 
-        // Render all items by default
-        function renderDriversDropdown() {
-            DOM.dropdowns.driver.innerHTML = '';  // Clear existing items
-            driverListInfo.forEach(driver => {
-                const listItem = document.createElement('li');
-                listItem.innerHTML = `<a class="dropdown-item" href="#">${driver.name.toLowerCase()}</a>`;
-                DOM.dropdowns.driver.appendChild(listItem);
-            });
+        // // Render all items by default
+        // function renderDriversDropdown() {
+        //     DOM.dropdowns.driver.innerHTML = '';  // Clear existing items
+        //     driverListInfo.forEach(driver => {
+        //         const listItem = document.createElement('li');
+        //         listItem.innerHTML = `<a class="dropdown-item" href="#">${driver.name.toLowerCase()}</a>`;
+        //         DOM.dropdowns.driver.appendChild(listItem);
+        //     });
+        // }
+
+
+        async function renderDriversDropdown() {
+            try {
+                // Fetch drivers from the server if not already loaded
+                if (!window.driverOptions) {
+                    const response = await fetch(baseUrl + 'get_drivers');
+                    const drivers = await response.json();
+                    
+                    window.driverOptions = drivers.map(driver => ({
+                        name: driver
+                    }));
+                }
+
+                DOM.dropdowns.driver.innerHTML = '';  // Clear existing items
+                window.driverOptions.forEach(driver => {
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `<a class="dropdown-item" href="#">${driver.name.toLowerCase()}</a>`;
+                    DOM.dropdowns.driver.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error('Failed to fetch drivers:', error);
+            }
         }
+
 
         // // Initial render of all items
         // // renderAllItems();
@@ -1157,7 +1226,7 @@
         function addDiscountRow() {
             const rowDiv = document.createElement('div');
             rowDiv.className = 'discount-row mb-3';
-            
+
             rowDiv.innerHTML = `
                 <div class="row g-2">
                     <div class="col-3">
@@ -1188,9 +1257,9 @@
                     </div>
                 </div>
             `;
-            
+
             DOM.containers.discounts.appendChild(rowDiv);
-            
+
             // Initialize MDB form elements
             rowDiv.querySelectorAll('.form-outline').forEach((formOutline) => {
                 new mdb.Input(formOutline).init();
@@ -1198,12 +1267,12 @@
 
             const sizeInput = rowDiv.querySelector('.discount-size');
             const dropdownMenu = rowDiv.querySelector('.discount-size-dropdown');
-            
+
             sizeInput.addEventListener('click', () => {
                 renderDiscountSizes(dropdownMenu);
             });
 
-            dropdownMenu.addEventListener('click', function(e) {
+            dropdownMenu.addEventListener('click', function (e) {
                 if (e.target && e.target.matches('.dropdown-item')) {
                     sizeInput.value = e.target.textContent.trim();
                     dropdownMenu.innerHTML = '';
@@ -1228,7 +1297,7 @@
         function addGainRow() {
             const rowDiv = document.createElement('div');
             rowDiv.className = 'gain-row mb-3';
-            
+
             rowDiv.innerHTML = `
                 <div class="row g-2">
                     <div class="col-3">
@@ -1259,9 +1328,9 @@
                     </div>
                 </div>
             `;
-            
+
             DOM.containers.gains.appendChild(rowDiv);
-            
+
             // Initialize MDB form elements
             rowDiv.querySelectorAll('.form-outline').forEach((formOutline) => {
                 new mdb.Input(formOutline).init();
@@ -1269,12 +1338,12 @@
 
             const sizeInput = rowDiv.querySelector('.gain-size');
             const dropdownMenu = rowDiv.querySelector('.gain-size-dropdown');
-            
+
             sizeInput.addEventListener('click', () => {
                 renderGainSizes(dropdownMenu);  // Using renderDiscountSizes directly
             });
 
-            dropdownMenu.addEventListener('click', function(e) {
+            dropdownMenu.addEventListener('click', function (e) {
                 if (e.target && e.target.matches('.dropdown-item')) {
                     sizeInput.value = e.target.textContent.trim();
                     dropdownMenu.innerHTML = '';
@@ -1303,98 +1372,136 @@
 
 
         function renderGainSizes(dropdownMenu) {
-                dropdownMenu.innerHTML = '';
-                const selectedProductName = DOM.inputs.product.value.toLowerCase();
-                const uniqueSizes = new Set();
-
-                // Filter sizes for the chosen product
-                products
-                    .filter(product => product.name.toLowerCase() === selectedProductName)
-                    .forEach(product => {
-                        const size = product.gain.case;
-                        if (!uniqueSizes.has(size)) {
-                            uniqueSizes.add(size);
-                            const listItem = document.createElement('li');
-                            listItem.innerHTML = `<a class="dropdown-item" href="#">${size}</a>`;
-                            dropdownMenu.appendChild(listItem);
-                        }
-                    });
-            }
-
-
-        
-        function renderDiscountSizes(dropdownMenu) {
             dropdownMenu.innerHTML = '';
-            const selectedProductName = DOM.inputs.product.value.toLowerCase();
+            const selectedProduct = getSelectedProduct();
             const uniqueSizes = new Set();
 
-            // Filter sizes for the chosen product
-            products
-                .filter(product => product.name.toLowerCase() === selectedProductName)
-                .forEach(product => {
-                    const size = product.discount.case;
-                    if (!uniqueSizes.has(size)) {
-                        uniqueSizes.add(size);
-                        const listItem = document.createElement('li');
-                        listItem.innerHTML = `<a class="dropdown-item" href="#">${size}</a>`;
-                        dropdownMenu.appendChild(listItem);
-                    }
-                });
+            // Extract and sort unique sizes in ascending order
+            const sortedSizes = selectedProduct.gain
+                .map(gain => gain.case)
+                .filter(size => !uniqueSizes.has(size) && uniqueSizes.add(size))
+                .sort((a, b) => a - b);
+
+            // Populate dropdown with sorted sizes
+            sortedSizes.forEach(size => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `<a class="dropdown-item" href="#">${size}</a>`;
+                dropdownMenu.appendChild(listItem);
+            });
         }
 
+
+
+        function renderDiscountSizes(dropdownMenu) {
+            dropdownMenu.innerHTML = '';
+            const selectedProduct = getSelectedProduct();
+            const uniqueSizes = new Set();
+
+            // Extract and sort unique sizes in ascending order
+            const sortedSizes = selectedProduct.discount
+                .map(discount => discount.case)
+                .filter(size => !uniqueSizes.has(size) && uniqueSizes.add(size))
+                .sort((a, b) => a - b);
+
+            // Populate dropdown with sorted sizes
+            sortedSizes.forEach(size => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `<a class="dropdown-item" href="#">${size}</a>`;
+                dropdownMenu.appendChild(listItem);
+            });
+        }
         function calculateGains() {
             const gainRows = document.querySelectorAll('.gain-row');
             let totalGain = 0;
             const selectedProduct = getSelectedProduct();
-            console.log(selectedProduct)
-            
+
             if (!selectedProduct) return 0;
-            
+
             gainRows.forEach(row => {
                 const size = row.querySelector('.gain-size').value;
                 const cases = parseInt(row.querySelector('.gain-cases').value) || 0;
                 const pieces = parseInt(row.querySelector('.gain-pieces').value) || 0;
-                
-                // Find the product with matching size
-                const productWithSize = products.find(p => 
-                    p.name.toLowerCase() === selectedProduct.name.toLowerCase() &&
-                    p.gain.case === Number(size)
-                )
 
-                totalGain += (cases * productWithSize.gain.case) + (pieces * productWithSize.gain.piece);
+                // Find the matching gain object for the given size
+                const matchingGain = selectedProduct.gain.find(
+                    gainObj => gainObj.case === Number(size)
+                );
+
+                if (matchingGain) {
+                    totalGain += (cases * matchingGain.case) +
+                        (pieces * matchingGain.piece);
+                }
+                else{
+                    totalGain += (size * cases) +
+                        (size/24 * pieces);
+                }
             });
-            
+
             return totalGain;
         }
+
+        function getSelectedDiscount() {
+            DOM.inputs.discount.value.toLowerCase();
+        }
+
+        async function renderAllItems() {
+            dropdownMenu.innerHTML = ''; // Clear existing items
+
+            // Use a Set to track unique product names
+            const uniqueProductNames = new Set();
+
+            // Iterate through the keys of the products object
+            Object.keys(productsV1).forEach(productKey => {
+                // Convert the key to lowercase for consistency
+                const lowerCaseName = productKey.toLowerCase();
+
+                if (!uniqueProductNames.has(lowerCaseName)) {
+                    uniqueProductNames.add(lowerCaseName);
+
+                    // Create dropdown item
+                    const dropdownItem = document.createElement('div');
+                    dropdownItem.classList.add('dropdown-item');
+                    dropdownItem.textContent = productKey;
+                    dropdownItem.addEventListener('click', () => {
+                        input.value = productKey;
+                        dropdownMenu.style.display = 'none';
+                    });
+
+                    dropdownMenu.appendChild(dropdownItem);
+                }
+            });
+        }
+
 
         function calculateDiscounts() {
             const discountRows = document.querySelectorAll('.discount-row');
             let totalDiscount = 0;
             const selectedProduct = getSelectedProduct();
-            
+
             if (!selectedProduct) return 0;
-            
+
             discountRows.forEach(row => {
                 const size = row.querySelector('.discount-size').value;
                 const cases = parseInt(row.querySelector('.discount-cases').value) || 0;
                 const pieces = parseInt(row.querySelector('.discount-pieces').value) || 0;
-                
-                // Find the product with matching size
-                const productWithSize = products.find(p => 
-                    p.name.toLowerCase() === selectedProduct.name.toLowerCase() && 
-                    p.discount.case === Number(size)
+
+                // Find the matching discount object for the given size
+                const matchingDiscount = selectedProduct.discount.find(
+                    discountObj => discountObj.case === Number(size)
                 );
-                console.log(productWithSize)
-                
-                if (productWithSize) {
-                    totalDiscount += (cases * productWithSize.discount.case) + 
-                                   (pieces * productWithSize.discount.piece);
-                        
-                    console.log(totalDiscount);
+
+                if (matchingDiscount) {
+                    totalDiscount += (cases * matchingDiscount.case) +
+                        (pieces * matchingDiscount.piece);
+                }
+                else{
+                    totalDiscount += (size * cases) +
+                        (size/24 * pieces);
                 }
 
+                console.log(totalDiscount);
             });
-            
+
             return totalDiscount;
         }
 
@@ -1413,7 +1520,7 @@
             const totalQuantityCases = Number(DOM.inputs.salesCases.value);
             const totalQuantityPieces = Number(DOM.inputs.salesPieces.value);
 
-            if (totalQuantityCases === 0 && totalQuantityPieces === 0) return;
+            if (totalQuantityCases === 0 && totalQuantityPieselectedProductces === 0) return;
 
             // Collect discount entries
             const discountEntries = [];
@@ -1468,18 +1575,18 @@
             });
 
             // Validate that total discounts, gains, and commissions do not exceed total cases and pieces
-            if (totalDiscountCases > totalQuantityCases || 
-                totalDiscountPieces > totalQuantityPieces || 
-                totalCommissionCases > totalQuantityCases || 
-                totalCommissionPieces > totalQuantityPieces || 
-                totalGainCases > totalQuantityCases || 
+            if (totalDiscountCases > totalQuantityCases ||
+                totalDiscountPieces > totalQuantityPieces ||
+                totalCommissionCases > totalQuantityCases ||
+                totalCommissionPieces > totalQuantityPieces ||
+                totalGainCases > totalQuantityCases ||
                 totalGainPieces > totalQuantityPieces) {
                 alert("Total discounts, gains, and commissions cannot exceed total sales cases or pieces.");
                 return; // Prevent saving if validation fails
             }
 
-            const baseAmount = (totalQuantityCases * selectedProduct.price.case) + 
-                              (totalQuantityPieces * selectedProduct.price.piece);
+            const baseAmount = (totalQuantityCases * selectedProduct.price.case) +
+                (totalQuantityPieces * selectedProduct.price.piece);
 
             // Calculate total gains
             let totalGains = 0;
@@ -1512,7 +1619,8 @@
                 base_amount: finalBaseAmount,  // Update base amount to include gains
                 discounts: discountEntries,        // Store discount entries
                 commissions: commissionEntries,    // Store commission entries
-                gains: gainEntries                 // Store gain entries
+                gains: gainEntries,                 // Store gain entries
+                n_pieces: selectedProduct.max_case_count
             };
 
             if (formData.title) {
@@ -1526,7 +1634,7 @@
         function addCommissionRow() {
             const rowDiv = document.createElement('div');
             rowDiv.className = 'commission-row mb-3';
-            
+
             rowDiv.innerHTML = `
                 <div class="row g-2">
                     <div class="col-3">
@@ -1557,9 +1665,9 @@
                     </div>
                 </div>
             `;
-            
+
             DOM.containers.commissions.appendChild(rowDiv);
-            
+
             // Initialize MDB form elements
             rowDiv.querySelectorAll('.form-outline').forEach((formOutline) => {
                 new mdb.Input(formOutline).init();
@@ -1567,12 +1675,12 @@
 
             const sizeInput = rowDiv.querySelector('.commission-size');
             const dropdownMenu = rowDiv.querySelector('.commission-size-dropdown');
-            
+
             sizeInput.addEventListener('click', () => {
                 renderCommissionSizes(dropdownMenu);
             });
 
-            dropdownMenu.addEventListener('click', function(e) {
+            dropdownMenu.addEventListener('click', function (e) {
                 if (e.target && e.target.matches('.dropdown-item')) {
                     sizeInput.value = e.target.textContent.trim();
                     dropdownMenu.innerHTML = '';
@@ -1594,48 +1702,56 @@
 
         function renderCommissionSizes(dropdownMenu) {
             dropdownMenu.innerHTML = '';
-            const selectedProductName = DOM.inputs.product.value.toLowerCase();
+            const selectedProduct = getSelectedProduct();
             const uniqueSizes = new Set();
 
-            products
-                .filter(product => product.name.toLowerCase() === selectedProductName)
-                .forEach(product => {
-                    const size = product.commission.case;
-                    if (!uniqueSizes.has(size)) {
-                        uniqueSizes.add(size);
-                        const listItem = document.createElement('li');
-                        listItem.innerHTML = `<a class="dropdown-item" href="#">${size}</a>`;
-                        dropdownMenu.appendChild(listItem);
-                    }
-                });
+            // Extract and sort unique sizes in ascending order
+            const sortedSizes = selectedProduct.commission
+                .map(commission => commission.case)
+                .filter(size => !uniqueSizes.has(size) && uniqueSizes.add(size))
+                .sort((a, b) => a - b);
+
+            // Populate dropdown with sorted sizes
+            sortedSizes.forEach(size => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `<a class="dropdown-item" href="#">${size}</a>`;
+                dropdownMenu.appendChild(listItem);
+            });
         }
+
 
         function calculateCommissions() {
             const commissionRows = document.querySelectorAll('.commission-row');
             let totalCommission = 0;
             const selectedProduct = getSelectedProduct();
-            
+
             if (!selectedProduct) return 0;
-            
+
             commissionRows.forEach(row => {
                 const size = row.querySelector('.commission-size').value;
                 const cases = parseInt(row.querySelector('.commission-cases').value) || 0;
                 const pieces = parseInt(row.querySelector('.commission-pieces').value) || 0;
-                
-                // Find the product with matching size
-                const productWithSize = products.find(p => 
-                    p.name.toLowerCase() === selectedProduct.name.toLowerCase() && 
-                    p.commission.case === Number(size)
+
+                // Find the matching commission object for the given size
+                const matchingCommission = selectedProduct.commission.find(
+                    commissionObj => commissionObj.case === Number(size)
                 );
-                
-                if (productWithSize) {
-                    totalCommission += (cases * productWithSize.commission.case) + 
-                                     (pieces * productWithSize.commission.piece);
+
+                if (matchingCommission) {
+                    totalCommission += (cases * matchingCommission.case) +
+                        (pieces * matchingCommission.piece);
                 }
+                else{
+                    totalCommission += (size * cases) +
+                        (size/24 * pieces);
+                }
+
+                console.log(totalCommission);
             });
-            
+
             return totalCommission;
         }
+
 
         function removeCommissionRow(button) {
             const row = button.closest('.commission-row');
@@ -1644,23 +1760,23 @@
         }
 
         // Update product selection handler
-        DOM.dropdowns.product.addEventListener('click', function(e) {
+        DOM.dropdowns.product.addEventListener('click', function (e) {
             if (e.target && e.target.matches('.dropdown-item')) {
                 const newProductName = e.target.textContent.trim();
                 const currentProductName = DOM.inputs.product.value.trim();
-                
+
                 // Only clear if selecting a different product
                 if (newProductName !== currentProductName) {
                     DOM.forms.todo.reset();
                     DOM.containers.discounts.innerHTML = '';  // Clear discount rows
                     DOM.containers.commissions.innerHTML = ''; // Clear commission rows
                 }
-                
+
                 // Set the new product
                 const productId = e.target.dataset.productId;
                 DOM.inputs.product.value = newProductName;
                 DOM.inputs.product.dataset.productId = productId;
-                
+
                 DOM.dropdowns.product.innerHTML = '';
                 DOM.inputs.product.dispatchEvent(new Event('input'));
             }
@@ -1677,6 +1793,8 @@
 
 
     <script>
+        // const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === "127.0.0.1";
+        // const baseUrl = isDevelopment ? 'http://localhost:8000/' : 'https://nagaraj1.pythonanywhere.com/';
         // TrieNode and Trie implementation
         class TrieNode {
             constructor() {
@@ -1727,7 +1845,7 @@
         // Initialize the Trie and insert products
         // const products2 = ["product 1", "product 2", "product 3", "product 4", "other products"];
         const trie = new Trie();
-        products.forEach(product => {
+        productsV1.keys().forEach(product => {
             trie.insert(product.name.toLowerCase())
         }
         );
@@ -1736,33 +1854,31 @@
         const input = DOM.inputs.product;
         const dropdownMenu = DOM.dropdowns.product;
 
-        // Render all items by default
-        function renderAllItems() {
+        async function renderAllItems() {
             dropdownMenu.innerHTML = ''; // Clear existing items
 
-            // Use a Set to keep track of unique product names
+            // Use a Set to track unique product names
             const uniqueProductNames = new Set();
 
-            products.forEach(product => {
-                const lowerCaseName = product.name.toLowerCase();
+            Object.keys(productsV1).forEach(product => {
+                const upperCaseName = product.toUpperCase();
 
-                if (!uniqueProductNames.has(lowerCaseName)) {
-                    uniqueProductNames.add(lowerCaseName);
+                if (!uniqueProductNames.has(upperCaseName)) {
+                    uniqueProductNames.add(upperCaseName);
 
                     const listItem = document.createElement('li');
-                    listItem.innerHTML = `<a class="dropdown-item" href="#">${lowerCaseName}</a>`;
+                    listItem.innerHTML = `<a class="dropdown-item" href="#">${upperCaseName}</a>`;
                     dropdownMenu.appendChild(listItem);
                 }
             });
         }
-
         // Initial render of unique items
         input.addEventListener("click", () => {
             renderAllItems();
         });
 
 
-        input.addEventListener('input', function() {
+        input.addEventListener('input', function () {
             const query = DOM.inputs.product.value.trim().toLowerCase();
 
             if (query.length === 0) {
@@ -1781,7 +1897,7 @@
         });
 
         // Handle dropdown item selection
-        DOM.dropdowns.product.addEventListener('click', function(e) {
+        DOM.dropdowns.product.addEventListener('click', function (e) {
             if (e.target && e.target.matches('.dropdown-item')) {
                 DOM.inputs.product.value = e.target.textContent.trim();
                 DOM.dropdowns.product.innerHTML = '';  // Close dropdown after selection

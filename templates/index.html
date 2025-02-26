@@ -1026,38 +1026,14 @@
             return lineListInfo.filter(line => line.line.toLowerCase().includes(query.toLowerCase()));
         }
 
-        // // Render all items by default
-        // function renderLineDropdown() {
-        //     DOM.dropdowns.line.innerHTML = '';  // Clear existing items
-        //     lineListInfo.forEach(line => {
-        //         const listItem = document.createElement('li');
-        //         listItem.innerHTML = `<a class="dropdown-item" href="#">${line.line.toLowerCase()}</a>`;
-        //         DOM.dropdowns.line.appendChild(listItem);
-        //     });
-        // }
-
-
-        async function renderLineDropdown() {
-            try {
-                // Fetch lines from the server if not already loaded
-                if (!window.lineOptions) {
-                    const response = await fetch(baseUrl + 'get_line');
-                    const lines = await response.json();
-                    
-                    window.lineOptions = lines.map(line => ({
-                        line: line
-                    }));
-                }
-
-                DOM.dropdowns.line.innerHTML = '';  // Clear existing items
-                window.lineOptions.forEach(line => {
-                    const listItem = document.createElement('li');
-                    listItem.innerHTML = `<a class="dropdown-item" href="#">${line.line.toLowerCase()}</a>`;
-                    DOM.dropdowns.line.appendChild(listItem);
-                });
-            } catch (error) {
-                console.error('Failed to fetch lines:', error);
-            }
+        // Render all items by default
+        function renderLineDropdown() {
+            DOM.dropdowns.line.innerHTML = '';  // Clear existing items
+            lineListInfo.forEach(line => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `<a class="dropdown-item" href="#">${line.line.toLowerCase()}</a>`;
+                DOM.dropdowns.line.appendChild(listItem);
+            });
         }
 
         // // Initial render of all items
@@ -1115,40 +1091,15 @@
             return driverListInfo.filter(driver => driver.name.toLowerCase().includes(query.toLowerCase()));
         }
 
-        // // Render all items by default
-        // function renderDriversDropdown() {
-        //     DOM.dropdowns.driver.innerHTML = '';  // Clear existing items
-        //     driverListInfo.forEach(driver => {
-        //         const listItem = document.createElement('li');
-        //         listItem.innerHTML = `<a class="dropdown-item" href="#">${driver.name.toLowerCase()}</a>`;
-        //         DOM.dropdowns.driver.appendChild(listItem);
-        //     });
-        // }
-
-
-        async function renderDriversDropdown() {
-            try {
-                // Fetch drivers from the server if not already loaded
-                if (!window.driverOptions) {
-                    const response = await fetch(baseUrl + 'get_drivers');
-                    const drivers = await response.json();
-                    
-                    window.driverOptions = drivers.map(driver => ({
-                        name: driver
-                    }));
-                }
-
-                DOM.dropdowns.driver.innerHTML = '';  // Clear existing items
-                window.driverOptions.forEach(driver => {
-                    const listItem = document.createElement('li');
-                    listItem.innerHTML = `<a class="dropdown-item" href="#">${driver.name.toLowerCase()}</a>`;
-                    DOM.dropdowns.driver.appendChild(listItem);
-                });
-            } catch (error) {
-                console.error('Failed to fetch drivers:', error);
-            }
+        // Render all items by default
+        function renderDriversDropdown() {
+            DOM.dropdowns.driver.innerHTML = '';  // Clear existing items
+            driverListInfo.forEach(driver => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `<a class="dropdown-item" href="#">${driver.name.toLowerCase()}</a>`;
+                DOM.dropdowns.driver.appendChild(listItem);
+            });
         }
-
 
         // // Initial render of all items
         // // renderAllItems();

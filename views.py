@@ -149,10 +149,9 @@ def format_msg(data):
 
     # Add total before deductions
     table_rows.append(["", "Total Before Deductions", total_amount])
-    # table_rows.append(["", "---------------", "--------"])
 
     # Process all deductions
-    deduction_rows = []
+    total_kuraivu = 0
     for item in entries:
         # Add individual discounts
         for discount_entry in item.get('discount', []):
@@ -167,7 +166,8 @@ def format_msg(data):
             commission += commission_amount
 
         if item.get("kuraivu_amount") is not None and item.get("kuraivu_amount") > 0:
-            deduction_rows.append(["ADD", f"Kuraivu - {item['product_name']}", item["kuraivu_amount"]])
+            # deduction_rows.append(["ADD", f"Kuraivu - {item['product_name']}", item["kuraivu_amount"]])
+            total_kuraivu += item["kuraivu_amount"]
         
         final_amount += item["final_amount"]
 
@@ -175,23 +175,25 @@ def format_msg(data):
     summary_rows = [
         ["SUB", "Total Discount", discount],
         ["SUB", "Total Commission", commission],
+        ["ADD", "Total Kuraivu", total_kuraivu],
     ]
-
-    # Add credits
-    if credits["payable"] > 0:
-        summary_rows.append(["SUB", "Credit Payable", credits["payable"]])
-    if credits["receivable"] > 0:
-        summary_rows.append(["ADD", "Credit Receivable", credits["receivable"]])
-
     # Add total after deductions
     summary_rows.append(["", "Total After Deductions", final_amount])
     # summary_rows.append(["", "---------------", "--------"])
+
+
+    # Add credits
+    if credits["payable"] > 0:
+        summary_rows.append(["SUB", f"Credit Payable: ({credits['payable_desc']})", credits["payable"]])
+    if credits["receivable"] > 0:
+        summary_rows.append(["ADD", f"Credit Receivable: ({credits['receivable_desc']})", credits["receivable"]])
+
 
     # Create expense rows
     expense_rows = []
     total_expenses = 0
     for description, amount in expenses.items():
-        # expense_rows.append(["SUB", description, amount])
+        expense_rows.append(["SUB", description, amount])
         total_expenses += amount
     expense_rows.append(["", "Total Expenses", total_expenses])
 
@@ -202,7 +204,7 @@ def format_msg(data):
     # Generate table
     header = f"**Driver Name:** {driver_name}\n**Line:** {line}\n**Date:** {date}\n\n"
     table = tabulate(
-        table_rows + deduction_rows + summary_rows + expense_rows + [final_total_row],
+        table_rows + summary_rows + expense_rows + [final_total_row],
         headers=["", "Description", "Amount"],
         tablefmt="grid",
         maxcolwidths=[None, 10, None],

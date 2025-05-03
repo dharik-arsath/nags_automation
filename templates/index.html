@@ -1467,7 +1467,22 @@
 
         function saveTodo() {
             const isProductEmpty = DOM.inputs.product.value.trim() === '';
-            if (isProductEmpty) return;
+            const isAdhigaVaravuCasesEmpty = DOM.inputs.adhigaVaravuCases.value.trim() === '';
+            const isAdhigaVaravuPiecesEmpty = DOM.inputs.adhigaVaravuPieces.value.trim() === '';
+            const isKuraivuCasesEmpty = DOM.inputs.kuraivuCases.value.trim() === '';
+            const isKuraivuPiecesEmpty = DOM.inputs.kuraivuPieces.value.trim() === '';
+
+            // raise error on why it fails on which entry it fails
+            let error = ''; 
+            if (isProductEmpty) error = 'Product';
+            if (isAdhigaVaravuCasesEmpty) error = 'Adhiga Varavu Cases';
+            if (isAdhigaVaravuPiecesEmpty) error = 'Adhiga Varavu Pieces';
+            if (isKuraivuCasesEmpty) error = 'Kuraivu Cases';
+            if (isKuraivuPiecesEmpty) error = 'Kuraivu Pieces';
+            if (error) {
+                alert(`${error} is required`);
+                return;
+            }
 
             const selectedProduct = getSelectedProduct();
             const goodsData = getGoodsData();

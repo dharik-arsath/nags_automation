@@ -2,12 +2,10 @@
     "products": {
         "Soda": {
             "max_case_count": 24,
-    
             "price": {
                 "case": 144,
                 "piece": 6
             },
-    
             "commission": [
                 {
                     "case": 6,
@@ -28,36 +26,32 @@
                     "piece": 3
                 }
             ],
-            "gain": [ 
+            "gain": [
                 {
-                    "case" : 1,
-                    "piece" : 0
+                    "case": 1,
+                    "piece": 0
                 },
                 {
-                    "case" : 2,
-                    "piece" : 0
+                    "case": 2,
+                    "piece": 0
                 },
                 {
-                    "case" : 3,
-                    "piece" : 0
+                    "case": 3,
+                    "piece": 0
                 },
                 {
-                    "case" : 10,
-                    "piece" : 0
+                    "case": 10,
+                    "piece": 0
                 }
-                
             ],
             "kuraivu": 4
         },
-    
         "Badam Milk": {
             "max_case_count": 24,
-    
             "price": {
                 "case": 456,
                 "piece": 19
             },
-            
             "commission": [
                 {
                     "case": 18,
@@ -68,8 +62,8 @@
                     "piece": 0.625
                 },
                 {
-                    "case":  10,
-                    "piece": 0.416667 
+                    "case": 10,
+                    "piece": 0.416667
                 },
                 {
                     "case": 0,
@@ -122,15 +116,12 @@
             ],
             "kuraivu": 2
         },
-    
         "200ML": {
             "max_case_count": 24,
-    
             "price": {
                 "case": 168,
                 "piece": 7
             },
-    
             "commission": [
                 {
                     "case": 7,
@@ -171,10 +162,8 @@
             ],
             "kuraivu": 4
         },
-    
         "250ML": {
             "max_case_count": 24,
-            
             "price": {
                 "case": 192,
                 "piece": 8
@@ -231,20 +220,17 @@
             ],
             "kuraivu": 4
         },
-    
         "PET": {
             "max_case_count": 30,
-    
             "price": {
                 "case": 225,
                 "piece": 7.5
             },
-            
             "commission": [
                 {
                     "case": 7,
                     "piece": 0.233333
-                }, 
+                },
                 {
                     "case": 0,
                     "piece": 0
@@ -281,7 +267,6 @@
             "kuraivu": 4
         }
     },
-
     "expenses": [
         "Petrol",
         "Food",
@@ -290,7 +275,6 @@
         "Vehicle_Repair",
         "Gpay"
     ],
-
     "drivers": [
         "Selvam",
         "Pandi",
@@ -299,7 +283,9 @@
         "Varusha",
         "Siva",
         "Saravanan",
-        "selvapandi"
+        "selvapandi",
+        "asdasd",
+        "asdasdasdasda"
     ],
     "line": [
         "Karia patti",

@@ -1,37 +1,92 @@
-const driverListInfo = [
-    {name: "Selvam"},
-    {name: "Pandi"},
-    {name: "Ganeshan"},
-    {name: "Saghul"},
-    {name: "Varusha"},
-    {name: "Avudai amman agency"},
-]
-
-const lineListInfo = [
-    {line: "Karia patti"},
-    {line: "Thirumansolai"},
-    {line: "SS kottai"},
-    {line: "Kilavalavu"},
-    {line: "Muthusamy patti"},
-    {line: "Silambani vadakku, Devakottai"},
-    {line: "Athikulam"},
-]
-
-const expensesListInfo = [
-    {expense: "Petrol"},
-    {expense: "Puncture"},
-    {expense: "Food"},
-    {expense: "Key"},
-    {expense: "Vehicle repair"}
-]
+const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === "127.0.0.1";
+const baseUrl = isDevelopment ? 'http://localhost:8000/' : 'https://nagaraj1.pythonanywhere.com/';
 
 
+let driverListInfo = [];
 
-const products = [
-    { name: "Karak Soda", commission: {case: 8, piece: 0.3333}, price: {case: 10, piece: 0.416666666666667}},
-    { name: "Mango 200ml PET", commission: {case: 2, piece: 0.13},price: {case: 20, piece: 0.833333333333333} },
-    { name: "Badam Milk",   commission: {case: 4, piece: 0.233}, price: {case: 30, piece: 1.25} },
-    { name: "200ml color",   commission: {case: 5, piece: 0.533}, price: {case: 40, piece: 1.66666666666667} },
-    { name: "250ml color",   commission: {case: 2, piece: 0.13},price: {case: 50, piece: 2.08333333333333} },
-    { name: "200ml PET Bottle",   commission: {case: 6, piece: 0.733},price: {case: 60, piece: 2.5} }
-];
+async function fetchDrivers() {
+    try {
+        const response = await fetch(baseUrl + 'get_drivers');
+        const drivers = await response.json();
+        
+        driverListInfo = drivers.map(driver => ({
+            name: driver
+        }));
+    } catch (error) {
+        console.error('Failed to fetch drivers:', error);
+    }
+}
+
+// Call fetchDrivers when the script loads
+fetchDrivers();
+let lineListInfo = [];
+
+async function fetchLines() {
+    try {
+        const response = await fetch(baseUrl + 'get_line');
+        const lines = await response.json();
+        
+        lineListInfo = lines.map(line => ({
+            line: line
+        }));
+    } catch (error) {
+        console.error('Failed to fetch lines:', error);
+    }
+}
+
+// Call fetchLines when the script loads
+fetchLines();
+
+
+let expensesListInfo = [];
+
+async function fetchExpenses() {
+    try {
+        const response = await fetch(baseUrl + 'get_all_expenses');
+        const expenses = await response.json();
+        
+        expensesListInfo = expenses.map(expense => ({
+            expense: expense
+        }));
+    } catch (error) {
+        console.error('Failed to fetch expenses:', error);
+    }
+}
+
+// Call fetchExpenses when the script loads
+fetchExpenses();
+
+
+
+driverListInfo = driverListInfo.map(driver => ({
+    ...driver,  // Keep the rest of the properties intact
+    name: driver.name.toLowerCase()  // Convert the name to lowercase
+}));
+
+
+let productsV1 = [];
+
+// Function to fetch products from the server
+async function fetchProducts() {
+    try {
+        const response = await fetch(baseUrl + 'get_raw_data');
+        if (!response.ok) {
+            throw new Error('Failed to fetch products');
+        }
+        productsV1 = await response.json();
+        return productsV1;
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        return [];
+    }
+}
+
+// Function to get a specific product by name
+function getProductByName(productName) {
+    return productsV1.find(product => 
+        product.name.toLowerCase() === productName.toLowerCase()
+    );
+}
+
+// Fetch products when the script loads
+fetchProducts();

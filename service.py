@@ -1,13 +1,13 @@
 import json
 
-from dao import JsonDataDAO 
-from loguru import logger 
+from dao import JsonDataDAO
+from loguru import logger
+
 
 class JsonDataHandler:
     def __init__(self):
         self.data_dao = JsonDataDAO()
-        self.logger   = logger 
-
+        self.logger = logger
 
     def load_data(self):
         with open("data.json") as f:
@@ -22,9 +22,10 @@ class JsonDataHandler:
 
     def get_drivers(self):
         return self.data_dao.get_drivers()
-    
+
     def get_line(self):
         return self.data_dao.get_line()
+
 
 if __name__ == "__main__":
     data_handler = JsonDataHandler()

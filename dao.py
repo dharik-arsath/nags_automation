@@ -1,4 +1,6 @@
-import json 
+import json
+
+
 class JsonDataDAO:
     def __init__(self):
         pass
@@ -30,20 +32,20 @@ class JsonDataDAO:
         data = self.load_data()
         data["drivers"].append(name)
         self.write_data(data)
-        return 
-
+        return
 
     def get_line(self) -> list:
         data = self.load_data()
         return data.get("line", [])
-    
+
     def remove_product(self, product: str):
         data = self.load_data()
         if product not in data:
-            return 
-        
+            return
+
         del data[product]
-        return 
+        return
+
 
 if __name__ == "__main__":
     data_handler = JsonDataDAO()

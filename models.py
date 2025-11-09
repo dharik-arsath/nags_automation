@@ -1,5 +1,3 @@
-from typing import List
-from typing import Optional
 from sqlalchemy import ForeignKey
 from sqlalchemy import String
 from sqlalchemy.orm import DeclarativeBase
@@ -10,6 +8,7 @@ from sqlalchemy.orm import relationship
 
 class Base(DeclarativeBase):
     pass
+
 
 class Drivers(Base):
     __tablename__ = "drivers"
@@ -28,7 +27,6 @@ class Lines(Base):
 
     def __repr__(self):
         return f"{self.name}"
-
 
 
 class Expenses(Base):
@@ -52,26 +50,25 @@ class Products(Base):
     # One-to-many relationship
     commissions: Mapped[list["Commissions"]] = relationship(
         back_populates="product",
-        cascade="all, delete-orphan"  # optional: deletes related commissions if product deleted,
+        cascade="all, delete-orphan",  # optional: deletes related commissions if product deleted,
     )
 
     # One-to-many relationship
     discounts: Mapped[list["Discounts"]] = relationship(
         back_populates="product",
-        cascade="all, delete-orphan"  # optional: deletes related commissions if product deleted
+        cascade="all, delete-orphan",  # optional: deletes related commissions if product deleted
     )
 
     gains: Mapped[list["Gains"]] = relationship(
         back_populates="product",
-        cascade="all, delete-orphan"  # optional: deletes related commissions if product deleted
+        cascade="all, delete-orphan",  # optional: deletes related commissions if product deleted
     )
 
     price: Mapped["Prices"] = relationship(
         back_populates="product",
         cascade="all, delete-orphan",  # optional: deletes related commissions if product deleted,
-        uselist=False
+        uselist=False,
     )
-
 
     def __repr__(self):
         return f"{self.name}"
@@ -127,7 +124,6 @@ class Prices(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     case: Mapped[float]
     piece: Mapped[float]
-
 
     product_id: Mapped[int] = mapped_column(ForeignKey("products.id"))
     # Many-to-one relationship

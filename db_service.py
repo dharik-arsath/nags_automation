@@ -1,7 +1,7 @@
 import json
 
 from db_dao import DB_DAO
-from loguru import logger 
+from loguru import logger
 from sqlalchemy.orm import Session
 from utils import to_dict
 
@@ -9,8 +9,7 @@ from utils import to_dict
 class DB_Service:
     def __init__(self, session: Session):
         self.data_dao = DB_DAO(session)
-        self.logger   = logger 
-
+        self.logger = logger
 
     def load_data(self):
         with open("data.json") as f:
@@ -28,19 +27,16 @@ class DB_Service:
             out[product["name"]]["commission"] = out[product["name"]].pop("commissions")
             out[product["name"]]["gain"] = out[product["name"]].pop("gains")
 
-
-        return out 
-
+        return out
 
     def get_all_expenses(self):
         expenses = self.data_dao.get_all_expenses()
         return [expense.name for expense in expenses]
 
-
     def get_drivers(self):
         drivers = self.data_dao.get_drivers()
         return [driver.name for driver in drivers]
-    
+
     def get_lines(self):
         lines = self.data_dao.get_lines()
         return [line.name for line in lines]
@@ -58,6 +54,5 @@ if __name__ == "__main__":
     products = data_handler.get_raw_data()
     products
     # product_dict = {c.name: getattr(products[0], c.name) for c in products[0].__table__.columns}
-
 
     products["Soda"]["discount"]

@@ -1,5 +1,6 @@
 import gspread
-import pandas as pd 
+import pandas as pd
+
 gc = gspread.service_account("credentials.json")
 spreadsheet = gc.open("nags_automation")
 report_sheet = spreadsheet.worksheet("Sheet3")
@@ -17,11 +18,10 @@ report_sheet = spreadsheet.worksheet("Sheet3")
 
 
 records = report_sheet.get_all_records()
-df = pd.DataFrame( records )
+df = pd.DataFrame(records)
 
 
 df.groupby("TRANSACTION ID").FINAL_AMOUNT.agg(["sum"])
-
 
 
 # # Create a list of values in the same order as the sheet headers
@@ -31,4 +31,3 @@ df.groupby("TRANSACTION ID").FINAL_AMOUNT.agg(["sum"])
 #     if header in COLUMN_MAPPING:
 #         key = COLUMN_MAPPING[header]
 #         value = data_dict.get(key, '')  # Use empty string if key doesn't exist
-

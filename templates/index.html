@@ -845,7 +845,16 @@
             }
         }
 
-        function addExpenseRow() {
+
+        async function addExpenseRow() {
+            // Fetch expense options
+            const expenseOptions = await loadExpenseOptions();
+            
+            // Generate dropdown items dynamically
+            const dropdownItems = expenseOptions.map(option => 
+                `<li><a class="dropdown-item">${option}</a></li>`
+            ).join('');
+
             const newRow = document.createElement('div');
             newRow.className = 'expense-row mb-2 position-relative';
             newRow.innerHTML = `
@@ -853,15 +862,10 @@
                     <div class="col-8">
                         <div class="form-outline mb-3">
                             <input type="text" class="form-control expense-description active dropdown-toggle" 
-                                   data-mdb-dropdown-init aria-expanded="false" autocomplete="off" id="expenseOptions">
+                                data-mdb-dropdown-init aria-expanded="false" autocomplete="off" id="expenseOptions">
                             <label class="form-label">Description</label>
                             <ul class="dropdown-menu w-100" id="expenseDropdown" aria-labelledby="expenseOptions">
-                                <li><a class="dropdown-item">Petrol</a></li>
-                                <li><a class="dropdown-item">Food</a></li>
-                                <li><a class="dropdown-item">Rep</a></li>
-                                <li><a class="dropdown-item">Key</a></li>
-                                <li><a class="dropdown-item">Vehicle_Repair</a></li>
-                                <li><a class="dropdown-item">Gpay</a></li>
+                                ${dropdownItems}
                             </ul>
                         </div>
                     </div>
@@ -889,21 +893,19 @@
             const dropdownInputs = newRow.querySelectorAll('.dropdown-toggle');
             dropdownInputs.forEach(input => {
                 new mdb.Dropdown(input);
-            });
+        });
 
+        // Add event listener for dropdown item click
+        const expenseOptionsMenu = newRow.querySelector('#expenseDropdown');
+        const expenseOptionInput = newRow.querySelector('#expenseOptions');
 
-            // Add event listener for dropdown item click
-            const expenseOptionsMenu = newRow.querySelector('#expenseDropdown');
-            const expenseOptionInput = newRow.querySelector('#expenseOptions');
-
-            expenseOptionsMenu.addEventListener("click", (e) => {
-                if (e.target && e.target.matches('.dropdown-item')) {
-                    // Set input value to the clicked item's text content
-                    expenseOptionInput.value = e.target.textContent.trim();
-                    expenseOptionsMenu.classList.remove('show');
-                }
-            });
-        }
+        expenseOptionsMenu.addEventListener("click", (e) => {
+            if (e.target && e.target.matches('.dropdown-item')) {
+                expenseOptionInput.value = e.target.textContent.trim();
+                expenseOptionsMenu.classList.remove('show');
+            }
+        });
+    }
 
 
 

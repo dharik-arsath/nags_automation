@@ -90,3 +90,24 @@ function getProductByName(productName) {
 
 // Fetch products when the script loads
 fetchProducts();
+
+
+
+// Add at the top of your file
+let cachedExpenseOptions = null;
+
+async function loadExpenseOptions() {
+    if (cachedExpenseOptions) {
+        return cachedExpenseOptions;
+    }
+    
+    try {
+        const response = await fetch(baseUrl + 'get_all_expenses');
+        if (!response.ok) throw new Error('Failed to load expense options');
+        cachedExpenseOptions = await response.json();
+        return cachedExpenseOptions;
+    } catch (error) {
+        console.error('Error loading expense options:', error);
+        return [];
+    }
+}

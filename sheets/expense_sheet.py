@@ -39,6 +39,10 @@ class ExpenseSheetHandler:
         expenses = deepcopy(self.expense_info.expenses)
 
         headers = self.sheet.row_values(1)
+        print(headers)
+        if len(headers) == 0:
+            headers = list(COLUMN_MAPPING.keys())
+            self.sheet.update("A1", [headers])
         row_data = []
         for header in headers:
             if header not in COLUMN_MAPPING:

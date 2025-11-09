@@ -100,6 +100,9 @@ class ProductSheetHandler:
 
     def parse_product_entries(self):
         headers = self.sheet.row_values(1)
+        if len(headers) == 0:
+            headers = list(COLUMN_MAPPING.keys())
+            self.sheet.update("A1", [headers])
         row_data = []
         for entry in self.sheet_info.entries:
             row = []

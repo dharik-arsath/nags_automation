@@ -14,12 +14,13 @@ class AuthGsheet(BaseModel):
         if os.path.exists(v) is False:
             raise FileNotFoundError(f"File {v} does not exist...")
 
+        return v
 
 def authenticate(path_to_credentials: Optional[str] = None):
     if path_to_credentials is None:
         auth_info = AuthGsheet()
     else:
-        auth_info = AuthGsheet(path_to_credentials)
+        auth_info = AuthGsheet(credentials=path_to_credentials)
 
     gc = gspread.service_account(auth_info.credentials)
     return gc

@@ -11,3 +11,4 @@ static/js/data_bkup.js
 static/js/data_no.js
 
 **__pycache__**
+/.idea/*
